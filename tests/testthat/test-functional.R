@@ -1,4 +1,4 @@
-sample_mp3 <- tuneR::readMP3(system.file("sample_audio.mp3", package = "torchaudio"))
+sample_mp3 <- tuneR::readMP3(system.file("sample_audio_1.mp3", package = "torchaudio"))
 
 test_that("spectrogram", {
   n_fft = 400
