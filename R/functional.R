@@ -50,6 +50,29 @@ spectrogram <- function(
   return(spec_f)
 }
 
+
+#' Frequency Bin Conversion Matrix
+#'
+#' Create a frequency bin conversion matrix.
+#'
+#' @param n_freqs (int): Number of frequencies to highlight/apply
+#' @param f_min (float): Minimum frequency (Hz)
+#' @param f_max (float): Maximum frequency (Hz)
+#' @param n_mels (int): Number of mel filterbanks
+#' @param sample_rate (int): Sample rate of the audio waveform
+#' @param norm (chr) (Optional): If 'slaney', divide the triangular
+#'  mel weights by the width of the mel band (area normalization). (Default: `None`)
+#'
+#' @return `tensor`: Triangular filter banks (fb matrix) of size (`n_freqs`, `n_mels`)
+#'         meaning number of frequencies to highlight/apply to x the number of filterbanks.
+#'         Each column is a filterbank so that assuming there is a matrix A of
+#'         size (..., `n_freqs`), the applied result would be
+#'         ``A * create_fb_matrix(A.size(-1), ...)``.
+#' @export
+create_fb_matrix <- function() {
+
+}
+
 #' Complex Norm
 #'
 #' Compute the norm of complex tensor input.
