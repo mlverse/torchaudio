@@ -1,4 +1,5 @@
 library(torch)
+library(testthat)
 
 is_torch_tensor <- function(x) {
   inherits(x, "torch_tensor")

@@ -15,6 +15,5 @@ test_that("complex_norm", {
 
   tensor_r_cn <- sum((tensor_r^2))^(0.5)
   tensor_t_cn <- complex_norm(tensor_t)
-  expect_identical()
   expect_lt(abs(as.numeric(tensor_t_cn) - tensor_r_cn), 1e-6)
 })
