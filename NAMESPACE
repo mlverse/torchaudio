@@ -2,4 +2,6 @@
 
 export(complex_norm)
 export(create_fb_matrix)
+export(linear_to_mel_frequency)
+export(mel_to_linear_frequency)
 export(spectrogram)
