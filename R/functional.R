@@ -56,10 +56,10 @@ spectrogram <- function(
 #' Create a frequency bin conversion matrix.
 #'
 #' @param n_freqs (int): Number of frequencies to highlight/apply
-#' @param f_min (float): Minimum frequency (Hz)
-#' @param f_max (float): Maximum frequency (Hz)
 #' @param n_mels (int): Number of mel filterbanks
 #' @param sample_rate (int): Sample rate of the audio waveform
+#' @param f_min (float): Minimum frequency (Hz)
+#' @param f_max (float): Maximum frequency (Hz)
 #' @param norm (chr) (Optional): If 'slaney', divide the triangular
 #'  mel weights by the width of the mel band (area normalization). (Default: `None`)
 #'
@@ -69,8 +69,44 @@ spectrogram <- function(
 #'         size (..., `n_freqs`), the applied result would be
 #'         ``A * create_fb_matrix(A.size(-1), ...)``.
 #' @export
-create_fb_matrix <- function() {
+create_fb_matrix <- function(
+  n_freqs,
+  n_mels,
+  sample_rate = 16000,
+  f_min = 0,
+  f_max = sample_rate %/% 2,
+  norm = NULL
+) {
+  if(!is.null(norm) && norm != "slaney")
+    type_error("norm must be one of NULL or 'slaney'")
 
+  # freq bins
+  all_freqs <- torch::torch_linspace(0, sample_rate %/% 2, n_freqs)
+
+  # calculate mel freq bins
+  # hertz to mel(f) is 2595. * math.log10(1. + (f / 700.))
+  m_min = herts_to_mel(f_min)
+  m_max = herts_to_mel(f_max)
+  m_pts = torch::torch_linspace(m_min, m_max, n_mels + 2)
+  # mel to hertz(mel) is 700. * (10**(mel / 2595.) - 1.)
+  f_pts = 700.0 * (10 ^ (m_pts / 2595.0) - 1.0)
+  # calculate the difference between each mel point and each stft freq point in hertz
+  len_f_pts <- length(f_pts)
+  f_diff = f_pts[2:len_f_pts] - f_pts[1:(len_f_pts - 1)]  # (n_mels + 1)
+  slopes = f_pts$unsqueeze(1L) - all_freqs$unsqueeze(2L)  # (n_freqs, n_mels + 2)
+  # create overlapping triangles
+  zero = torch::torch_zeros(1L)
+  down_slopes = (-1.0 * slopes[ , 1:(ncol(slopes) - 2)]) / f_diff[1:(length(f_diff) - 1)]  # (n_freqs, n_mels)
+  up_slopes = slopes[ , 3:ncol(slopes)] / f_diff[2:length(f_diff)]  # (n_freqs, n_mels)
+  fb = torch::torch_max(zero, other = torch::torch_min(down_slopes, other = up_slopes))
+
+  if(!is.null(norm) && norm == "slaney") {
+    # Slaney-style mel is scaled to be approx constant energy per channel
+    enorm = 2.0 / (f_pts[3:(n_mels + 2)] - f_pts[1:n_mels])
+    fb = fb + enorm$unsqueeze(1)
+  }
+
+  return(fb)
 }
 
 #' Complex Norm
