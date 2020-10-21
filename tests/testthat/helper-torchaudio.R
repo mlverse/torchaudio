@@ -1,5 +1,6 @@
 library(torch)
 library(testthat)
+library(torchaudio)
 
 is_torch_tensor <- function(x) {
   inherits(x, "torch_tensor")
