@@ -4,24 +4,31 @@
 \alias{create_fb_matrix}
 \title{Frequency Bin Conversion Matrix}
 \usage{
-create_fb_matrix()
+create_fb_matrix(
+  n_freqs,
+  n_mels,
+  sample_rate = 16000,
+  f_min = 0,
+  f_max = sample_rate\%/\%2,
+  norm = NULL
+)
 }
 \arguments{
 \item{n_freqs}{(int): Number of frequencies to highlight/apply}
-
-\item{f_min}{(float): Minimum frequency (Hz)}
-
-\item{f_max}{(float): Maximum frequency (Hz)}
 
 \item{n_mels}{(int): Number of mel filterbanks}
 
 \item{sample_rate}{(int): Sample rate of the audio waveform}
 
-\item{norm}{(Optional\link{str}): If 'slaney', divide the triangular
+\item{f_min}{(float): Minimum frequency (Hz)}
+
+\item{f_max}{(float): Maximum frequency (Hz)}
+
+\item{norm}{(chr) (Optional): If 'slaney', divide the triangular
 mel weights by the width of the mel band (area normalization). (Default: \code{None})}
 }
 \value{
-tensor: Triangular filter banks (fb matrix) of size (\code{n_freqs}, \code{n_mels})
+\code{tensor}: Triangular filter banks (fb matrix) of size (\code{n_freqs}, \code{n_mels})
 meaning number of frequencies to highlight/apply to x the number of filterbanks.
 Each column is a filterbank so that assuming there is a matrix A of
 size (..., \code{n_freqs}), the applied result would be
