@@ -165,3 +165,62 @@ create_dct <- function(
 complex_norm <- function(complex_tensor, power = 1) {
   complex_tensor$pow(2.)$sum(-1)$pow(0.5 * power)
 }
+
+
+
+
+
+
+#' Amplitude to DB
+#'
+#' Turn a tensor from the power/amplitude scale to the decibel scale.
+#'
+#' This output depends on the maximum value in the input tensor, and so
+#' may return different values for an audio clip split into snippets vs. a
+#' a full clip.
+#'
+#' @param x (Tensor): Input tensor before being converted to decibel scale
+#' @param multiplier (float): Use 10.0 for power and 20.0 for amplitude (Default: ``10.0``)
+#' @param amin (float): Number to clamp ``x`` (Default: ``1e-10``)
+#' @param ref_value (float): Reference which the output will be scaled by.
+#' @param db_multiplier (float): Log10(max(ref_value and amin))
+#' @param top_db (float or NULL, optional): Minimum negative cut-off in decibels. A reasonable number
+#'     is 80. (Default: ``NULL``)
+#'
+#' @return `Tensor`: Output tensor in decibel scale
+#'
+#' @export
+amplitude_to_DB <- function(
+  x,
+  multiplier = 10.0,
+  amin = 1e-10,
+  ref_value = 1.0,
+  db_multiplier = log10(max(amin, ref_value)),
+  top_db = NULL
+) {
+  x_db = multiplier * torch::torch_log10(torch::torch_clamp(x, min=amin))
+  x_db = x_db - multiplier * db_multiplier
+
+  if(!is.null(top_db)){
+    x_db = x_db$clamp(min=x_db$max()$item() - top_db)
+  }
+
+  return(x_db)
+}
+
+#' DB to Amplitude
+#'
+#' Turn a tensor from the decibel scale to the power/amplitude scale.
+#'
+#'
+#' @param x (Tensor): Input tensor before being converted to power/amplitude scale.
+#' @param ref (float): Reference which the output will be scaled by. (Default: ``1.0``)
+#' @param power (float): If power equals 1, will compute DB to power. If 0.5, will compute
+#'  DB to amplitude. (Default: ``1.0``)
+#'
+#' @return `Tensor`: Output tensor in power/amplitude scale.
+#'
+#' @export
+DB_to_amplitude <- function(x, ref = 1.0, power = 1.0) {
+  ref * torch::torch_pow(torch::torch_pow(10.0, 0.1 * x), power)
+}
