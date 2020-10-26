@@ -39,4 +39,6 @@ test_that("create_dct", {
   )
   expect_tensor(x)
   expect_tensor_shape(x, c(64, 10))
+  expect_no_error(create_dct(2, 3, 'ortho'), class = "value_error")
+  expect_error(create_dct(2, 3, 'not ortho nor NULL norm'), class = "value_error")
 })
