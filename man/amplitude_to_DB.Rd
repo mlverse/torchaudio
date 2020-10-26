@@ -4,16 +4,25 @@
 \alias{amplitude_to_DB}
 \title{Amplitude to DB}
 \usage{
-amplitude_to_DB(x, multiplier, amin, db_multiplier, top_db = NULL)
+amplitude_to_DB(
+  x,
+  multiplier = 10,
+  amin = 1e-10,
+  ref_value = 1,
+  db_multiplier = log10(max(amin, ref_value)),
+  top_db = NULL
+)
 }
 \arguments{
 \item{x}{(Tensor): Input tensor before being converted to decibel scale}
 
-\item{multiplier}{(float): Use 10. for power and 20. for amplitude}
+\item{multiplier}{(float): Use 10.0 for power and 20.0 for amplitude (Default: \code{10.0})}
 
-\item{amin}{(float): Number to clamp \code{x}}
+\item{amin}{(float): Number to clamp \code{x} (Default: \code{1e-10})}
 
-\item{db_multiplier}{(float): Log10(max(reference value and amin))}
+\item{ref_value}{(float): Reference which the output will be scaled by.}
+
+\item{db_multiplier}{(float): Log10(max(ref_value and amin))}
 
 \item{top_db}{(float or NULL, optional): Minimum negative cut-off in decibels. A reasonable number
 is 80. (Default: \code{NULL})}
