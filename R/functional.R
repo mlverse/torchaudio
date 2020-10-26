@@ -35,6 +35,12 @@ spectrogram <- function(
   if(pad > 0) waveform <- torch::nnf_pad(waveform, c(pad, pad))
   if(!is_torch_tensor(waveform)) waveform <- torch::torch_tensor(as.vector(as.array(waveform)), dtype = torch::torch_float())
 
+
+  # pack batch
+  shape = waveform$size()
+  ls = length(shape)
+  waveform = waveform$reshape(list(-1, shape[ls]))
+
   # default values are consistent with librosa.core.spectrum._spectrogram
   spec_f <- torch::torch_stft(
     input = waveform, n_fft = n_fft,
@@ -43,6 +49,10 @@ spectrogram <- function(
     pad_mode = "reflect", normalized = FALSE,
     onesided = TRUE
   )
+
+  # unpack batch
+  lspec = length(spec_f$shape)
+  spec_f = spec_f$reshape(c(shape[-ls], spec_f$shape[(lspec-2):lspec]))
 
   if(normalized) spec_f <- spec_f/sqrt(sum(window^2))
   if(!is.null(power)) spec_f <- complex_norm(spec_f, power = power)
@@ -129,16 +139,16 @@ create_dct <- function(
   n_mels,
   norm = NULL
 ) {
-  n = torch_arange(n_mels)
-  k = torch.arange(float(n_mfcc)).unsqueeze(1)
-  dct = torch.cos(math.pi / float(n_mels) * (n + 0.5) * k)  # size (n_mfcc, n_mels)
-  if norm is None:
-    dct *= 2.0
-  else:
-    assert norm == "ortho"
-  dct[0] *= 1.0 / math.sqrt(2.0)
-  dct *= math.sqrt(2.0 / float(n_mels))
-  return dct.t()
+  # n = torch_arange(n_mels)
+  # k = torch.arange(float(n_mfcc)).unsqueeze(1)
+  # dct = torch.cos(math.pi / float(n_mels) * (n + 0.5) * k)  # size (n_mfcc, n_mels)
+  # if norm is None:
+  #   dct *= 2.0
+  # else:
+  #   assert norm == "ortho"
+  # dct[0] *= 1.0 / math.sqrt(2.0)
+  # dct *= math.sqrt(2.0 / float(n_mels))
+  # return dct.t()
 }
 
 #' Complex Norm
