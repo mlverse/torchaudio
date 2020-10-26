@@ -22,7 +22,6 @@ test_that("create_fb_matrix", {
   expect_tensor_shape(x, c(10, 13))
 })
 
-
 test_that("complex_norm", {
   tensor_r <- c(1,2,3)
   tensor_t <- torch::torch_tensor(tensor_r)
@@ -30,4 +29,16 @@ test_that("complex_norm", {
   tensor_r_cn <- sum((tensor_r^2))^(0.5)
   tensor_t_cn <- complex_norm(tensor_t)
   expect_lt(abs(as.numeric(tensor_t_cn) - tensor_r_cn), 1e-6)
+})
+
+test_that("create_dct", {
+  x <- create_dct(
+    n_mfcc = 10,
+    n_mels = 64,
+    norm = NULL
+  )
+  expect_tensor(x)
+  expect_tensor_shape(x, c(64, 10))
+  expect_no_error(create_dct(2, 3, 'ortho'), class = "value_error")
+  expect_error(create_dct(2, 3, 'not ortho nor NULL norm'), class = "value_error")
 })
