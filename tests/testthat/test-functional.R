@@ -42,3 +42,14 @@ test_that("create_dct", {
   expect_no_error(create_dct(2, 3, 'ortho'), class = "value_error")
   expect_error(create_dct(2, 3, 'not ortho nor NULL norm'), class = "value_error")
 })
+
+test_that("amplitude_to_DB", {
+  x <- amplitude_to_DB(torch::torch_arange(0,3))
+  expect_tensor(x)
+  expect_tensor_shape(x, c(3))
+
+  # top_db
+  x <- amplitude_to_DB(torch::torch_arange(0,3), top_db = 1.0)
+  expect_tensor(x)
+  expect_tensor_shape(x, c(3))
+})
