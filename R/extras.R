@@ -23,3 +23,4 @@ linear_to_mel_frequency <- function(frequency_in_hertz, mel_break_frequency_hert
 mel_to_linear_frequency <- function(frequency_in_mel, mel_break_frequency_linear = 2595.0, mel_high_frequency_q = 700.0) {
   mel_high_frequency_q * (10^(frequency_in_mel/mel_break_frequency_linear) - 1.0)
 }
+

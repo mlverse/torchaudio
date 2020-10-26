@@ -119,7 +119,6 @@ create_fb_matrix <- function(
   return(fb)
 }
 
-
 #' DCT transformation matrix
 #'
 #' Create a DCT transformation matrix with shape (``n_mels``, ``n_mfcc``),
