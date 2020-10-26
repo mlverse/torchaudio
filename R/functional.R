@@ -139,16 +139,18 @@ create_dct <- function(
   n_mels,
   norm = NULL
 ) {
-  # n = torch_arange(n_mels)
-  # k = torch.arange(float(n_mfcc)).unsqueeze(1)
-  # dct = torch.cos(math.pi / float(n_mels) * (n + 0.5) * k)  # size (n_mfcc, n_mels)
-  # if norm is None:
-  #   dct *= 2.0
-  # else:
-  #   assert norm == "ortho"
-  # dct[0] *= 1.0 / math.sqrt(2.0)
-  # dct *= math.sqrt(2.0 / float(n_mels))
-  # return dct.t()
+  n = torch::torch_arange(0, n_mels)
+  k = torch::torch_arange(0, n_mfcc)$unsqueeze(2)
+  dct = torch::torch_cos(pi / n_mels * ((n + 0.5) * k))  # size (n_mfcc, n_mels)
+  if(is.null(norm)) {
+    dct = dct * 2.0
+  } else {
+    if(norm != 'ortho') value_error("Argument norm must be 'ortho' or NULL.")
+    dct[1] = dct[1] * 1.0 / torch::torch_sqrt(2.0)
+    dct = dct * torch::torch_sqrt(2.0 / n_mels)
+  }
+
+  return(dct$t())
 }
 
 #' Complex Norm
