@@ -11,7 +11,7 @@
 #' @param hop_length (integer): Length of hop between STFT windows
 #' @param win_length (integer): Window size
 #' @param power (numeric): Exponent for the magnitude spectrogram, (must be > 0) e.g.,
-#'  1 for energy, 2 for power, etc. If None, then the complex spectrum is returned instead.
+#'  1 for energy, 2 for power, etc. If NULL, then the complex spectrum is returned instead.
 #' @param normalized (logical): Whether to normalize by magnitude after stft
 #' @param Arguments for window function.
 #'
@@ -70,7 +70,7 @@ functional_spectrogram <- function(
 #' @param f_min (float): Minimum frequency (Hz)
 #' @param f_max (float): Maximum frequency (Hz)
 #' @param norm (chr) (Optional): If 'slaney', divide the triangular
-#'  mel weights by the width of the mel band (area normalization). (Default: `None`)
+#'  mel weights by the width of the mel band (area normalization). (Default: `NULL`)
 #'
 #' @return `tensor`: Triangular filter banks (fb matrix) of size (`n_freqs`, `n_mels`)
 #'         meaning number of frequencies to highlight/apply to x the number of filterbanks.
@@ -126,7 +126,7 @@ functional_create_fb_matrix <- function(
 #'
 #' @param n_mfcc (int): Number of mfc coefficients to retain
 #' @param n_mels (int): Number of mel filterbanks
-#' @param norm (chr or NULL): Norm to use (either 'ortho' or None)
+#' @param norm (chr or NULL): Norm to use (either 'ortho' or NULL)
 #'
 #' @return `Tensor`: The transformation matrix, to be right-multiplied to
 #'     row-wise data of size (``n_mels``, ``n_mfcc``).
@@ -227,9 +227,9 @@ functional_db_to_amplitude <- function(x, ref = 1.0, power = 1.0) {
 #' @param n_mels (int, optional): Number of mel filterbanks. (Default: ``128``)
 #' @param sample_rate (int, optional): Sample rate of audio signal. (Default: ``16000``)
 #' @param f_min (float, optional): Minimum frequency. (Default: ``0.``)
-#' @param f_max (float or None, optional): Maximum frequency. (Default: ``sample_rate // 2``)
+#' @param f_max (float or NULL, optional): Maximum frequency. (Default: ``sample_rate // 2``)
 #' @param n_stft (int, optional): Number of bins in STFT. Calculated from first input
-#' if None is given.  See ``n_fft`` in :class:`Spectrogram`. (Default: ``None``)
+#' if NULL is given.  See ``n_fft`` in :class:`Spectrogram`. (Default: ``NULL``)
 #'
 #' @return `tensor`: Mel frequency spectrogram of size (..., ``n_mels``, time).
 #'
