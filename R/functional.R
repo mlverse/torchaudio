@@ -15,7 +15,7 @@
 #' @param normalized (logical): Whether to normalize by magnitude after stft
 #' @param Arguments for window function.
 #'
-#' @return tensor: Dimension (..., freq, time), freq is n_fft %/% 2 + 1 and n_fft is the
+#' @return `tensor`: Dimension (..., freq, time), freq is n_fft %/% 2 + 1 and n_fft is the
 #' number of Fourier bins, and time is the number of window hops (n_frame).
 #' @export
 spectrogram <- function(
@@ -60,7 +60,6 @@ spectrogram <- function(
   return(spec_f)
 }
 
-
 #' Frequency Bin Conversion Matrix
 #'
 #' Create a frequency bin conversion matrix.
@@ -78,6 +77,7 @@ spectrogram <- function(
 #'         Each column is a filterbank so that assuming there is a matrix A of
 #'         size (..., `n_freqs`), the applied result would be
 #'         ``A * create_fb_matrix(A.size(-1), ...)``.
+#'
 #' @export
 create_fb_matrix <- function(
   n_freqs,
@@ -129,7 +129,7 @@ create_fb_matrix <- function(
 #' @param n_mels (int): Number of mel filterbanks
 #' @param norm (chr or NULL): Norm to use (either 'ortho' or None)
 #'
-#' @return `Tensor`: The transformation matrix, to be right-multiplied to
+#' @return `tensor`: The transformation matrix, to be right-multiplied to
 #'     row-wise data of size (``n_mels``, ``n_mfcc``).
 #'
 #' @export
@@ -159,17 +159,12 @@ create_dct <- function(
 #' @param complex_tensor (tensor): Tensor shape of `(..., complex=2)`
 #' @param power (numeric): Power of the norm. (Default: `1.0`).
 #'
-#' @return tensor: Power of the normed input tensor. Shape of `(..., )`
+#' @return `tensor`: Power of the normed input tensor. Shape of `(..., )`
 #'
 #' @export
 complex_norm <- function(complex_tensor, power = 1) {
   complex_tensor$pow(2.)$sum(-1)$pow(0.5 * power)
 }
-
-
-
-
-
 
 #' Amplitude to DB
 #'
@@ -187,10 +182,10 @@ complex_norm <- function(complex_tensor, power = 1) {
 #' @param top_db (float or NULL, optional): Minimum negative cut-off in decibels. A reasonable number
 #'     is 80. (Default: ``NULL``)
 #'
-#' @return `Tensor`: Output tensor in decibel scale
+#' @return `tensor`: Output tensor in decibel scale
 #'
 #' @export
-amplitude_to_DB <- function(
+amplitude_to_db <- function(
   x,
   multiplier = 10.0,
   amin = 1e-10,
@@ -218,9 +213,54 @@ amplitude_to_DB <- function(
 #' @param power (float): If power equals 1, will compute DB to power. If 0.5, will compute
 #'  DB to amplitude. (Default: ``1.0``)
 #'
-#' @return `Tensor`: Output tensor in power/amplitude scale.
+#' @return `tensor`: Output tensor in power/amplitude scale.
 #'
 #' @export
-DB_to_amplitude <- function(x, ref = 1.0, power = 1.0) {
+db_to_amplitude <- function(x, ref = 1.0, power = 1.0) {
   ref * torch::torch_pow(torch::torch_pow(10.0, 0.1 * x), power)
+}
+
+#' Mel-frequency Cepstrum Coefficients
+#'
+#' Create the Mel-frequency cepstrum coefficients from an audio signal.
+#'
+#' @param waveform (tensor): Tensor of audio of dimension (..., time)
+#' @param sample_rate (int, optional): Sample rate of audio signal. (Default: ``16000``)
+#' @param n_mfcc (int, optional): Number of mfc coefficients to retain. (Default: ``40``)
+#' @param dct_type (int, optional): type of DCT (discrete cosine transform) to use. (Default: ``2``)
+#' @param norm (str, optional): norm to use. (Default: ``'ortho'``)
+#' @param log_mels (bool, optional): whether to use log-mel spectrograms instead of db-scaled. (Default: ``FALSE``)
+#' @param db_multiplier (float): Passed to [torchaudio::amplitude_to_db()].
+#' @param top_db (float or NULL, optional): Passed to [torchaudio::amplitude_to_db()]. Minimum negative cut-off in decibels. A reasonable number
+#'     is 80. (Default: ``80``). See
+#' @param ... (optional): arguments for MelSpectrogram.
+#'
+#' @details By default, this calculates the MFCC on the DB-scaled Mel spectrogram.
+#' This output depends on the maximum value in the input spectrogram, and so
+#' may return different values for an audio clip split into snippets vs. a
+#' a full clip.
+#'
+#' @return `tensor`: specgram_mel_db of size (..., ``n_mfcc``, time).
+#'
+#' @export
+mfcc <- function(
+  waveform,
+  sample_rate = 16000,
+  n_mfcc = 40,
+  dct_type = 2,
+  norm = 'ortho',
+  log_mels = FALSE,
+  top_db = 80.0,
+  db_multiplier = 10.0,
+  n_mels =
+  ...
+) {
+  supported_dct_types = c(2)
+  if(!dct_type %in% supported_dct_types) {
+    value_error(paste0('DCT type not supported:', dct_type))
+  }
+
+  amplitude_to_db = amplitude_to_db(waveform, db_multiplier = db_multiplier, top_db = top_db)
+  mel_spectrogram = mel_spectrogram(waveform, sample_rate = sample_rate)
+
 }
