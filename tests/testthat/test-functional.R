@@ -6,7 +6,6 @@ test_that("functional_spectrogram", {
   expect_no_error(spec <- functional_spectrogram(sample_mp3@left, n_fft = n_fft))
   expect_tensor(spec)
   expect_equal(dim(spec)[1], n_fft %/% 2 + 1)
-
 })
 
 test_that("create_fb_matrix", {
