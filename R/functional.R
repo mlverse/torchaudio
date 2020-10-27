@@ -18,7 +18,7 @@
 #' @return tensor: Dimension (..., freq, time), freq is n_fft %/% 2 + 1 and n_fft is the
 #' number of Fourier bins, and time is the number of window hops (n_frame).
 #' @export
-spectrogram <- function(
+functional_spectrogram <- function(
   waveform,
   pad = 0,
   n_fft = 400,
@@ -55,11 +55,10 @@ spectrogram <- function(
   spec_f = spec_f$reshape(c(shape[-ls], spec_f$shape[(lspec-2):lspec]))
 
   if(normalized) spec_f <- spec_f/sqrt(sum(window^2))
-  if(!is.null(power)) spec_f <- complex_norm(spec_f, power = power)
+  if(!is.null(power)) spec_f <- functional_complex_norm(spec_f, power = power)
 
   return(spec_f)
 }
-
 
 #' Frequency Bin Conversion Matrix
 #'
@@ -79,7 +78,7 @@ spectrogram <- function(
 #'         size (..., `n_freqs`), the applied result would be
 #'         ``A * create_fb_matrix(A.size(-1), ...)``.
 #' @export
-create_fb_matrix <- function(
+functional_create_fb_matrix <- function(
   n_freqs,
   n_mels,
   sample_rate = 16000,
@@ -133,7 +132,7 @@ create_fb_matrix <- function(
 #'     row-wise data of size (``n_mels``, ``n_mfcc``).
 #'
 #' @export
-create_dct <- function(
+functional_create_dct <- function(
   n_mfcc,
   n_mels,
   norm = NULL
@@ -162,14 +161,9 @@ create_dct <- function(
 #' @return tensor: Power of the normed input tensor. Shape of `(..., )`
 #'
 #' @export
-complex_norm <- function(complex_tensor, power = 1) {
+functional_complex_norm <- function(complex_tensor, power = 1) {
   complex_tensor$pow(2.)$sum(-1)$pow(0.5 * power)
 }
-
-
-
-
-
 
 #' Amplitude to DB
 #'
@@ -190,7 +184,7 @@ complex_norm <- function(complex_tensor, power = 1) {
 #' @return `Tensor`: Output tensor in decibel scale
 #'
 #' @export
-amplitude_to_DB <- function(
+functional_amplitude_to_db <- function(
   x,
   multiplier = 10.0,
   amin = 1e-10,
@@ -208,10 +202,9 @@ amplitude_to_DB <- function(
   return(x_db)
 }
 
-#' DB to Amplitude
+#' DB to Amplitude (functional)
 #'
 #' Turn a tensor from the decibel scale to the power/amplitude scale.
-#'
 #'
 #' @param x (Tensor): Input tensor before being converted to power/amplitude scale.
 #' @param ref (float): Reference which the output will be scaled by. (Default: ``1.0``)
@@ -221,6 +214,8 @@ amplitude_to_DB <- function(
 #' @return `Tensor`: Output tensor in power/amplitude scale.
 #'
 #' @export
-DB_to_amplitude <- function(x, ref = 1.0, power = 1.0) {
+functional_db_to_amplitude <- function(x, ref = 1.0, power = 1.0) {
   ref * torch::torch_pow(torch::torch_pow(10.0, 0.1 * x), power)
 }
+
+
