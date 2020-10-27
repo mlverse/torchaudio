@@ -2,11 +2,9 @@ sample_mp3 <- tuneR::readMP3(system.file("sample_audio_1.mp3", package = "torcha
 
 test_that("spectrogram", {
   n_fft = 400
-  samples = length(sample_mp3@left)
   expect_no_error(spec <- spectrogram(sample_mp3@left, n_fft = n_fft))
   expect_tensor(spec)
   expect_equal(dim(spec)[1], n_fft %/% 2 + 1)
-
 })
 
 test_that("create_fb_matrix", {
@@ -58,4 +56,12 @@ test_that("amplitude_to_DB and DB_to_amplitude", {
 
   # DB_to_amplitude
   expect_lt( as.numeric(sum(DB_to_amplitude(amplitude_to_DB(x1)) - x1)), 1e-8)
+})
+
+
+test_that("mfcc", {
+  expect_error(mfcc(sample_mp3@left, dct_type = 3), class = "value_error")
+  expect_no_error(mfcc_matrix <- mfcc(sample_mp3@left))
+  expect_tensor(mfcc_matrix)
+  expect_equal(dim(spec)[2], 40)
 })
