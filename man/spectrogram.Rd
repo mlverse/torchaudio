@@ -38,7 +38,7 @@ frame/window or a function that generates the window tensor.}
 \item{Arguments}{for window function.}
 }
 \value{
-tensor: Dimension (..., freq, time), freq is n_fft \%/\% 2 + 1 and n_fft is the
+\code{tensor}: Dimension (..., freq, time), freq is n_fft \%/\% 2 + 1 and n_fft is the
 number of Fourier bins, and time is the number of window hops (n_frame).
 }
 \description{
