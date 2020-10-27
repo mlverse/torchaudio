@@ -3,7 +3,6 @@
 #' Turn a normal STFT into a mel frequency STFT, using a conversion
 #' matrix. This uses triangular filter banks.
 #'
-#' @param specgram (Tensor): A spectrogram STFT of dimension (..., freq, time).
 #' @param n_mels (int, optional): Number of mel filterbanks. (Default: ``128``)
 #' @param sample_rate (int, optional): Sample rate of audio signal. (Default: ``16000``)
 #' @param f_min (float, optional): Minimum frequency. (Default: ``0.``)
@@ -14,40 +13,65 @@
 #' @return `tensor`: Mel frequency spectrogram of size (..., ``n_mels``, time).
 #'
 #' @export
-mel_scale <- function(
-  specgram,
-  n_mels= 128,
-  sample_rate = 16000,
-  f_min = 0.0,
-  f_max = NULL,
-  n_stft = NULL
-) {
-  if(is.null(f_max)) f_max = as.numeric(sample_rate %/% 2)
-  if(f_min > f_max) value_error(glue::glue("Require f_min: {f_min} < f_max: {f_max}"))
+transform_mel_scale <- torch::nn_module(
+  "MelScale",
+  initialize = function(
+    n_mels = 128,
+    sample_rate = 16000,
+    f_min = 0.0,
+    f_max = NULL,
+    n_stft = NULL
+  ) {
+    self$n_mels = n_mels
+    self$sample_rate = sample_rate
+    self$f_max = if(is.null(f_max)) as.numeric(sample_rate %/% 2) else f_max
+    self$f_min = f_min
 
-  # pack batch
-  shape = specgram$size()
-  ls = length(shape)
-  specgram = specgram$reshape(list(-1, shape[ls-1], shape[ls]))
+    if(f_min > f_max) value_error(glue::glue("Require f_min: {f_min} < f_max: {f_max}"))
 
-  if(is.null(n_stft)) n_stft = specgram$size(2)
+    fb = if(is.null(n_stft)) {
+      torch::torch_empty(0)
+    } else {
+      create_fb_matrix(
+        n_freqs = n_stft,
+        f_min = f_min,
+        f_max = f_max,
+        n_mels = n_mels,
+        sample_rate = sample_rate
+      )
+    }
+    self$register_buffer('fb', fb)
+  },
+  forward = function(specgram) {
+    # pack batch
+    shape = specgram$size()
+    ls = length(shape)
+    specgram = specgram$reshape(list(-1, shape[ls-1], shape[ls]))
 
-  fb = create_fb_matrix(
-    n_freqs = n_stft,
-    f_min = f_min,
-    f_max = f_max,
-    n_mels = n_mels,
-    sample_rate = sample_rate
-  )
+    if(self$fb$numel() == 0) {
+      tmp_fb = functional_create_fb_matrix(
+        n_freqs = specgram$size(2),
+        f_min = self$f_min,
+        f_max = self$f_max,
+        n_mels = self$n_mels,
+        sample_rate = self$sample_rate
+      )
+      # Attributes cannot be reassigned outside __init__ so workaround
+      self$fb$resize_(tmp_fb$size())
+      self$fb$copy_(tmp_fb)
+    }
 
-  mel_specgram = torch_matmul(specgram$transpose(2L, 3L), fb)$transpose(2L, 3L)
+    # (channel, frequency, time).transpose(...) dot (frequency, n_mels)
+    # -> (channel, time, n_mels).transpose(...)
+    mel_specgram = torch::torch_matmul(specgram$transpose(2L, 3L), self$fb)$transpose(2L, 3L)
 
-  # unpack batch
-  lspec = length(mel_specgram$shape)
-  mel_specgram = mel_specgram$reshape(c(shape[-((ls-1):ls)], mel_specgram$shape[(lspec-2):lspec]))
+    # unpack batch
+    lspec = length(mel_specgram$shape)
+    mel_specgram = mel_specgram$reshape(c(shape[-((ls-1):ls)], mel_specgram$shape[(lspec-2):lspec]))
 
-  return(mel_specgram)
-}
+    return(mel_specgram)
+  }
+)
 
 #' DB to Amplitude
 #'
