@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_amplitude_to_db}
 \alias{functional_amplitude_to_db}
-\title{Amplitude to DB}
+\title{Amplitude to DB (functional)}
 \usage{
 functional_amplitude_to_db(
   x,

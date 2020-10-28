@@ -165,7 +165,7 @@ functional_complex_norm <- function(complex_tensor, power = 1) {
   complex_tensor$pow(2.)$sum(-1)$pow(0.5 * power)
 }
 
-#' Amplitude to DB
+#' Amplitude to DB (functional)
 #'
 #' Turn a tensor from the power/amplitude scale to the decibel scale.
 #'
