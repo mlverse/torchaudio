@@ -125,3 +125,8 @@ test_that("highpass_biquad", {
   expect_tensor_shape(highpass_biquad, samp$shape)
 })
 
+test_that("lowpass_biquad", {
+  lowpass_biquad <- functional_lowpass_biquad(samp, sample_rate = 2, cutoff_freq = 1)
+  expect_tensor(lowpass_biquad)
+  expect_tensor_shape(lowpass_biquad, samp$shape)
+})
