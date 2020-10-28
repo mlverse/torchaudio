@@ -340,6 +340,25 @@ functional_mu_law_decoding <- function(
 #'
 #' @export
 functional_angle <- function(complex_tensor) {
-  torch::torch_atan2(complex_tensor[.., 1], complex_tensor[.., 0])
+  complex_tensor = complex_tensor$to(torch::torch_float())
+  torch::torch_atan2(complex_tensor[.., 2], complex_tensor[.., 1])
 }
 
+#' Magnitude and Phase
+#'
+#' Separate a complex-valued spectrogram with shape `(.., 2)` into its magnitude and phase.
+#'
+#' @param complex_tensor (Tensor): Tensor shape of `(.., complex=2)`
+#' @param power (float): Power of the norm. (Default: `1.0`)
+#'
+#' @return list(`tensor`, `tensor`): The magnitude and phase of the complex tensor
+#'
+#' @export
+functional_magphase <- function(
+  complex_tensor,
+  power = 1.0
+  ) {
+  mag = functional_complex_norm(complex_tensor, power)
+  phase = functional_angle(complex_tensor)
+  return(list(mag, phase))
+}
