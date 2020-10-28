@@ -271,3 +271,61 @@ functional_mel_scale <- function(
   return(mel_specgram)
 }
 
+
+#' Mu Law Encoding
+#'
+#' Encode signal based on mu-law companding.  For more info see
+#' the [Wikipedia Entry](https://en.wikipedia.org/wiki/M-law_algorithm)
+#'
+#' @param x (Tensor): Input tensor
+#' @param quantization_channels (int): Number of channels
+#'
+#' @details
+#' This algorithm assumes the signal has been scaled to between -1 and 1 and
+#' returns a signal encoded with values from 0 to quantization_channels - 1.
+#'
+#' @return `tensor`: Input after mu-law encoding
+#'
+#' @export
+functional_mu_law_encoding <- function(
+  x,
+  quantization_channels
+) {
+  mu = quantization_channels - 1.0
+  if(!torch::torch_is_floating_point(x)) {
+    x = x$to(torch::torch_float())
+  }
+  mu = torch::torch_tensor(mu, dtype=x$dtype)
+  x_mu = torch::torch_sign(x) * torch::torch_log1p(mu * torch::torch_abs(x)) / torch::torch_log1p(mu)
+  x_mu = ((x_mu + 1) / 2 * mu + 0.5)$to(torch::torch_int64())
+  return(x_mu)
+}
+
+#' Mu Law Decoding
+#'
+#' Decode mu-law encoded signal.  For more info see the
+#'  [Wikipedia Entry](https://en.wikipedia.org/wiki/M-law_algorithm)
+#'
+#' @param x (Tensor): Input tensor
+#' @param quantization_channels (int): Number of channels
+#'
+#' @details
+#' This expects an input with values between 0 and quantization_channels - 1
+#' and returns a signal scaled between -1 and 1.
+#'
+#' @return `tensor`: Input after mu-law decoding
+#'
+#' @export
+functional_mu_law_decoding <- function(
+  x_mu,
+  quantization_channels
+) {
+  mu = quantization_channels - 1.0
+  if(!torch::torch_is_floating_point(x_mu)) {
+    x_mu = x_mu$to(torch::torch_float())
+  }
+  mu = torch::torch_tensor(mu, dtype=x_mu$dtype)
+  x = ((x_mu)/mu) * 2 - 1.0
+  x = torch::torch_sign(x) * (torch::torch_exp(torch::torch_abs(x) * torch::torch_log1p(mu)) - 1.0)/mu
+  return(x)
+}
