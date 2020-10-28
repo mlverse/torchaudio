@@ -130,3 +130,47 @@ test_that("lowpass_biquad", {
   expect_tensor(lowpass_biquad)
   expect_tensor_shape(lowpass_biquad, samp$shape)
 })
+
+test_that("bandpass_biquad", {
+  bandpass_biquad <- functional_bandpass_biquad(samp, sample_rate = 2, central_freq = 1)
+  expect_tensor(bandpass_biquad)
+  expect_tensor_shape(bandpass_biquad, samp$shape)
+})
+
+test_that("bandreject_biquad", {
+  bandreject_biquad <- functional_bandreject_biquad(samp, sample_rate = 2, central_freq = 1)
+  expect_tensor(bandreject_biquad)
+  expect_tensor_shape(bandreject_biquad, samp$shape)
+})
+
+test_that("equalizer_biquad", {
+  equalizer_biquad <- functional_equalizer_biquad(samp, sample_rate = 2, center_freq = 1, gain = 1)
+  expect_tensor(equalizer_biquad)
+  expect_tensor_shape(equalizer_biquad, samp$shape)
+})
+
+test_that("band_biquad", {
+  band_biquad <- functional_band_biquad(samp, sample_rate = 2, central_freq = 1)
+  expect_tensor(band_biquad)
+  expect_tensor_shape(band_biquad, samp$shape)
+})
+
+test_that("treble_biquad", {
+  treble_biquad <- functional_treble_biquad(samp, sample_rate = 2, gain = 1)
+  expect_tensor(treble_biquad)
+  expect_tensor_shape(treble_biquad, samp$shape)
+})
+
+test_that("bass_biquad", {
+  bass_biquad <- functional_bass_biquad(samp, sample_rate = 2, gain = 1)
+  expect_tensor(bass_biquad)
+  expect_tensor_shape(bass_biquad, samp$shape)
+})
+
+test_that("deemph_biquad", {
+  deemph_biquad <- functional_deemph_biquad(samp, sample_rate = 44100)
+  expect_tensor(deemph_biquad)
+  expect_tensor_shape(deemph_biquad, samp$shape)
+  expect_error(functional_deemph_biquad(samp, sample_rate = 1), class = "value_error")
+})
+

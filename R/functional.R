@@ -357,7 +357,7 @@ functional_angle <- function(complex_tensor) {
 functional_magphase <- function(
   complex_tensor,
   power = 1.0
-  ) {
+) {
   mag = functional_complex_norm(complex_tensor, power)
   phase = functional_angle(complex_tensor)
   return(list(mag, phase))
@@ -683,3 +683,292 @@ functional_allpass_biquad <- function(
   return(functional_biquad(waveform, b0, b1, b2, a0, a1, a2))
 }
 
+#' Band-pass Biquad Filter
+#'
+#' Design two-pole band-pass filter.  Similar to SoX implementation.
+#'
+#' @param waveform  (Tensor): audio waveform of dimension of `(..., time)`
+#' @param sample_rate  (int): sampling rate of the waveform, e.g. 44100 (Hz)
+#' @param central_freq  (float): central frequency (in Hz)
+#' @param Q  (float, optional): [https://en.wikipedia.org/wiki/Q_factor]() (Default: ``0.707``)
+#' @param const_skirt_gain  (bool, optional) : If ``FALSE``, uses a constant skirt gain (peak gain = Q).
+#' @param If ``TRUE``, uses a constant 0dB peak gain.  (Default: ``TRUE``)
+#'
+#' @return Tensor: Waveform of dimension of `(..., time)`
+#'
+#' @references
+#' - [http://sox.sourceforge.net/sox.html]()
+#' - [https://www.w3.org/2011/audio/audio-eq-cookbook.html#APF]()
+#'
+#' @export
+functional_bandpass_biquad <- function(
+  waveform,
+  sample_rate,
+  central_freq,
+  Q = 0.707,
+  const_skirt_gain = FALSE
+) {
+
+  w0 = 2 * pi * central_freq / sample_rate
+  alpha = sin(w0) / 2 / Q
+
+  temp =if(const_skirt_gain) sin(w0) / 2 else alpha
+  b0 = temp
+  b1 = 0.
+  b2 = -temp
+  a0 = 1 + alpha
+  a1 = -2 * cos(w0)
+  a2 = 1 - alpha
+  return(functional_biquad(waveform, b0, b1, b2, a0, a1, a2))
+}
+
+#' Band-reject Biquad Filter
+#'
+#' Design two-pole band-reject filter.  Similar to SoX implementation.
+#'
+#' @param waveform  (Tensor): audio waveform of dimension of `(..., time)`
+#' @param sample_rate  (int): sampling rate of the waveform, e.g. 44100 (Hz)
+#' @param central_freq  (float): central frequency (in Hz)
+#' @param Q  (float, optional): [https://en.wikipedia.org/wiki/Q_factor]() (Default: ``0.707``)
+#'
+#' @return `tensor`: Waveform of dimension of `(..., time)`
+#'
+#' @references
+#' - [http://sox.sourceforge.net/sox.html]()
+#' - [https://www.w3.org/2011/audio/audio-eq-cookbook.html#APF]()
+#'
+#' @export
+functional_bandreject_biquad <- function(
+  waveform,
+  sample_rate,
+  central_freq,
+  Q = 0.707
+) {
+
+  w0 = 2 * pi * central_freq / sample_rate
+  alpha = sin(w0) / 2 / Q
+
+  b0 = 1.
+  b1 = -2 * cos(w0)
+  b2 = 1.
+  a0 = 1 + alpha
+  a1 = -2 * cos(w0)
+  a2 = 1 - alpha
+  return(functional_biquad(waveform, b0, b1, b2, a0, a1, a2))
+}
+
+#' Biquad Peaking Equalizer Filter
+#'
+#' Design biquad peaking equalizer filter and perform filtering.  Similar to SoX implementation.
+#'
+#' @param waveform  (Tensor): audio waveform of dimension of `(..., time)`
+#' @param sample_rate  (int): sampling rate of the waveform, e.g. 44100 (Hz)
+#' @param center_freq  (float): filter's central frequency
+#' @param gain (float): desired gain at the boost (or attenuation) in dB
+#' @param Q (float, optional): [https://en.wikipedia.org/wiki/Q_factor]() (Default: ``0.707``)
+#'
+#' @return Tensor: Waveform of dimension of `(..., time)`
+#'
+#' @export
+functional_equalizer_biquad <- function(
+  waveform,
+  sample_rate,
+  center_freq,
+  gain,
+  Q = 0.707
+) {
+
+  w0 = 2 * pi * center_freq / sample_rate
+  A = exp(gain / 40.0 * log(10))
+  alpha = sin(w0) / 2 / Q
+
+  b0 = 1 + alpha * A
+  b1 = -2 * cos(w0)
+  b2 = 1 - alpha * A
+  a0 = 1 + alpha / A
+  a1 = -2 * cos(w0)
+  a2 = 1 - alpha / A
+  return(functional_biquad(waveform, b0, b1, b2, a0, a1, a2))
+}
+
+#' Two-pole Band Filter
+#'
+#' Design two-pole band filter.  Similar to SoX implementation.
+#'
+#' @param waveform  (Tensor): audio waveform of dimension of `(..., time)`
+#' @param sample_rate  (int): sampling rate of the waveform, e.g. 44100 (Hz)
+#' @param central_freq  (float): central frequency (in Hz)
+#' @param Q  (float, optional): https://en.wikipedia.org/wiki/Q_factor (Default: ``0.707``).
+#' @param noise  (bool, optional) : If ``FALSE``, uses the alternate mode for un-pitched audio
+#' (e.g. percussion). If ``TRUE``, uses mode oriented to pitched audio, i.e. voice, singing,
+#' or instrumental music  (Default: ``TRUE``).
+#'
+#' @return `tensor`: Waveform of dimension of `(..., time)`
+#'
+#' @references
+#' - [http://sox.sourceforge.net/sox.html]()
+#' - [https://www.w3.org/2011/audio/audio-eq-cookbook.html#APF]()
+#'
+#' @export
+functional_band_biquad <- function(
+  waveform,
+  sample_rate,
+  central_freq,
+  Q = 0.707,
+  noise = TRUE
+) {
+
+  w0 = 2 * pi * central_freq / sample_rate
+  bw_Hz = central_freq / Q
+
+  a0 = 1.
+  a2 = exp(-2 * pi * bw_Hz / sample_rate)
+  a1 = -4 * a2 / (1 + a2) * cos(w0)
+
+  b0 = sqrt(1 - a1 * a1 / (4 * a2)) * (1 - a2)
+
+  if(noise) {
+    mult = sqrt(((1 + a2) * (1 + a2) - a1 * a1) * (1 - a2) / (1 + a2)) / b0
+    b0 = b0 * mult
+  }
+
+  b1 = 0.
+  b2 = 0.
+
+  return(functional_biquad(waveform, b0, b1, b2, a0, a1, a2))
+}
+
+#' Treble Tone-control Effect
+#'
+#' Design a treble tone-control effect.  Similar to SoX implementation.
+#'
+#' @param waveform  (Tensor): audio waveform of dimension of `(..., time)`
+#' @param sample_rate  (int): sampling rate of the waveform, e.g. 44100 (Hz)
+#' @param gain  (float): desired gain at the boost (or attenuation) in dB.
+#' @param central_freq  (float, optional): central frequency (in Hz). (Default: ``3000``)
+#' @param Q  (float, optional): [https://en.wikipedia.org/wiki/Q_factor]() (Default: ``0.707``).
+#'
+#' @return `tensor`: Waveform of dimension of `(..., time)`
+#'
+#' @references
+#' - [http://sox.sourceforge.net/sox.html]()
+#' - [https://www.w3.org/2011/audio/audio-eq-cookbook.html#APF]()
+#'
+#' @export
+functional_treble_biquad <- function(
+  waveform,
+  sample_rate,
+  gain,
+  central_freq = 3000,
+  Q = 0.707
+) {
+
+  w0 = 2 * pi * central_freq / sample_rate
+  alpha = sin(w0) / 2 / Q
+  A = exp(gain / 40 * log(10))
+
+  temp1 = 2 * sqrt(A) * alpha
+  temp2 = (A - 1) * cos(w0)
+  temp3 = (A + 1) * cos(w0)
+
+  b0 = A * ((A + 1) + temp2 + temp1)
+  b1 = -2 * A * ((A - 1) + temp3)
+  b2 = A * ((A + 1) + temp2 - temp1)
+  a0 = (A + 1) - temp2 + temp1
+  a1 = 2 * ((A - 1) - temp3)
+  a2 = (A + 1) - temp2 - temp1
+
+  return(functional_biquad(waveform, b0, b1, b2, a0, a1, a2))
+}
+
+#' Bass Tone-control Effect
+#'
+#' Design a bass tone-control effect.  Similar to SoX implementation.
+#'
+#' @param waveform  (Tensor): audio waveform of dimension of `(..., time)`
+#' @param sample_rate  (int): sampling rate of the waveform, e.g. 44100 (Hz)
+#' @param gain  (float): desired gain at the boost (or attenuation) in dB.
+#' @param central_freq  (float, optional): central frequency (in Hz). (Default: ``100``)
+#' @param Q  (float, optional): [https://en.wikipedia.org/wiki/Q_factor]() (Default: ``0.707``).
+#'
+#' @return `tensor`: Waveform of dimension of `(..., time)`
+#'
+#' @references
+#' - [http://sox.sourceforge.net/sox.html]()
+#' - [https://www.w3.org/2011/audio/audio-eq-cookbook.html#APF]()
+#'
+#' @export
+functional_bass_biquad <- function(
+  waveform,
+  sample_rate,
+  gain,
+  central_freq = 100,
+  Q = 0.707
+) {
+
+  w0 = 2 * pi * central_freq / sample_rate
+  alpha = sin(w0) / 2 / Q
+  A = exp(gain / 40 * log(10))
+
+  temp1 = 2 * sqrt(A) * alpha
+  temp2 = (A - 1) * cos(w0)
+  temp3 = (A + 1) * cos(w0)
+
+  b0 = A * ((A + 1) - temp2 + temp1)
+  b1 = 2 * A * ((A - 1) - temp3)
+  b2 = A * ((A + 1) - temp2 - temp1)
+  a0 = (A + 1) + temp2 + temp1
+  a1 = -2 * ((A - 1) + temp3)
+  a2 = (A + 1) + temp2 - temp1
+
+  return(functional_biquad(waveform, b0 / a0, b1 / a0, b2 / a0, a0 / a0, a1 / a0, a2 / a0))
+}
+
+
+#' ISO 908 CD De-emphasis IIR Filter
+#'
+#' Apply ISO 908 CD de-emphasis (shelving) IIR filter.  Similar to SoX implementation.
+#'
+#' @param waveform  (Tensor): audio waveform of dimension of `(..., time)`
+#' @param sample_rate  (int): sampling rate of the waveform, Allowed sample rate ``44100`` or ``48000``
+#'
+#' @return Tensor: Waveform of dimension of `(..., time)`
+#'
+#' @references
+#' - [http://sox.sourceforge.net/sox.html]()
+#' - [https://www.w3.org/2011/audio/audio-eq-cookbook.html#APF]()
+#'
+#' @export
+functional_deemph_biquad <- function(
+  waveform,
+  sample_rate
+) {
+  if(sample_rate == 44100) {
+    central_freq = 5283
+    width_slope = 0.4845
+    gain = -9.477
+  } else if(sample_rate == 48000) {
+    central_freq = 5356
+    width_slope = 0.479
+    gain = -9.62
+  } else {
+    value_error("Sample rate must be 44100 (audio-CD) or 48000 (DAT)")
+  }
+
+  w0 = 2 * pi * central_freq / sample_rate
+  A = exp(gain / 40.0 * log(10))
+  alpha = sin(w0) / 2 * sqrt((A + 1 / A) * (1 / width_slope - 1) + 2)
+
+  temp1 = 2 * sqrt(A) * alpha
+  temp2 = (A - 1) * cos(w0)
+  temp3 = (A + 1) * cos(w0)
+
+  b0 = A * ((A + 1) + temp2 + temp1)
+  b1 = -2 * A * ((A - 1) + temp3)
+  b2 = A * ((A + 1) + temp2 - temp1)
+  a0 = (A + 1) - temp2 + temp1
+  a1 = 2 * ((A - 1) - temp3)
+  a2 = (A + 1) - temp2 - temp1
+
+  return(functional_biquad(waveform, b0, b1, b2, a0, a1, a2))
+}
