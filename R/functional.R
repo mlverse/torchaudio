@@ -1120,3 +1120,62 @@ functional_dcshift <- function(
 
   return(output_waveform)
 }
+
+#' Overdrive Effect
+#'
+#' Apply a overdrive effect to the audio. Similar to SoX implementation.
+#'    This effect applies a non linear distortion to the audio signal.
+#'
+#' @param waveform  (Tensor): audio waveform of dimension of `(..., time)`
+#' @param gain  (float): desired gain at the boost (or attenuation) in dB
+#'  Allowed range of values are 0 to 100
+#' @param colour  (float):  controls the amount of even harmonic content in
+#' the over-driven output. Allowed range of values are 0 to 100
+#'
+#' @return Tensor: Waveform of dimension of `(..., time)`
+#'
+#' @references
+#' - [http://sox.sourceforge.net/sox.html]()
+#'
+#' @export
+functional_overdrive <- function(
+  waveform,
+  gain = 20,
+  colour = 20
+) {
+
+  actual_shape = waveform$shape
+  device = waveform$device
+  dtype = waveform$dtype
+
+  # convert to 2D (..,time)
+  waveform = waveform$view(c(-1, actual_shape[length(actual_shape)]))
+  lws = length(waveform$shape)
+  gain = db_to_linear(gain)
+  colour = colour / 200
+  last_in = torch::torch_zeros(waveform$shape[-lws], dtype=dtype, device=device)
+  last_out = torch::torch_zeros(waveform$shape[-lws], dtype=dtype, device=device)
+
+  temp = waveform * gain + colour
+
+  mask1 = temp < -1
+  temp[mask1] = torch::torch_tensor(-2.0 / 3.0, dtype=dtype, device=device)
+  # Wrapping the constant with Tensor is required for Torchscript
+
+  mask2 = temp > 1
+  temp[mask2] = torch::torch_tensor(2.0 / 3.0, dtype=dtype, device=device)
+
+  mask3 = (!mask1 & !mask2)
+  temp[mask3] = temp[mask3] - (temp[mask3]**3) * (1. / 3)
+
+  output_waveform = torch::torch_zeros_like(waveform, dtype=dtype, device=device)
+
+  # TODO: Implement a torch CPP extension
+  for(i in seq(waveform$shape[lws])) {
+    last_out = temp[ , i] - last_in + 0.995 * last_out
+    last_in = temp[ , i]
+    output_waveform[ , i] = waveform[ , i] * 0.5 + last_out * 0.75
+  }
+
+  return(output_waveform$clamp(min=-1.0, max=1.0)$view(actual_shape))
+}

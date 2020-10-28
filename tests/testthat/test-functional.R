@@ -195,3 +195,8 @@ test_that("dcshift", {
   expect_tensor_shape(dcshift, samp$shape)
 })
 
+test_that("overdrive", {
+  overdrive <- functional_overdrive(samp)
+  expect_tensor(overdrive)
+  expect_tensor_shape(overdrive, samp$shape)
+})
