@@ -77,18 +77,36 @@ test_that("functional_magphase", {
 })
 
 test_that("functional_lfilter", {
-  # functional_magphase
-  a_coeffs = torch::torch_tensor(c(1.0, 2.1, 3.3, 4.0))
-  b_coeffs = torch::torch_tensor(c(3.1,3.1,3.1,10.0))
+  a_coeffs = torch::torch_tensor(c(1.0, 2.1, 3.3))
+  b_coeffs = torch::torch_tensor(c(3.1,3.1,10.0))
 
+  # functional_lfilter
   samp = torch::torch_tensor(c(0.5,0.5,0.5,0.5,0.5))
   filtered_samp <- functional_lfilter(waveform = samp, a_coeffs = a_coeffs, b_coeffs = b_coeffs)
   expect_tensor(filtered_samp)
   expect_tensor_shape(filtered_samp, samp$shape)
 
+  # functional_lfilter 2D
   samp = torch::torch_tensor(c(0.5,0.5,0.5,0.5,0.5))
   samp = torch::torch_stack(list(samp, samp, samp))
   filtered_samp <- functional_lfilter(waveform = samp, a_coeffs = a_coeffs, b_coeffs = b_coeffs)
   expect_tensor(filtered_samp)
   expect_tensor_shape(filtered_samp, samp$shape)
+
+  # functional_biquad
+  a_coeffs = as.numeric(a_coeffs)
+  b_coeffs = as.numeric(b_coeffs)
+  biquad_samp <- functional_biquad(
+    waveform = samp,
+    b_coeffs[1],
+    b_coeffs[2],
+    b_coeffs[3],
+    a_coeffs[1],
+    a_coeffs[2],
+    a_coeffs[3]
+  )
+  expect_tensor(biquad_samp)
+  expect_tensor_shape(biquad_samp, filtered_samp$shape)
+  expect_equal(as.array(biquad_samp), as.array(filtered_samp))
 })
+
