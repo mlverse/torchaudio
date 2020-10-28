@@ -33,3 +33,9 @@ test_that("transform_amplitude_to_db", {
   # DB_to_amplitude
   expect_lt( as.numeric(sum(functional_db_to_amplitude(transform_amplitude_to_db()(x1)) - x1)), 1e-8)
 })
+
+test_that("transform_mfcc", {
+  samples = length(sample_mp3@left)
+  expect_no_error(m <- transform_mfcc()(sample_mp3@left))
+  expect_tensor(m)
+})
