@@ -27,7 +27,7 @@ transform_mel_scale <- torch::nn_module(
     self$f_max = if(is.null(f_max)) as.numeric(sample_rate %/% 2) else f_max
     self$f_min = f_min
 
-    if(f_min > f_max) value_error(glue::glue("Require f_min: {f_min} < f_max: {f_max}"))
+    if(self$f_min > self$f_max) value_error(glue::glue("Require f_min: {self$f_min} < f_max: {self$f_max}"))
 
     fb = if(is.null(n_stft)) {
       torch::torch_empty(0)
