@@ -2,6 +2,7 @@
 
 export(functional_amplitude_to_db)
 export(functional_angle)
+export(functional_biquad)
 export(functional_complex_norm)
 export(functional_create_dct)
 export(functional_create_fb_matrix)
