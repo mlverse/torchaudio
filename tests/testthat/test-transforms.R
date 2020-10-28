@@ -9,3 +9,20 @@ test_that("transform_mel_scale", {
   expect_tensor(ms)
   expect_equal(dim(ms), c(1, 128, 1709))
 })
+
+test_that("transform_amplitude_to_db", {
+  x1 <- torch::torch_arange(0,3, dtype = torch::torch_float())
+
+  # amplitude_to_db
+  x2 <- transform_amplitude_to_db()(x1)
+  expect_tensor(x2)
+  expect_tensor_shape(x2, c(3))
+
+  # top_db
+  x2 <- transform_amplitude_to_db(top_db = 1.0)(x1)
+  expect_tensor(x2)
+  expect_tensor_shape(x2, c(3))
+
+  # DB_to_amplitude
+  expect_lt( as.numeric(sum(functional_db_to_amplitude(transform_amplitude_to_db()(x1)) - x1)), 1e-8)
+})
