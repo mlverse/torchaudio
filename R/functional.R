@@ -68,7 +68,7 @@ functional_spectrogram <- function(
 #' @param n_mels (int): Number of mel filterbanks
 #' @param sample_rate (int): Sample rate of the audio waveform
 #' @param f_min (float): Minimum frequency (Hz)
-#' @param f_max (float): Maximum frequency (Hz)
+#' @param f_max (float or NULL): Maximum frequency (Hz). If NULL defaults to sample_rate %/% 2
 #' @param norm (chr) (Optional): If 'slaney', divide the triangular
 #'  mel weights by the width of the mel band (area normalization). (Default: `NULL`)
 #'
@@ -84,7 +84,7 @@ functional_create_fb_matrix <- function(
   n_mels,
   sample_rate = 16000,
   f_min = 0,
-  f_max = sample_rate %/% 2,
+  f_max = NULL,
   norm = NULL
 ) {
   if(!is.null(norm) && norm != "slaney")
@@ -95,6 +95,7 @@ functional_create_fb_matrix <- function(
 
   # calculate mel freq bins
   # hertz to mel(f) is 2595. * math.log10(1. + (f / 700.))
+  f_max = if(is.null(f_max)) sample_rate %/% 2 else f_max
   m_min = linear_to_mel_frequency(f_min)
   m_max = linear_to_mel_frequency(f_max)
   m_pts = torch::torch_linspace(m_min, m_max, n_mels + 2)
