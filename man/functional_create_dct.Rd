@@ -14,7 +14,7 @@ functional_create_dct(n_mfcc, n_mels, norm = NULL)
 \item{norm}{(chr or NULL): Norm to use (either 'ortho' or NULL)}
 }
 \value{
-\code{Tensor}: The transformation matrix, to be right-multiplied to
+\code{tensor}: The transformation matrix, to be right-multiplied to
 row-wise data of size (\code{n_mels}, \code{n_mfcc}).
 }
 \description{

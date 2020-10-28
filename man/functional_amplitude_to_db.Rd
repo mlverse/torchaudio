@@ -28,7 +28,7 @@ functional_amplitude_to_db(
 is 80. (Default: \code{NULL})}
 }
 \value{
-\code{Tensor}: Output tensor in decibel scale
+\code{tensor}: Output tensor in decibel scale
 }
 \description{
 Turn a tensor from the power/amplitude scale to the decibel scale.
