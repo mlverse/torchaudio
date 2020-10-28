@@ -1,4 +1,5 @@
 sample_mp3 <- tuneR::readMP3(system.file("sample_audio_1.mp3", package = "torchaudio"))
+sample_rate = sample_mp3@samp.rate
 samples = length(sample_mp3@left)
 
 test_that("functional_spectrogram", {
@@ -108,5 +109,10 @@ test_that("functional_lfilter", {
   expect_tensor(biquad_samp)
   expect_tensor_shape(biquad_samp, filtered_samp$shape)
   expect_equal(as.array(biquad_samp), as.array(filtered_samp))
+
+  # allpass_biquad
+  allpass_biquad <- functional_allpass_biquad(samp, sample_rate = 2, central_freq = 1)
+  expect_tensor(allpass_biquad)
+  expect_tensor_shape(allpass_biquad, samp$shape)
 })
 
