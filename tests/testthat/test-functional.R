@@ -65,3 +65,8 @@ test_that("functional_mu_law_encoding and functional_mu_law_decoding", {
   # functional_mu_law_decoding
   stop("TO DO")
 })
+
+test_that("functional_angle", {
+  # functional_angle
+  stop("TO DO")
+})
