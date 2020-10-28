@@ -1,5 +1,12 @@
 sample_mp3 <- tuneR::readMP3(system.file("sample_audio_1.mp3", package = "torchaudio"))
 
+test_that("transform_spectrogram", {
+  samples = length(sample_mp3@left)
+  expect_no_error(spec <- transform_spectrogram()(sample_mp3@left))
+  expect_tensor(spec)
+  expect_equal(dim(spec)[1], 400 %/% 2 + 1)
+})
+
 test_that("transform_mel_scale", {
   n_fft = 400
   samples = length(sample_mp3@left)
