@@ -546,4 +546,8 @@ functional_lfilter <- function(
   return(output)
 }
 
+db_to_linear <- function(x) {
+  exp(x * log(10) / 20.0)
+}
+
 
