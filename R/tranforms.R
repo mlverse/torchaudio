@@ -1,3 +1,62 @@
+#' Spectrogram
+#'
+#' Create a spectrogram or a batch of spectrograms from a raw audio signal.
+#' The spectrogram can be either magnitude-only or complex.
+#'
+#' @param waveform (tensor): Tensor of audio of dimension (..., time)
+#' @param pad (integer): Two sided padding of signal
+#' @param window (tensor or function): Window tensor that is applied/multiplied to each
+#' frame/window or a function that generates the window tensor.
+#' @param n_fft (integer): Size of FFT
+#' @param hop_length (integer): Length of hop between STFT windows
+#' @param win_length (integer): Window size
+#' @param power (numeric): Exponent for the magnitude spectrogram, (must be > 0) e.g.,
+#'  1 for energy, 2 for power, etc. If NULL, then the complex spectrum is returned instead.
+#' @param normalized (logical): Whether to normalize by magnitude after stft
+#' @param Arguments for window function.
+#'
+#' @return tensor: Dimension (..., freq, time), freq is n_fft %/% 2 + 1 and n_fft is the
+#' number of Fourier bins, and time is the number of window hops (n_frame).
+#' @export
+transform_spectrogram <- torch::nn_module(
+  "Spectrogram",
+  initialize = function(
+    n_fft = 400,
+    win_length = NULL,
+    hop_length = NULL,
+    pad = 0,
+    window_fn = torch::torch_hann_window,
+    power = 2,
+    normalized = FALSE,
+    ...
+  ) {
+    self$n_fft = n_fft
+
+    # number of FFT bins. the returned STFT result will have n_fft // 2 + 1
+    # number of frequecies due to onesided=True in torch.stft
+    self$win_length = if(!is.null(win_length)) win_length else n_fft
+    self$hop_length = if(!is.null(hop_length)) hop_length else self$win_length %/% 2
+    window = window_fn(window_length = self$win_length, dtype = torch::torch_float(), ...)
+    self$register_buffer('window', window)
+    self$pad = pad
+    self$power = power
+    self$normalized = normalized
+  },
+
+  forward = function(waveform){
+    functional_spectrogram(
+      waveform = waveform,
+      pad = self$pad,
+      n_fft = self$n_fft,
+      window = self$window,
+      hop_length = self$hop_length,
+      win_length = self$win_length,
+      power = self$power,
+      normalized = self$normalized
+    )
+  }
+)
+
 #' Mel Scale
 #'
 #' Turn a normal STFT into a mel frequency STFT, using a conversion
@@ -81,6 +140,7 @@ transform_mel_scale <- torch::nn_module(
 #' may return different values for an audio clip split into snippets vs. a
 #' a full clip.
 #'
+#' @param x (Tensor): Input tensor before being converted to decibel scale
 #' @param stype (str, optional): scale of input tensor ('power' or 'magnitude'). The
 #' power being the elementwise square of the magnitude. (Default: ``'power'``)
 #' @param top_db (float or NULL, optional): Minimum negative cut-off in decibels. A reasonable number
