@@ -15,7 +15,7 @@
 #' @param normalized (logical): Whether to normalize by magnitude after stft
 #' @param Arguments for window function.
 #'
-#' @return tensor: Dimension (..., freq, time), freq is n_fft %/% 2 + 1 and n_fft is the
+#' @return `tensor`: Dimension (..., freq, time), freq is n_fft %/% 2 + 1 and n_fft is the
 #' number of Fourier bins, and time is the number of window hops (n_frame).
 #' @export
 functional_spectrogram <- function(
@@ -77,6 +77,7 @@ functional_spectrogram <- function(
 #'         Each column is a filterbank so that assuming there is a matrix A of
 #'         size (..., `n_freqs`), the applied result would be
 #'         ``A * create_fb_matrix(A.size(-1), ...)``.
+#'
 #' @export
 functional_create_fb_matrix <- function(
   n_freqs,
@@ -128,7 +129,7 @@ functional_create_fb_matrix <- function(
 #' @param n_mels (int): Number of mel filterbanks
 #' @param norm (chr or NULL): Norm to use (either 'ortho' or NULL)
 #'
-#' @return `Tensor`: The transformation matrix, to be right-multiplied to
+#' @return `tensor`: The transformation matrix, to be right-multiplied to
 #'     row-wise data of size (``n_mels``, ``n_mfcc``).
 #'
 #' @export
@@ -158,7 +159,7 @@ functional_create_dct <- function(
 #' @param complex_tensor (tensor): Tensor shape of `(..., complex=2)`
 #' @param power (numeric): Power of the norm. (Default: `1.0`).
 #'
-#' @return tensor: Power of the normed input tensor. Shape of `(..., )`
+#' @return `tensor`: Power of the normed input tensor. Shape of `(..., )`
 #'
 #' @export
 functional_complex_norm <- function(complex_tensor, power = 1) {
@@ -181,7 +182,7 @@ functional_complex_norm <- function(complex_tensor, power = 1) {
 #' @param top_db (float or NULL, optional): Minimum negative cut-off in decibels. A reasonable number
 #'     is 80. (Default: ``NULL``)
 #'
-#' @return `Tensor`: Output tensor in decibel scale
+#' @return `tensor`: Output tensor in decibel scale
 #'
 #' @export
 functional_amplitude_to_db <- function(
@@ -211,7 +212,7 @@ functional_amplitude_to_db <- function(
 #' @param power (float): If power equals 1, will compute DB to power. If 0.5, will compute
 #'  DB to amplitude. (Default: ``1.0``)
 #'
-#' @return `Tensor`: Output tensor in power/amplitude scale.
+#' @return `tensor`: Output tensor in power/amplitude scale.
 #'
 #' @export
 functional_db_to_amplitude <- function(x, ref = 1.0, power = 1.0) {
