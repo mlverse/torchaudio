@@ -586,4 +586,38 @@ db_to_linear <- function(x) {
   exp(x * log(10) / 20.0)
 }
 
+#' All-pass Biquad Filter
+#'
+#' Design two-pole all-pass filter. Similar to SoX implementation.
+#'
+#' @param (torch.Tensor): audio waveform of dimension of `(..., time)`
+#' @param (int): sampling rate of the waveform, e.g. 44100 (Hz)
+#' @param (float): central frequency (in Hz)
+#' @param (float, optional): [https://en.wikipedia.org/wiki/Q_factor]() (Default: ``0.707``)
+#'
+#' @return Tensor: Waveform of dimension of `(..., time)`
+#'
+#' @references
+#' - [http://sox.sourceforge.net/sox.html]()
+#' - [https://www.w3.org/2011/audio/audio-eq-cookbook.html#APF]()
+#'
+#' @export
+functional_allpass_biquad <- function(
+  waveform,
+  sample_rate,
+  central_freq,
+  Q = 0.707
+) {
+
+  w0 = 2 * pi * central_freq / sample_rate
+  alpha = sin(w0) / 2 / Q
+
+  b0 = 1 - alpha
+  b1 = -2 * cos(w0)
+  b2 = 1 + alpha
+  a0 = 1 + alpha
+  a1 = -2 * cos(w0)
+  a2 = 1 - alpha
+  return(functional_biquad(waveform, b0, b1, b2, a0, a1, a2))
+}
 
