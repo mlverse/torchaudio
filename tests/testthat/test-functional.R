@@ -70,3 +70,8 @@ test_that("functional_angle", {
   # functional_angle
   stop("TO DO")
 })
+
+test_that("functional_magphase", {
+  # functional_magphase
+  stop("TO DO")
+})
