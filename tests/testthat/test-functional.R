@@ -80,18 +80,17 @@ test_that("functional_magphase", {
 context("filters")
 a_coeffs = torch::torch_tensor(c(1.0, 2.1, 3.3))
 b_coeffs = torch::torch_tensor(c(3.1,3.1,10.0))
-samp = torch::torch_tensor(c(0.5,0.5,0.5,0.5,0.5))
+samp_1d = torch::torch_tensor(c(0.5,0.5,0.5,0.5,0.5))
+samp = torch::torch_stack(list(samp_1d, samp_1d, samp_1d))
 
 test_that("functional_lfilter and functional_biquad", {
 
   # functional_lfilter
-  filtered_samp <- functional_lfilter(waveform = samp, a_coeffs = a_coeffs, b_coeffs = b_coeffs)
+  filtered_samp <- functional_lfilter(waveform = samp_1d, a_coeffs = a_coeffs, b_coeffs = b_coeffs)
   expect_tensor(filtered_samp)
-  expect_tensor_shape(filtered_samp, samp$shape)
+  expect_tensor_shape(filtered_samp, samp_1d$shape)
 
   # functional_lfilter 2D
-  samp = torch::torch_tensor(c(0.5,0.5,0.5,0.5,0.5))
-  samp = torch::torch_stack(list(samp, samp, samp))
   filtered_samp <- functional_lfilter(waveform = samp, a_coeffs = a_coeffs, b_coeffs = b_coeffs)
   expect_tensor(filtered_samp)
   expect_tensor_shape(filtered_samp, samp$shape)
@@ -180,3 +179,19 @@ test_that("riaa_biquad", {
   expect_tensor_shape(riaa_biquad, samp$shape)
   expect_error(functional_riaa_biquad(samp, sample_rate = 1), class = "value_error")
 })
+
+context("other effects")
+
+test_that("contrast", {
+  contrast <- functional_contrast(samp)
+  expect_tensor(contrast)
+  expect_tensor_shape(contrast, samp$shape)
+  expect_error(functional_contrast(samp, enhancement_amount = 101), class = "value_error")
+})
+
+test_that("dcshift", {
+  dcshift <- functional_dcshift(samp, 5)
+  expect_tensor(dcshift)
+  expect_tensor_shape(dcshift, samp$shape)
+})
+

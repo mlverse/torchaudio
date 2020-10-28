@@ -973,7 +973,7 @@ functional_deemph_biquad <- function(
   return(functional_biquad(waveform, b0, b1, b2, a0, a1, a2))
 }
 
-#'  RIAA Vinyl Playback Equalisation
+#' RIAA Vinyl Playback Equalisation
 #'
 #' Apply RIAA vinyl playback equalisation.  Similar to SoX implementation.
 #'
@@ -1037,4 +1037,86 @@ functional_riaa_biquad <- function(
   b2 = b2 * g
 
   return(functional_biquad(waveform, b0, b1, b2, a0, a1, a2))
+}
+
+
+#' Contrast Effect
+#'
+#' Apply contrast effect.  Similar to SoX implementation.
+#' Comparable with compression, this effect modifies an audio signal to
+#' make it sound louder
+#'
+#' @param waveform  (Tensor): audio waveform of dimension of `(..., time)`
+#' @param enhancement_amount  (float): controls the amount of the enhancement
+#' Allowed range of values for enhancement_amount : 0-100
+#' Note that enhancement_amount = 0 still gives a significant contrast enhancement
+#'
+#' @return `tensor`: Waveform of dimension of `(..., time)`
+#'
+#' @references
+#' - [http://sox.sourceforge.net/sox.html]()
+#'
+#' @export
+functional_contrast <- function(
+  waveform,
+  enhancement_amount = 75.0
+) {
+
+  if(enhancement_amount < 0 | enhancement_amount > 100) {
+    value_error("Allowed range of values for enhancement_amount : 0-100")
+  }
+  contrast = enhancement_amount / 750.
+
+  temp1 = waveform * (pi / 2)
+  temp2 = contrast * torch::torch_sin(temp1 * 4)
+  output_waveform = torch::torch_sin(temp1 + temp2)
+
+  return(output_waveform)
+}
+
+#' DC Shift
+#'
+#' Apply a DC shift to the audio. Similar to SoX implementation.
+#'    This can be useful to remove a DC offset (caused perhaps by a
+#'    hardware problem in the recording chain) from the audio
+#'
+#' @param waveform  (Tensor): audio waveform of dimension of `(..., time)`
+#' @param shift  (float): indicates the amount to shift the audio
+#'  Allowed range of values for shift : -2.0 to +2.0
+#' @param limiter_gain  (float): It is used only on peaks to prevent clipping
+#'  It should have a value much less than 1  (e.g. 0.05 or 0.02)
+#'
+#' @return `tensor`: Waveform of dimension of `(..., time)`
+#'
+#' @references
+#' - [http://sox.sourceforge.net/sox.html]()
+#'
+#' @export
+functional_dcshift <- function(
+  waveform,
+  shift,
+  limiter_gain = NULL
+) {
+  output_waveform = waveform
+  limiter_threshold = 0.0
+
+  if(!is.null(limiter_gain)) {
+    limiter_threshold = 1.0 - (abs(shift) - limiter_gain)
+  }
+
+  if(!is.null(limiter_gain) & shift > 0) {
+    mask = (waveform > limiter_threshold)
+    temp = (waveform[mask] - limiter_threshold) * limiter_gain / (1 - limiter_threshold)
+    output_waveform[mask] = (temp + limiter_threshold + shift)$clamp(max = limiter_threshold)
+    output_waveform[!mask] = (waveform[!mask] + shift)$clamp(min=-1.0, max=1.0)
+  } else if(!is.null(limiter_gain) & shift < 0) {
+    mask = waveform < -limiter_threshold
+    temp = (waveform[mask] + limiter_threshold) * limiter_gain / (1 - limiter_threshold)
+    output_waveform[mask] = (temp - limiter_threshold + shift)$clamp(min=-limiter_threshold)
+    output_waveform[!mask] = (waveform[!mask] + shift)$clamp(min=-1.0, max=1.0)
+  } else {
+    output_waveform = (waveform + shift)$clamp(min=-1.0, max=1.0)
+  }
+
+  return(output_waveform)
 }
