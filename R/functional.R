@@ -1,4 +1,4 @@
-#' Spectrogram
+#' Spectrogram (functional)
 #'
 #' Create a spectrogram or a batch of spectrograms from a raw audio signal.
 #' The spectrogram can be either magnitude-only or complex.
@@ -11,14 +11,14 @@
 #' @param hop_length (integer): Length of hop between STFT windows
 #' @param win_length (integer): Window size
 #' @param power (numeric): Exponent for the magnitude spectrogram, (must be > 0) e.g.,
-#'  1 for energy, 2 for power, etc. If None, then the complex spectrum is returned instead.
+#'  1 for energy, 2 for power, etc. If NULL, then the complex spectrum is returned instead.
 #' @param normalized (logical): Whether to normalize by magnitude after stft
 #' @param Arguments for window function.
 #'
 #' @return `tensor`: Dimension (..., freq, time), freq is n_fft %/% 2 + 1 and n_fft is the
 #' number of Fourier bins, and time is the number of window hops (n_frame).
 #' @export
-spectrogram <- function(
+functional_spectrogram <- function(
   waveform,
   pad = 0,
   n_fft = 400,
@@ -55,7 +55,7 @@ spectrogram <- function(
   spec_f = spec_f$reshape(c(shape[-ls], spec_f$shape[(lspec-2):lspec]))
 
   if(normalized) spec_f <- spec_f/sqrt(sum(window^2))
-  if(!is.null(power)) spec_f <- complex_norm(spec_f, power = power)
+  if(!is.null(power)) spec_f <- functional_complex_norm(spec_f, power = power)
 
   return(spec_f)
 }
@@ -70,7 +70,7 @@ spectrogram <- function(
 #' @param f_min (float): Minimum frequency (Hz)
 #' @param f_max (float): Maximum frequency (Hz)
 #' @param norm (chr) (Optional): If 'slaney', divide the triangular
-#'  mel weights by the width of the mel band (area normalization). (Default: `None`)
+#'  mel weights by the width of the mel band (area normalization). (Default: `NULL`)
 #'
 #' @return `tensor`: Triangular filter banks (fb matrix) of size (`n_freqs`, `n_mels`)
 #'         meaning number of frequencies to highlight/apply to x the number of filterbanks.
@@ -79,7 +79,7 @@ spectrogram <- function(
 #'         ``A * create_fb_matrix(A.size(-1), ...)``.
 #'
 #' @export
-create_fb_matrix <- function(
+functional_create_fb_matrix <- function(
   n_freqs,
   n_mels,
   sample_rate = 16000,
@@ -127,13 +127,13 @@ create_fb_matrix <- function(
 #'
 #' @param n_mfcc (int): Number of mfc coefficients to retain
 #' @param n_mels (int): Number of mel filterbanks
-#' @param norm (chr or NULL): Norm to use (either 'ortho' or None)
+#' @param norm (chr or NULL): Norm to use (either 'ortho' or NULL)
 #'
 #' @return `tensor`: The transformation matrix, to be right-multiplied to
 #'     row-wise data of size (``n_mels``, ``n_mfcc``).
 #'
 #' @export
-create_dct <- function(
+functional_create_dct <- function(
   n_mfcc,
   n_mels,
   norm = NULL
@@ -162,11 +162,11 @@ create_dct <- function(
 #' @return `tensor`: Power of the normed input tensor. Shape of `(..., )`
 #'
 #' @export
-complex_norm <- function(complex_tensor, power = 1) {
+functional_complex_norm <- function(complex_tensor, power = 1) {
   complex_tensor$pow(2.)$sum(-1)$pow(0.5 * power)
 }
 
-#' Amplitude to DB
+#' Amplitude to DB (functional)
 #'
 #' Turn a tensor from the power/amplitude scale to the decibel scale.
 #'
@@ -185,7 +185,7 @@ complex_norm <- function(complex_tensor, power = 1) {
 #' @return `tensor`: Output tensor in decibel scale
 #'
 #' @export
-amplitude_to_db <- function(
+functional_amplitude_to_db <- function(
   x,
   multiplier = 10.0,
   amin = 1e-10,
@@ -203,10 +203,9 @@ amplitude_to_db <- function(
   return(x_db)
 }
 
-#' DB to Amplitude
+#' DB to Amplitude (functional)
 #'
 #' Turn a tensor from the decibel scale to the power/amplitude scale.
-#'
 #'
 #' @param x (Tensor): Input tensor before being converted to power/amplitude scale.
 #' @param ref (float): Reference which the output will be scaled by. (Default: ``1.0``)
@@ -216,51 +215,57 @@ amplitude_to_db <- function(
 #' @return `tensor`: Output tensor in power/amplitude scale.
 #'
 #' @export
-db_to_amplitude <- function(x, ref = 1.0, power = 1.0) {
+functional_db_to_amplitude <- function(x, ref = 1.0, power = 1.0) {
   ref * torch::torch_pow(torch::torch_pow(10.0, 0.1 * x), power)
 }
 
-#' Mel-frequency Cepstrum Coefficients
+#' Mel Scale (functional)
 #'
-#' Create the Mel-frequency cepstrum coefficients from an audio signal.
+#' Turn a normal STFT into a mel frequency STFT, using a conversion
+#' matrix. This uses triangular filter banks.
 #'
-#' @param waveform (tensor): Tensor of audio of dimension (..., time)
+#' @param specgram (Tensor): A spectrogram STFT of dimension (..., freq, time).
+#' @param n_mels (int, optional): Number of mel filterbanks. (Default: ``128``)
 #' @param sample_rate (int, optional): Sample rate of audio signal. (Default: ``16000``)
-#' @param n_mfcc (int, optional): Number of mfc coefficients to retain. (Default: ``40``)
-#' @param dct_type (int, optional): type of DCT (discrete cosine transform) to use. (Default: ``2``)
-#' @param norm (str, optional): norm to use. (Default: ``'ortho'``)
-#' @param log_mels (bool, optional): whether to use log-mel spectrograms instead of db-scaled. (Default: ``FALSE``)
-#' @param db_multiplier (float): Passed to [torchaudio::amplitude_to_db()].
-#' @param top_db (float or NULL, optional): Passed to [torchaudio::amplitude_to_db()]. Minimum negative cut-off in decibels. A reasonable number
-#'     is 80. (Default: ``80``). See
-#' @param ... (optional): arguments for MelSpectrogram.
+#' @param f_min (float, optional): Minimum frequency. (Default: ``0.``)
+#' @param f_max (float or NULL, optional): Maximum frequency. (Default: ``sample_rate // 2``)
+#' @param n_stft (int, optional): Number of bins in STFT. Calculated from first input
+#' if NULL is given.  See ``n_fft`` in :class:`Spectrogram`. (Default: ``NULL``)
 #'
-#' @details By default, this calculates the MFCC on the DB-scaled Mel spectrogram.
-#' This output depends on the maximum value in the input spectrogram, and so
-#' may return different values for an audio clip split into snippets vs. a
-#' a full clip.
-#'
-#' @return `tensor`: specgram_mel_db of size (..., ``n_mfcc``, time).
+#' @return `tensor`: Mel frequency spectrogram of size (..., ``n_mels``, time).
 #'
 #' @export
-mfcc <- function(
-  waveform,
+functional_mel_scale <- function(
+  specgram,
+  n_mels= 128,
   sample_rate = 16000,
-  n_mfcc = 40,
-  dct_type = 2,
-  norm = 'ortho',
-  log_mels = FALSE,
-  top_db = 80.0,
-  db_multiplier = 10.0,
-  n_mels =
-  ...
+  f_min = 0.0,
+  f_max = NULL,
+  n_stft = NULL
 ) {
-  supported_dct_types = c(2)
-  if(!dct_type %in% supported_dct_types) {
-    value_error(paste0('DCT type not supported:', dct_type))
-  }
+  if(is.null(f_max)) f_max = as.numeric(sample_rate %/% 2)
+  if(f_min > f_max) value_error(glue::glue("Require f_min: {f_min} < f_max: {f_max}"))
 
-  amplitude_to_db = amplitude_to_db(waveform, db_multiplier = db_multiplier, top_db = top_db)
-  mel_spectrogram = mel_spectrogram(waveform, sample_rate = sample_rate)
+  # pack batch
+  shape = specgram$size()
+  ls = length(shape)
+  specgram = specgram$reshape(list(-1, shape[ls-1], shape[ls]))
 
+  if(is.null(n_stft)) n_stft = specgram$size(2)
+
+  fb = create_fb_matrix(
+    n_freqs = n_stft,
+    f_min = f_min,
+    f_max = f_max,
+    n_mels = n_mels,
+    sample_rate = sample_rate
+  )
+
+  mel_specgram = torch_matmul(specgram$transpose(2L, 3L), fb)$transpose(2L, 3L)
+
+  # unpack batch
+  lspec = length(mel_specgram$shape)
+  mel_specgram = mel_specgram$reshape(c(shape[-((ls-1):ls)], mel_specgram$shape[(lspec-2):lspec]))
+
+  return(mel_specgram)
 }
