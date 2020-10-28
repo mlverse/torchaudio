@@ -463,6 +463,87 @@ functional_griffinlim <- function(
   # waveform = waveform$reshape(shape[:-2] + waveform.shape[-1:])
   #
   # return(waveform)
-  "TO DO (waiting for torch_istft() implementation"
+  not_implemented_error("TO DO (waiting for torch_istft() implementation)")
 }
+
+#' An IIR Filter
+#'
+#' Perform an IIR filter by evaluating difference equation.
+#'
+#' @param waveform (Tensor): audio waveform of dimension of ``(..., time)``.  Must be normalized to -1 to 1.
+#' @param a_coeffs (Tensor): denominator coefficients of difference equation of dimension of ``(n_order + 1)``.
+#'  Lower delays coefficients are first, e.g. ``[a0, a1, a2, ...]``.
+#'  Must be same size as b_coeffs (pad with 0's as necessary).
+#' @param b_coeffs (Tensor): numerator coefficients of difference equation of dimension of ``(n_order + 1)``.
+#'  Lower delays coefficients are first, e.g. ``[b0, b1, b2, ...]``.
+#'  Must be same size as a_coeffs (pad with 0's as necessary).
+#' @param clamp (bool, optional): If ``TRUE``, clamp the output signal to be in the range [-1, 1] (Default: ``TRUE``)
+#'
+#' @return `tensor`: Waveform with dimension of ``(..., time)``.
+#'
+#' @export
+functional_lfilter <- function(
+  waveform,
+  a_coeffs,
+  b_coeffs,
+  clamp = TRUE
+) {
+
+  # pack batch
+  shape = waveform$size()
+  ls = length(shape)
+  waveform = waveform$reshape(c(-1, shape[ls]))
+
+  if(a_coeffs$size(1) != b_coeffs$size(1)) value_error(glue::glue("Size of a_coeffs: {a_coeffs$size(1)} differs from size of b_coeffs: {b_coeffs$size(1)}"))
+  if(length(waveform$size()) != 2) value_error(glue::glue("waveform size should be 1, got {length(waveform$size()) - 1}."))
+  if(waveform$device$type != a_coeffs$device$type) runtime_error(glue::glue("waveform is in {waveform$device$type} device while a_coeffs is in {a_coeffs$device$type} device. They should share the same device."))
+  if(b_coeffs$device$type != a_coeffs$device$type) runtime_error(glue::glue("b_coeffs is in {b_coeffs$device$type} device while a_coeffs is in {a_coeffs$device$type} device. They should share the same device."))
+
+  device = waveform$device
+  dtype = waveform$dtype
+  n_channel = waveform$size(1)
+  n_sample = waveform$size(2)
+  n_order = a_coeffs$size(1)
+  n_sample_padded = n_sample + n_order - 1
+  if(n_order <= 0) value_error(glue::glue("a_coeffs$size(1) should be greater than zero, got {n_order}."))
+
+  # Pad the input and create output
+  padded_waveform = torch::torch_zeros(n_channel, n_sample_padded, dtype=dtype, device=device)
+  padded_waveform[, (n_order):N] = waveform
+  padded_output_waveform = torch::torch_zeros(n_channel, n_sample_padded, dtype=dtype, device=device)
+
+  # Set up the coefficients matrix
+  # Flip coefficients' order
+  a_coeffs_flipped = a_coeffs$flip(1)
+  b_coeffs_flipped = b_coeffs$flip(1)
+
+  # calculate windowed_input_signal in parallel
+  # create indices of original with shape (n_channel, n_order, n_sample)
+  window_idxs = torch::torch_arange(0, n_sample, device=device)$unsqueeze(1) + torch::torch_arange(0, n_order, device=device)$unsqueeze(2)
+  window_idxs = window_idxs$`repeat`(c(n_channel, 1, 1))
+  window_idxs = window_idxs + (torch::torch_arange(0, n_channel, device=device)$unsqueeze(-1)$unsqueeze(-1) * n_sample_padded)
+  # Indices/Index start at 1 in R.
+  window_idxs = (window_idxs + 1)$to(torch::torch_long())
+  # (n_order, ) matmul (n_channel, n_order, n_sample) -> (n_channel, n_sample)
+  input_signal_windows = torch::torch_matmul(b_coeffs_flipped, torch::torch_take(padded_waveform, window_idxs))
+
+  input_signal_windows$div_(a_coeffs[1])
+  a_coeffs_flipped$div_(a_coeffs[1])
+  for(i_sample in 1:ncol(input_signal_windows)) {
+    o0 = input_signal_windows[,i_sample]
+    windowed_output_signal = padded_output_waveform[ , i_sample:(i_sample + n_order-1)]
+    o0$addmv_(windowed_output_signal, a_coeffs_flipped, alpha=-1)
+    padded_output_waveform[ , i_sample + n_order - 1] = o0
+  }
+
+  output = padded_output_waveform[, (n_order):N]
+
+  if(clamp) output = torch::torch_clamp(output, min=-1., max=1.)
+
+  # unpack batch
+  output = output$reshape(c(shape[-ls], output$shape[length(output$shape)]))
+
+  return(output)
+}
+
 
