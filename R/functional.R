@@ -972,3 +972,69 @@ functional_deemph_biquad <- function(
 
   return(functional_biquad(waveform, b0, b1, b2, a0, a1, a2))
 }
+
+#'  RIAA Vinyl Playback Equalisation
+#'
+#' Apply RIAA vinyl playback equalisation.  Similar to SoX implementation.
+#'
+#' @param waveform  (Tensor): audio waveform of dimension of `(..., time)`
+#' @param sample_rate  (int): sampling rate of the waveform, e.g. 44100 (Hz).
+#'  Allowed sample rates in Hz : ``44100``,``48000``,``88200``,``96000``
+#'
+#' @return `tensor`: Waveform of dimension of `(..., time)`
+#'
+#' @references
+#' - [http://sox.sourceforge.net/sox.html]()
+#' - [https://www.w3.org/2011/audio/audio-eq-cookbook.html#APF]()
+#'
+#' @export
+functional_riaa_biquad <- function(
+  waveform,
+  sample_rate
+) {
+
+
+  if(sample_rate == 44100) {
+    zeros = c(-0.2014898, 0.9233820)
+    poles = c(0.7083149, 0.9924091)
+
+  } else if(sample_rate == 48000) {
+    zeros = c(-0.1766069, 0.9321590)
+    poles = c(0.7396325, 0.9931330)
+
+  } else if(sample_rate == 88200) {
+    zeros = c(-0.1168735, 0.9648312)
+    poles = c(0.8590646, 0.9964002)
+
+  } else if(sample_rate == 96000) {
+    zeros = c(-0.1141486, 0.9676817)
+    poles = c(0.8699137, 0.9966946)
+
+  } else {
+    value_error("Sample rate must be 44.1k, 48k, 88.2k, or 96k")
+  }
+
+  # polynomial coefficients with roots zeros[0] and zeros[1]
+  b0 = 1.
+  b1 = -(zeros[1] + zeros[2])
+  b2 = (zeros[1] * zeros[2])
+
+  # polynomial coefficients with roots poles[0] and poles[1]
+  a0 = 1.
+  a1 = -(poles[1] + poles[2])
+  a2 = (poles[1] * poles[2])
+
+  # Normalise to 0dB at 1kHz
+  y = 2 * pi * 1000 / sample_rate
+  b_re = b0 + b1 * cos(-y) + b2 * cos(-2 * y)
+  a_re = a0 + a1 * cos(-y) + a2 * cos(-2 * y)
+  b_im = b1 * sin(-y) + b2 * sin(-2 * y)
+  a_im = a1 * sin(-y) + a2 * sin(-2 * y)
+  g = 1 / sqrt((b_re ** 2 + b_im ** 2) / (a_re ** 2 + a_im ** 2))
+
+  b0 = b0 * g
+  b1 = b1 * g
+  b2 = b2 * g
+
+  return(functional_biquad(waveform, b0, b1, b2, a0, a1, a2))
+}

@@ -174,3 +174,9 @@ test_that("deemph_biquad", {
   expect_error(functional_deemph_biquad(samp, sample_rate = 1), class = "value_error")
 })
 
+test_that("riaa_biquad", {
+  riaa_biquad <- functional_riaa_biquad(samp, sample_rate = 44100)
+  expect_tensor(riaa_biquad)
+  expect_tensor_shape(riaa_biquad, samp$shape)
+  expect_error(functional_riaa_biquad(samp, sample_rate = 1), class = "value_error")
+})
