@@ -174,3 +174,86 @@ transform_amplitude_to_db <- torch::nn_module(
     )
   }
 )
+
+#' Mel-frequency Cepstrum Coefficients
+#'
+#' Create the Mel-frequency cepstrum coefficients from an audio signal.
+#'
+#' @param waveform (tensor): Tensor of audio of dimension (..., time)
+#' @param sample_rate (int, optional): Sample rate of audio signal. (Default: ``16000``)
+#' @param n_mfcc (int, optional): Number of mfc coefficients to retain. (Default: ``40``)
+#' @param dct_type (int, optional): type of DCT (discrete cosine transform) to use. (Default: ``2``)
+#' @param norm (str, optional): norm to use. (Default: ``'ortho'``)
+#' @param log_mels (bool, optional): whether to use log-mel spectrograms instead of db-scaled. (Default: ``FALSE``)
+#' @param ... (optional): arguments for [torchaudio::transform_mel_spectrogram].
+#'
+#' @details By default, this calculates the MFCC on the DB-scaled Mel spectrogram.
+#' This output depends on the maximum value in the input spectrogram, and so
+#' may return different values for an audio clip split into snippets vs. a
+#' a full clip.
+#'
+#' @return `tensor`: specgram_mel_db of size (..., ``n_mfcc``, time).
+#'
+#' @export
+transform_mfcc <- torch::nn_module(
+  "MFCC",
+  initialize = function(
+    sample_rate = 16000,
+    n_mfcc = 40,
+    dct_type = 2,
+    norm = 'ortho',
+    log_mels = FALSE,
+    ...
+  ) {
+
+    supported_dct_types = c(2)
+    if(!dct_type %in% supported_dct_types) {
+      value_error(paste0('DCT type not supported:', dct_type))
+    }
+    self$sample_rate = sample_rate
+    self$n_mfcc = n_mfcc
+    self$dct_type = dct_type
+    self$norm = norm
+    self$top_db = 80.0
+    self$amplitude_to_db = transform_amplitude_to_db('power', self$top_db)
+
+    self$mel_spectrogram = transform_mel_spectrogram(sample_rate = self$sample_rate, ...)
+
+    if(self$n_mfcc > self$mel_spectrogram$n_mels) value_error('Cannot select more MFCC coefficients than # mel bins')
+
+    dct_mat = functional_create_dct(
+      n_mfcc = self$n_mfcc,
+      n_mels = self$mel_spectrogram$n_mels,
+      norm = self$norm
+    )
+
+    self$register_buffer('dct_mat', dct_mat)
+    self$log_mels = log_mels
+  },
+
+  forward = function(waveform) {
+
+    # pack batch
+    shape = waveform$size()
+    ls = length(shape)
+    waveform = waveform$reshape(list(-1, shape[ls]))
+
+    mel_specgram = self$mel_spectrogram(waveform)
+    if(selft$log_mels) {
+      log_offset = 1e-6
+      mel_specgram = torch::torch_log(mel_specgram + log_offset)
+    } else {
+      mel_specgram = self$amplitude_to_db(mel_specgram)
+    }
+
+    # (channel, n_mels, time).tranpose(...) dot (n_mels, n_mfcc)
+    # -> (channel, time, n_mfcc).tranpose(...)
+    mfcc = torch::torch_matmul(mel_specgram$transpose(2, 3), self$dct_mat)$transpose(2, 3)
+
+    # unpack batch
+    lspec = length(mfcc$shape)
+    mfcc = mfcc$reshape(c(shape[-((ls-1):ls)], mfcc$shape[(lspec-2):lspec]))
+
+    return(mfcc)
+  }
+)

@@ -269,3 +269,4 @@ functional_mel_scale <- function(
 
   return(mel_specgram)
 }
+
