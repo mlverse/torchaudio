@@ -73,19 +73,44 @@ transform_mel_scale <- torch::nn_module(
   }
 )
 
-#' DB to Amplitude
+#' Amplitude to DB
 #'
-#' Turn a tensor from the decibel scale to the power/amplitude scale.
+#' Turn a tensor from the power/amplitude scale to the decibel scale.
 #'
+#' This output depends on the maximum value in the input tensor, and so
+#' may return different values for an audio clip split into snippets vs. a
+#' a full clip.
 #'
-#' @param x (Tensor): Input tensor before being converted to power/amplitude scale.
-#' @param ref (float): Reference which the output will be scaled by. (Default: ``1.0``)
-#' @param power (float): If power equals 1, will compute DB to power. If 0.5, will compute
-#'  DB to amplitude. (Default: ``1.0``)
+#' @param stype (str, optional): scale of input tensor ('power' or 'magnitude'). The
+#' power being the elementwise square of the magnitude. (Default: ``'power'``)
+#' @param top_db (float or NULL, optional): Minimum negative cut-off in decibels. A reasonable number
+#' is 80. (Default: ``NULL``)
 #'
-#' @return `Tensor`: Output tensor in power/amplitude scale.
+#' @return `tensor`: Output tensor in decibel scale
 #'
 #' @export
-DB_to_amplitude <- function(x, ref = 1.0, power = 1.0) {
-  ref * torch::torch_pow(torch::torch_pow(10.0, 0.1 * x), power)
-}
+transform_amplitude_to_db <- torch::nn_module(
+  "AmplitudeToDB",
+  initialize = function(
+    stype = 'power',
+    top_db = NULL
+  ) {
+    self$stype = stype
+    if(!is.null(top_db) && top_db < 0) value_error("top_db must be positive value")
+    self$top_db = top_db
+    self$multiplier = if(stype == 'power') 10.0 else 20.0
+    self$amin = 1e-10
+    self$ref_value = 1.0
+    self$db_multiplier = log10(max(self$amin, self$ref_value))
+  },
+
+  forward = function(x) {
+    functional_amplitude_to_db(
+      x = x,
+      multiplier = self$multiplier,
+      amin = self$amin,
+      db_multiplier = self$db_multiplier,
+      top_db = self$top_db
+    )
+  }
+)
