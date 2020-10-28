@@ -11,7 +11,7 @@ functional_create_dct(n_mfcc, n_mels, norm = NULL)
 
 \item{n_mels}{(int): Number of mel filterbanks}
 
-\item{norm}{(chr or NULL): Norm to use (either 'ortho' or None)}
+\item{norm}{(chr or NULL): Norm to use (either 'ortho' or NULL)}
 }
 \value{
 \code{Tensor}: The transformation matrix, to be right-multiplied to

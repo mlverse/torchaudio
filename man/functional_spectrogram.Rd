@@ -31,7 +31,7 @@ functional_spectrogram(
 frame/window or a function that generates the window tensor.}
 
 \item{power}{(numeric): Exponent for the magnitude spectrogram, (must be > 0) e.g.,
-1 for energy, 2 for power, etc. If None, then the complex spectrum is returned instead.}
+1 for energy, 2 for power, etc. If NULL, then the complex spectrum is returned instead.}
 
 \item{normalized}{(logical): Whether to normalize by magnitude after stft}
 

@@ -25,7 +25,7 @@ functional_create_fb_matrix(
 \item{f_max}{(float): Maximum frequency (Hz)}
 
 \item{norm}{(chr) (Optional): If 'slaney', divide the triangular
-mel weights by the width of the mel band (area normalization). (Default: \code{None})}
+mel weights by the width of the mel band (area normalization). (Default: \code{NULL})}
 }
 \value{
 \code{tensor}: Triangular filter banks (fb matrix) of size (\code{n_freqs}, \code{n_mels})
