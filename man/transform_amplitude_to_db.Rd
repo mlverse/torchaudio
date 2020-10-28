@@ -12,6 +12,8 @@ power being the elementwise square of the magnitude. (Default: \code{'power'})}
 
 \item{top_db}{(float or NULL, optional): Minimum negative cut-off in decibels. A reasonable number
 is 80. (Default: \code{NULL})}
+
+\item{x}{(Tensor): Input tensor before being converted to decibel scale}
 }
 \value{
 \code{tensor}: Output tensor in decibel scale

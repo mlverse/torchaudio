@@ -1,4 +1,4 @@
-#' Spectrogram
+#' Spectrogram (functional)
 #'
 #' Create a spectrogram or a batch of spectrograms from a raw audio signal.
 #' The spectrogram can be either magnitude-only or complex.
