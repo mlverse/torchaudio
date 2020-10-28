@@ -546,6 +546,42 @@ functional_lfilter <- function(
   return(output)
 }
 
+#' Biquad Filter
+#'
+#' Perform a biquad filter of input tensor.  Initial conditions set to 0.
+#'     [https://en.wikipedia.org/wiki/Digital_biquad_filter]()
+#'
+#' @param waveform (Tensor): audio waveform of dimension of `(..., time)`
+#' @param b0 (float): numerator coefficient of current input, x[n]
+#' @param b1 (float): numerator coefficient of input one time step ago x[n-1]
+#' @param b2 (float): numerator coefficient of input two time steps ago x[n-2]
+#' @param a0 (float): denominator coefficient of current output y[n], typically 1
+#' @param a1 (float): denominator coefficient of current output y[n-1]
+#' @param a2 (float): denominator coefficient of current output y[n-2]
+#'
+#' @return `tensor`: Waveform with dimension of `(..., time)`
+#'
+#' @export
+functional_biquad <- function(
+  waveform,
+  b0,
+  b1,
+  b2,
+  a0,
+  a1,
+  a2
+) {
+  device = waveform$device
+  dtype = waveform$dtype
+
+  output_waveform = functional_lfilter(
+    waveform,
+    torch::torch_tensor(c(a0, a1, a2), dtype=dtype, device=device),
+    torch::torch_tensor(c(b0, b1, b2), dtype=dtype, device=device)
+  )
+  return(output_waveform)
+}
+
 db_to_linear <- function(x) {
   exp(x * log(10) / 20.0)
 }
