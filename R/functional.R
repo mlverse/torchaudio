@@ -329,3 +329,17 @@ functional_mu_law_decoding <- function(
   x = torch::torch_sign(x) * (torch::torch_exp(torch::torch_abs(x) * torch::torch_log1p(mu)) - 1.0)/mu
   return(x)
 }
+
+#' Angle
+#'
+#' Compute the angle of complex tensor input.
+#'
+#' @param complex_tensor (Tensor): Tensor shape of `(..., complex=2)`
+#'
+#' @return `tensor`: Angle of a complex tensor. Shape of `(..., )`
+#'
+#' @export
+functional_angle <- function(complex_tensor) {
+  torch::torch_atan2(complex_tensor[.., 1], complex_tensor[.., 0])
+}
+
