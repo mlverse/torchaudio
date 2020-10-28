@@ -59,3 +59,9 @@ test_that("functional_amplitude_to_db and functional_db_to_amplitude", {
   expect_lt( as.numeric(sum(functional_db_to_amplitude(functional_amplitude_to_db(x1)) - x1)), 1e-8)
 })
 
+
+test_that("functional_mu_law_encoding and functional_mu_law_decoding", {
+  # functional_mu_law_encoding
+  # functional_mu_law_decoding
+  stop("TO DO")
+})
