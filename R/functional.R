@@ -362,3 +362,107 @@ functional_magphase <- function(
   phase = functional_angle(complex_tensor)
   return(list(mag, phase))
 }
+
+
+
+#' Griffin-Lim Transformation
+#'
+#' Compute waveform from a linear scale magnitude spectrogram using the Griffin-Lim transformation.
+#'  Implementation ported from `librosa`.
+#'
+#'
+#' @param specgram (Tensor): A magnitude-only STFT spectrogram of dimension (..., freq, frames)
+#'      where freq is ``n_fft %/% 2 + 1``.
+#' @param window (Tensor): Window tensor that is applied/multiplied to each frame/window
+#' @param n_fft (int): Size of FFT, creates ``n_fft %/% 2 + 1`` bins
+#' @param hop_length (int): Length of hop between STFT windows. (Default: ``win_length %/% 2``)
+#' @param win_length (int): Window size. (Default: ``n_fft``)
+#' @param power (float): Exponent for the magnitude spectrogram,
+#'      (must be > 0) e.g., 1 for energy, 2 for power, etc.
+#' @param normalized (bool): Whether to normalize by magnitude after stft.
+#' @param n_iter (int): Number of iteration for phase recovery process.
+#' @param momentum (float): The momentum parameter for fast Griffin-Lim.
+#'      Setting this to 0 recovers the original Griffin-Lim method.
+#'      Values near 1 can lead to faster convergence, but above 1 may not converge.
+#' @param length (int or NULL): Array length of the expected output.
+#' @param rand_init (bool): Initializes phase randomly if True, to zero otherwise.
+#'
+#' @return `tensor`: waveform of (..., time), where time equals the ``length`` parameter if given.
+#'
+#' @export
+functional_griffinlim <- function(
+  specgram,
+  window,
+  n_fft,
+  hop_length,
+  win_length,
+  power,
+  normalized,
+  n_iter,
+  momentum,
+  length,
+  rand_init
+) {
+  # if(momentum > 1) value_warning('momentum > 1 can be unstable')
+  # if(momentum < 0) value_error('momentum < 0')
+  #
+  # # pack batch
+  # shape = specgram$size()
+  # specgram = specgram$reshape([-1] + list(shape[-2:]))
+  #
+  # specgram = specgram$pow(1 / power)
+  #
+  # # randomly initialize the phase
+  # ss = specgram$size()
+  # batch = ss[1]
+  # freq = ss[2]
+  # frames = ss[3]
+  # if(rand_init) {
+  #   angles = 2 * pi * torch::torch_rand(batch, freq, frames)
+  # } else {
+  #   angles = torch::Torch_zeros(batch, freq, frames)
+  # }
+  #
+  # angles = torch::torch_stack([angles.cos(), angles.sin()], dim=-1).to(dtype=specgram.dtype, device=specgram.device)
+  # specgram = specgram.unsqueeze(-1).expand_as(angles)
+  #
+  # # And initialize the previous iterate to 0
+  # rebuilt = torch::torch_tensor(0.)
+  #
+  # for _ in range(n_iter):
+  #   # Store the previous iterate
+  #   tprev = rebuilt
+  #
+  # # Invert with our current estimate of the phases
+  # inverse = torch::torch_istft(specgram * angles,
+  #                       n_fft=n_fft,
+  #                       hop_length=hop_length,
+  #                       win_length=win_length,
+  #                       window=window,
+  #                       length=length)$float()
+  #
+  # # Rebuild the spectrogram
+  # rebuilt = torch.stft(inverse, n_fft, hop_length, win_length, window,
+  #                      True, 'reflect', False, True)
+  #
+  # # Update our phase estimates
+  # angles = rebuilt
+  # if momentum:
+  #   angles = angles - tprev.mul_(momentum / (1 + momentum))
+  # angles = angles.div(complex_norm(angles).add(1e-16).unsqueeze(-1).expand_as(angles))
+  #
+  # # Return the final phase estimates
+  # waveform = torch.istft(specgram * angles,
+  #                        n_fft=n_fft,
+  #                        hop_length=hop_length,
+  #                        win_length=win_length,
+  #                        window=window,
+  #                        length=length)
+  #
+  # # unpack batch
+  # waveform = waveform$reshape(shape[:-2] + waveform.shape[-1:])
+  #
+  # return(waveform)
+  "TO DO (waiting for torch_istft() implementation"
+}
+
