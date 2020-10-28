@@ -77,12 +77,14 @@ test_that("functional_magphase", {
   stop("TO DO")
 })
 
-test_that("functional_lfilter", {
-  a_coeffs = torch::torch_tensor(c(1.0, 2.1, 3.3))
-  b_coeffs = torch::torch_tensor(c(3.1,3.1,10.0))
+context("filters")
+a_coeffs = torch::torch_tensor(c(1.0, 2.1, 3.3))
+b_coeffs = torch::torch_tensor(c(3.1,3.1,10.0))
+samp = torch::torch_tensor(c(0.5,0.5,0.5,0.5,0.5))
+
+test_that("functional_lfilter and functional_biquad", {
 
   # functional_lfilter
-  samp = torch::torch_tensor(c(0.5,0.5,0.5,0.5,0.5))
   filtered_samp <- functional_lfilter(waveform = samp, a_coeffs = a_coeffs, b_coeffs = b_coeffs)
   expect_tensor(filtered_samp)
   expect_tensor_shape(filtered_samp, samp$shape)
@@ -109,10 +111,17 @@ test_that("functional_lfilter", {
   expect_tensor(biquad_samp)
   expect_tensor_shape(biquad_samp, filtered_samp$shape)
   expect_equal(as.array(biquad_samp), as.array(filtered_samp))
+})
 
-  # allpass_biquad
+test_that("allpass_biquad", {
   allpass_biquad <- functional_allpass_biquad(samp, sample_rate = 2, central_freq = 1)
   expect_tensor(allpass_biquad)
   expect_tensor_shape(allpass_biquad, samp$shape)
+})
+
+test_that("highpass_biquad", {
+  highpass_biquad <- functional_highpass_biquad(samp, sample_rate = 2, cutoff_freq = 1)
+  expect_tensor(highpass_biquad)
+  expect_tensor_shape(highpass_biquad, samp$shape)
 })
 

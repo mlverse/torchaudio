@@ -7,16 +7,16 @@
 functional_allpass_biquad(waveform, sample_rate, central_freq, Q = 0.707)
 }
 \arguments{
-\item{(torch.Tensor):}{audio waveform of dimension of \verb{(..., time)}}
+\item{waveform}{(Tensor): audio waveform of dimension of \verb{(..., time)}}
 
-\item{(int):}{sampling rate of the waveform, e.g. 44100 (Hz)}
+\item{sample_rate}{(int): sampling rate of the waveform, e.g. 44100 (Hz)}
 
-\item{(float):}{central frequency (in Hz)}
+\item{central_freq}{(float): central frequency (in Hz)}
 
-\item{(float, }{optional): \url{https://en.wikipedia.org/wiki/Q_factor} (Default: \code{0.707})}
+\item{Q}{(float, optional): \url{https://en.wikipedia.org/wiki/Q_factor} (Default: \code{0.707})}
 }
 \value{
-Tensor: Waveform of dimension of \verb{(..., time)}
+\code{tensor}: Waveform of dimension of \verb{(..., time)}
 }
 \description{
 Design two-pole all-pass filter. Similar to SoX implementation.
