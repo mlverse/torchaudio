@@ -271,3 +271,279 @@ functional_mel_scale <- function(
   return(mel_specgram)
 }
 
+
+#' Mu Law Encoding
+#'
+#' Encode signal based on mu-law companding.  For more info see
+#' the [Wikipedia Entry](https://en.wikipedia.org/wiki/M-law_algorithm)
+#'
+#' @param x (Tensor): Input tensor
+#' @param quantization_channels (int): Number of channels
+#'
+#' @details
+#' This algorithm assumes the signal has been scaled to between -1 and 1 and
+#' returns a signal encoded with values from 0 to quantization_channels - 1.
+#'
+#' @return `tensor`: Input after mu-law encoding
+#'
+#' @export
+functional_mu_law_encoding <- function(
+  x,
+  quantization_channels
+) {
+  mu = quantization_channels - 1.0
+  if(!torch::torch_is_floating_point(x)) {
+    x = x$to(torch::torch_float())
+  }
+  mu = torch::torch_tensor(mu, dtype=x$dtype)
+  x_mu = torch::torch_sign(x) * torch::torch_log1p(mu * torch::torch_abs(x)) / torch::torch_log1p(mu)
+  x_mu = ((x_mu + 1) / 2 * mu + 0.5)$to(torch::torch_int64())
+  return(x_mu)
+}
+
+#' Mu Law Decoding
+#'
+#' Decode mu-law encoded signal.  For more info see the
+#'  [Wikipedia Entry](https://en.wikipedia.org/wiki/M-law_algorithm)
+#'
+#' @param x (Tensor): Input tensor
+#' @param quantization_channels (int): Number of channels
+#'
+#' @details
+#' This expects an input with values between 0 and quantization_channels - 1
+#' and returns a signal scaled between -1 and 1.
+#'
+#' @return `tensor`: Input after mu-law decoding
+#'
+#' @export
+functional_mu_law_decoding <- function(
+  x_mu,
+  quantization_channels
+) {
+  mu = quantization_channels - 1.0
+  if(!torch::torch_is_floating_point(x_mu)) {
+    x_mu = x_mu$to(torch::torch_float())
+  }
+  mu = torch::torch_tensor(mu, dtype=x_mu$dtype)
+  x = ((x_mu)/mu) * 2 - 1.0
+  x = torch::torch_sign(x) * (torch::torch_exp(torch::torch_abs(x) * torch::torch_log1p(mu)) - 1.0)/mu
+  return(x)
+}
+
+#' Angle
+#'
+#' Compute the angle of complex tensor input.
+#'
+#' @param complex_tensor (Tensor): Tensor shape of `(..., complex=2)`
+#'
+#' @return `tensor`: Angle of a complex tensor. Shape of `(..., )`
+#'
+#' @export
+functional_angle <- function(complex_tensor) {
+  complex_tensor = complex_tensor$to(torch::torch_float())
+  torch::torch_atan2(complex_tensor[.., 2], complex_tensor[.., 1])
+}
+
+#' Magnitude and Phase
+#'
+#' Separate a complex-valued spectrogram with shape `(.., 2)` into its magnitude and phase.
+#'
+#' @param complex_tensor (Tensor): Tensor shape of `(.., complex=2)`
+#' @param power (float): Power of the norm. (Default: `1.0`)
+#'
+#' @return list(`tensor`, `tensor`): The magnitude and phase of the complex tensor
+#'
+#' @export
+functional_magphase <- function(
+  complex_tensor,
+  power = 1.0
+  ) {
+  mag = functional_complex_norm(complex_tensor, power)
+  phase = functional_angle(complex_tensor)
+  return(list(mag, phase))
+}
+
+
+
+#' Griffin-Lim Transformation
+#'
+#' Compute waveform from a linear scale magnitude spectrogram using the Griffin-Lim transformation.
+#'  Implementation ported from `librosa`.
+#'
+#'
+#' @param specgram (Tensor): A magnitude-only STFT spectrogram of dimension (..., freq, frames)
+#'      where freq is ``n_fft %/% 2 + 1``.
+#' @param window (Tensor): Window tensor that is applied/multiplied to each frame/window
+#' @param n_fft (int): Size of FFT, creates ``n_fft %/% 2 + 1`` bins
+#' @param hop_length (int): Length of hop between STFT windows. (Default: ``win_length %/% 2``)
+#' @param win_length (int): Window size. (Default: ``n_fft``)
+#' @param power (float): Exponent for the magnitude spectrogram,
+#'      (must be > 0) e.g., 1 for energy, 2 for power, etc.
+#' @param normalized (bool): Whether to normalize by magnitude after stft.
+#' @param n_iter (int): Number of iteration for phase recovery process.
+#' @param momentum (float): The momentum parameter for fast Griffin-Lim.
+#'      Setting this to 0 recovers the original Griffin-Lim method.
+#'      Values near 1 can lead to faster convergence, but above 1 may not converge.
+#' @param length (int or NULL): Array length of the expected output.
+#' @param rand_init (bool): Initializes phase randomly if True, to zero otherwise.
+#'
+#' @return `tensor`: waveform of (..., time), where time equals the ``length`` parameter if given.
+#'
+#' @export
+functional_griffinlim <- function(
+  specgram,
+  window,
+  n_fft,
+  hop_length,
+  win_length,
+  power,
+  normalized,
+  n_iter,
+  momentum,
+  length,
+  rand_init
+) {
+  # if(momentum > 1) value_warning('momentum > 1 can be unstable')
+  # if(momentum < 0) value_error('momentum < 0')
+  #
+  # # pack batch
+  # shape = specgram$size()
+  # specgram = specgram$reshape([-1] + list(shape[-2:]))
+  #
+  # specgram = specgram$pow(1 / power)
+  #
+  # # randomly initialize the phase
+  # ss = specgram$size()
+  # batch = ss[1]
+  # freq = ss[2]
+  # frames = ss[3]
+  # if(rand_init) {
+  #   angles = 2 * pi * torch::torch_rand(batch, freq, frames)
+  # } else {
+  #   angles = torch::Torch_zeros(batch, freq, frames)
+  # }
+  #
+  # angles = torch::torch_stack([angles.cos(), angles.sin()], dim=-1).to(dtype=specgram.dtype, device=specgram.device)
+  # specgram = specgram.unsqueeze(-1).expand_as(angles)
+  #
+  # # And initialize the previous iterate to 0
+  # rebuilt = torch::torch_tensor(0.)
+  #
+  # for _ in range(n_iter):
+  #   # Store the previous iterate
+  #   tprev = rebuilt
+  #
+  # # Invert with our current estimate of the phases
+  # inverse = torch::torch_istft(specgram * angles,
+  #                       n_fft=n_fft,
+  #                       hop_length=hop_length,
+  #                       win_length=win_length,
+  #                       window=window,
+  #                       length=length)$float()
+  #
+  # # Rebuild the spectrogram
+  # rebuilt = torch.stft(inverse, n_fft, hop_length, win_length, window,
+  #                      True, 'reflect', False, True)
+  #
+  # # Update our phase estimates
+  # angles = rebuilt
+  # if momentum:
+  #   angles = angles - tprev.mul_(momentum / (1 + momentum))
+  # angles = angles.div(complex_norm(angles).add(1e-16).unsqueeze(-1).expand_as(angles))
+  #
+  # # Return the final phase estimates
+  # waveform = torch.istft(specgram * angles,
+  #                        n_fft=n_fft,
+  #                        hop_length=hop_length,
+  #                        win_length=win_length,
+  #                        window=window,
+  #                        length=length)
+  #
+  # # unpack batch
+  # waveform = waveform$reshape(shape[:-2] + waveform.shape[-1:])
+  #
+  # return(waveform)
+  not_implemented_error("TO DO (waiting for torch_istft() implementation)")
+}
+
+#' An IIR Filter
+#'
+#' Perform an IIR filter by evaluating difference equation.
+#'
+#' @param waveform (Tensor): audio waveform of dimension of ``(..., time)``.  Must be normalized to -1 to 1.
+#' @param a_coeffs (Tensor): denominator coefficients of difference equation of dimension of ``(n_order + 1)``.
+#'  Lower delays coefficients are first, e.g. ``[a0, a1, a2, ...]``.
+#'  Must be same size as b_coeffs (pad with 0's as necessary).
+#' @param b_coeffs (Tensor): numerator coefficients of difference equation of dimension of ``(n_order + 1)``.
+#'  Lower delays coefficients are first, e.g. ``[b0, b1, b2, ...]``.
+#'  Must be same size as a_coeffs (pad with 0's as necessary).
+#' @param clamp (bool, optional): If ``TRUE``, clamp the output signal to be in the range [-1, 1] (Default: ``TRUE``)
+#'
+#' @return `tensor`: Waveform with dimension of ``(..., time)``.
+#'
+#' @export
+functional_lfilter <- function(
+  waveform,
+  a_coeffs,
+  b_coeffs,
+  clamp = TRUE
+) {
+
+  # pack batch
+  shape = waveform$size()
+  ls = length(shape)
+  waveform = waveform$reshape(c(-1, shape[ls]))
+
+  if(a_coeffs$size(1) != b_coeffs$size(1)) value_error(glue::glue("Size of a_coeffs: {a_coeffs$size(1)} differs from size of b_coeffs: {b_coeffs$size(1)}"))
+  if(length(waveform$size()) != 2) value_error(glue::glue("waveform size should be 1, got {length(waveform$size()) - 1}."))
+  if(waveform$device$type != a_coeffs$device$type) runtime_error(glue::glue("waveform is in {waveform$device$type} device while a_coeffs is in {a_coeffs$device$type} device. They should share the same device."))
+  if(b_coeffs$device$type != a_coeffs$device$type) runtime_error(glue::glue("b_coeffs is in {b_coeffs$device$type} device while a_coeffs is in {a_coeffs$device$type} device. They should share the same device."))
+
+  device = waveform$device
+  dtype = waveform$dtype
+  n_channel = waveform$size(1)
+  n_sample = waveform$size(2)
+  n_order = a_coeffs$size(1)
+  n_sample_padded = n_sample + n_order - 1
+  if(n_order <= 0) value_error(glue::glue("a_coeffs$size(1) should be greater than zero, got {n_order}."))
+
+  # Pad the input and create output
+  padded_waveform = torch::torch_zeros(n_channel, n_sample_padded, dtype=dtype, device=device)
+  padded_waveform[, (n_order):N] = waveform
+  padded_output_waveform = torch::torch_zeros(n_channel, n_sample_padded, dtype=dtype, device=device)
+
+  # Set up the coefficients matrix
+  # Flip coefficients' order
+  a_coeffs_flipped = a_coeffs$flip(1)
+  b_coeffs_flipped = b_coeffs$flip(1)
+
+  # calculate windowed_input_signal in parallel
+  # create indices of original with shape (n_channel, n_order, n_sample)
+  window_idxs = torch::torch_arange(0, n_sample, device=device)$unsqueeze(1) + torch::torch_arange(0, n_order, device=device)$unsqueeze(2)
+  window_idxs = window_idxs$`repeat`(c(n_channel, 1, 1))
+  window_idxs = window_idxs + (torch::torch_arange(0, n_channel, device=device)$unsqueeze(-1)$unsqueeze(-1) * n_sample_padded)
+  # Indices/Index start at 1 in R.
+  window_idxs = (window_idxs + 1)$to(torch::torch_long())
+  # (n_order, ) matmul (n_channel, n_order, n_sample) -> (n_channel, n_sample)
+  input_signal_windows = torch::torch_matmul(b_coeffs_flipped, torch::torch_take(padded_waveform, window_idxs))
+
+  input_signal_windows$div_(a_coeffs[1])
+  a_coeffs_flipped$div_(a_coeffs[1])
+  for(i_sample in 1:ncol(input_signal_windows)) {
+    o0 = input_signal_windows[,i_sample]
+    windowed_output_signal = padded_output_waveform[ , i_sample:(i_sample + n_order-1)]
+    o0$addmv_(windowed_output_signal, a_coeffs_flipped, alpha=-1)
+    padded_output_waveform[ , i_sample + n_order - 1] = o0
+  }
+
+  output = padded_output_waveform[, (n_order):N]
+
+  if(clamp) output = torch::torch_clamp(output, min=-1., max=1.)
+
+  # unpack batch
+  output = output$reshape(c(shape[-ls], output$shape[length(output$shape)]))
+
+  return(output)
+}
+
+

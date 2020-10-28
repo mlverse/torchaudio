@@ -1,8 +1,8 @@
 sample_mp3 <- tuneR::readMP3(system.file("sample_audio_1.mp3", package = "torchaudio"))
+samples = length(sample_mp3@left)
 
 test_that("functional_spectrogram", {
   n_fft = 400
-  samples = length(sample_mp3@left)
   expect_no_error(spec <- functional_spectrogram(sample_mp3@left, n_fft = n_fft))
   expect_tensor(spec)
   expect_equal(dim(spec)[1], n_fft %/% 2 + 1)
@@ -59,3 +59,36 @@ test_that("functional_amplitude_to_db and functional_db_to_amplitude", {
   expect_lt( as.numeric(sum(functional_db_to_amplitude(functional_amplitude_to_db(x1)) - x1)), 1e-8)
 })
 
+
+test_that("functional_mu_law_encoding and functional_mu_law_decoding", {
+  # functional_mu_law_encoding
+  # functional_mu_law_decoding
+  stop("TO DO")
+})
+
+test_that("functional_angle", {
+  # functional_angle
+  stop("TO DO")
+})
+
+test_that("functional_magphase", {
+  # functional_magphase
+  stop("TO DO")
+})
+
+test_that("functional_lfilter", {
+  # functional_magphase
+  a_coeffs = torch::torch_tensor(c(1.0, 2.1, 3.3, 4.0))
+  b_coeffs = torch::torch_tensor(c(3.1,3.1,3.1,10.0))
+
+  samp = torch::torch_tensor(c(0.5,0.5,0.5,0.5,0.5))
+  filtered_samp <- functional_lfilter(waveform = samp, a_coeffs = a_coeffs, b_coeffs = b_coeffs)
+  expect_tensor(filtered_samp)
+  expect_tensor_shape(filtered_samp, samp$shape)
+
+  samp = torch::torch_tensor(c(0.5,0.5,0.5,0.5,0.5))
+  samp = torch::torch_stack(list(samp, samp, samp))
+  filtered_samp <- functional_lfilter(waveform = samp, a_coeffs = a_coeffs, b_coeffs = b_coeffs)
+  expect_tensor(filtered_samp)
+  expect_tensor_shape(filtered_samp, samp$shape)
+})

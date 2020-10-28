@@ -42,8 +42,3 @@ test_that("transform_mfcc", {
   expect_tensor(m)
 })
 
-test_that("transform_mel_spectrogram", {
-  samples = length(sample_mp3@left)
-  expect_no_error(spec <- transform_mel_spectrogram()(sample_mp3@left))
-  expect_tensor(spec)
-})
