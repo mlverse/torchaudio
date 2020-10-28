@@ -9,7 +9,7 @@ functional_create_fb_matrix(
   n_mels,
   sample_rate = 16000,
   f_min = 0,
-  f_max = sample_rate\%/\%2,
+  f_max = NULL,
   norm = NULL
 )
 }
@@ -22,7 +22,7 @@ functional_create_fb_matrix(
 
 \item{f_min}{(float): Minimum frequency (Hz)}
 
-\item{f_max}{(float): Maximum frequency (Hz)}
+\item{f_max}{(float or NULL): Maximum frequency (Hz). If NULL defaults to sample_rate \%/\% 2}
 
 \item{norm}{(chr) (Optional): If 'slaney', divide the triangular
 mel weights by the width of the mel band (area normalization). (Default: \code{NULL})}
