@@ -59,10 +59,3 @@ test_that("functional_amplitude_to_db and functional_db_to_amplitude", {
   expect_lt( as.numeric(sum(functional_db_to_amplitude(functional_amplitude_to_db(x1)) - x1)), 1e-8)
 })
 
-
-test_that("mfcc", {
-  expect_error(mfcc(sample_mp3@left, dct_type = 3), class = "value_error")
-  expect_no_error(mfcc_matrix <- mfcc(sample_mp3@left))
-  expect_tensor(mfcc_matrix)
-  expect_equal(dim(spec)[2], 40)
-})

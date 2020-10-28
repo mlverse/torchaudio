@@ -33,3 +33,17 @@ test_that("transform_amplitude_to_db", {
   # DB_to_amplitude
   expect_lt( as.numeric(sum(functional_db_to_amplitude(transform_amplitude_to_db()(x1)) - x1)), 1e-8)
 })
+
+test_that("transform_mfcc", {
+  samples = length(sample_mp3@left)
+  waveform <- torch::torch_tensor(as.vector(as.array(sample_mp3@left)), dtype = torch::torch_float())
+
+  expect_no_error(m <- transform_mfcc()(waveform))
+  expect_tensor(m)
+})
+
+test_that("transform_mel_spectrogram", {
+  samples = length(sample_mp3@left)
+  expect_no_error(spec <- transform_mel_spectrogram()(sample_mp3@left))
+  expect_tensor(spec)
+})

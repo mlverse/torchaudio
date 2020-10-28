@@ -12,7 +12,7 @@ functional_complex_norm(complex_tensor, power = 1)
 \item{power}{(numeric): Power of the norm. (Default: \code{1.0}).}
 }
 \value{
-tensor: Power of the normed input tensor. Shape of \verb{(..., )}
+\code{tensor}: Power of the normed input tensor. Shape of \verb{(..., )}
 }
 \description{
 Compute the norm of complex tensor input.
