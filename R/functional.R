@@ -1767,3 +1767,85 @@ functional_apply_probability_distribution <- function(
   # unpack batch
   return(quantised_signal$reshape(c(shape[-ls], quantised_signal$shape[length(quantised_signal$shape)])))
 }
+
+#' Dither
+#'
+#' Dither increases the perceived dynamic range of audio stored at a
+#'    particular bit-depth by eliminating nonlinear truncation distortion
+#'    (i.e. adding minimally perceived noise to mask distortion caused by quantization).
+#' @param waveform  (Tensor): Tensor of audio of dimension (..., time)
+#' @param density_function  (str, optional): The density function of a continuous random variable (Default: ``"TPDF"``)
+#'           Options: Triangular Probability Density Function - `TPDF`
+#'                    Rectangular Probability Density Function - `RPDF`
+#'                    Gaussian Probability Density Function - `GPDF`
+#' @param noise_shaping  (bool, optional): a filtering process that shapes the spectral
+#'  energy of quantisation error  (Default: ``TRUE``)
+#'
+#' @return `tensor`: waveform dithered
+#'
+#' @export
+functional_dither <- function(
+  waveform,
+  density_function = "TPDF",
+  noise_shaping = TRUE
+) {
+
+  dithered = functional_apply_probability_distribution(waveform, density_function=density_function)
+
+  if(noise_shaping) {
+    return(functional_add_noise_shaping(dithered, waveform))
+  } else {
+    return(dithered)
+  }
+}
+
+#' Normalized Cross-Correlation Function
+#'
+#' Compute Normalized Cross-Correlation Function  (NCCF).
+#'
+#' @param waveform  (Tensor): Tensor of audio of dimension (..., time)
+#' @param sample_rate (int): Sample rate of the audio waveform
+#' @param frame_time (float)
+#' @param freq_low (float)
+#'
+#' @export
+functional_compute_nccf <- function(
+  waveform,
+  sample_rate,
+  frame_time,
+  freq_low
+) {
+
+  EPSILON = 10 ** (-9)
+
+  # Number of lags to check
+  lags = as.integer(ceiling(sample_rate / freq_low))
+
+  frame_size = as.integer(ceiling(sample_rate * frame_time))
+
+  lws = length(waveform$size())
+  waveform_length = waveform$size()[lws]
+  num_of_frames = as.integer(ceiling(waveform_length / frame_size))
+
+  p = lags + num_of_frames * frame_size - waveform_length
+  waveform = torch::nnf_pad(waveform, c(0, p))
+
+  # Compute lags
+  output_lag = list()
+  for(lag in seq.int(lags + 1)) {
+    s1 = waveform[.., 1:(waveform$size(-1) - lag)]$unfold(-1, frame_size, frame_size)[.., 1:num_of_frames, ]
+    s2 = waveform[.., (1 + lag):waveform$size(-1)]$unfold(-1, frame_size, frame_size)[.., 1:num_of_frames, ]
+
+    output_frames = (
+      (s1 * s2)$sum(-1)
+      / (EPSILON + torch::torch_norm(s1, p=2L, dim=-1))$pow(2)
+      / (EPSILON + torch::torch_norm(s2, p=2L, dim=-1))$pow(2)
+    )
+
+    output_lag[[length(output_lag) + 1]] = output_frames$unsqueeze(-1)
+  }
+
+  nccf = torch::torch_cat(output_lag, -1)
+
+  return(nccf)
+}

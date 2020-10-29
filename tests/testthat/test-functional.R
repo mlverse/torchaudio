@@ -280,3 +280,31 @@ test_that("apply_probability_distribution", {
   expect_tensor_shape(RPDF, samp$shape)
   expect_tensor_shape(GPDF, samp$shape)
 })
+
+test_that("dither", {
+  TPDF <- functional_dither(samp, "TPDF")
+  RPDF <- functional_dither(samp, "RPDF")
+  GPDF <- functional_dither(samp, "GPDF")
+  expect_tensor(TPDF)
+  expect_tensor(RPDF)
+  expect_tensor(GPDF)
+  expect_tensor_shape(TPDF, samp$shape)
+  expect_tensor_shape(RPDF, samp$shape)
+  expect_tensor_shape(GPDF, samp$shape)
+})
+
+test_that("compute_nccf", {
+  expect_no_error(
+    compute_nccf <- functional_compute_nccf(
+      waveform  = samp,
+      sample_rate = 10,
+      frame_time = 0.01,
+      freq_low = 5
+    ),
+    class = "value_error"
+  )
+
+  # expect_tensor(compute_nccf)
+  # expect_tensor_shape(compute_nccf, samp$shape)
+
+})
