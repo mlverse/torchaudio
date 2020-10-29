@@ -1849,3 +1849,25 @@ functional_compute_nccf <- function(
 
   return(nccf)
 }
+
+#' Combine Max
+#'
+#' Take value from first if bigger than a multiplicative factor of the second, elementwise.
+#'
+#' @param a (Tuple[Tensor, Tensor])
+#' @param b (Tuple[Tensor, Tensor])
+#' @param thresh (float) Default: 0.99
+#'
+#' @export
+functional_combine_max <- function(
+  a,
+  b,
+  thresh = 0.99
+) {
+    mask = (a[1] > thresh * b[1])
+    values = mask * a[1] + !mask * b[1]
+    indices = mask * a[2] + !mask * b[2]
+
+    not_implemented_error("Not implemented yet.")
+    return(values, indices)
+}

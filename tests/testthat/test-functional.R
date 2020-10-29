@@ -308,3 +308,8 @@ test_that("compute_nccf", {
   # expect_tensor_shape(compute_nccf, samp$shape)
 
 })
+
+test_that("functional_combine_max",{
+  # functional_combine_max
+  stop("TO DO")
+})
