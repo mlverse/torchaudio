@@ -249,3 +249,10 @@ test_that("mask_along_axis", {
   expect_tensor_shape(mask_along_axis, c(2, 4, 5))
 })
 
+test_that("compute_deltas", {
+  compute_deltas <- functional_compute_deltas(
+    specgram = torch::torch_randn(1, 4, 10)
+  )
+  expect_tensor(compute_deltas)
+  expect_tensor_shape(compute_deltas, c(1, 4, 10))
+})

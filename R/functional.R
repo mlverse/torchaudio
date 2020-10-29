@@ -1574,3 +1574,56 @@ functional_mask_along_axis <- function(
 
   return(specgram)
 }
+
+#' Delta Coefficients
+#'
+#' Compute delta coefficients of a tensor, usually a spectrogram.
+#'
+#' math:
+#'  \deqn{
+#'  d_t = \frac{\sum_{n=1}^{N} n  (c_{t+n} - c_{t-n})}{2 \sum_{n=1}^{N} n^2}
+#'  }
+#'
+#'  where `d_t` is the deltas at time `t`, `c_t` is the spectrogram coeffcients at time `t`,
+#'  `N` is `` (win_length-1) %/% 2``.
+#'
+#' @param specgram  (Tensor): Tensor of audio of dimension (..., freq, time)
+#' @param win_length  (int, optional): The window length used for computing delta (Default: ``5``)
+#' @param mode  (str, optional): Mode parameter passed to padding (Default: ``"replicate"``)
+#'
+#' @return `tensor`: Tensor of deltas of dimension (..., freq, time)
+#'
+#' @examples
+#' specgram = torch::torch_randn(1, 40, 1000)
+#' delta = functional_compute_deltas(specgram)
+#' delta2 = functional_compute_deltas(delta)
+#'
+#' @export
+functional_compute_deltas <- function(
+  specgram,
+  win_length = 5,
+  mode = "replicate"
+) {
+  device = specgram$device
+  dtype = specgram$dtype
+
+  # pack batch
+  shape = specgram$size()
+  ls = length(shape)
+  specgram = specgram$reshape(c(1, -1, shape[ls]))
+  if(win_length < 3) value_error("win_length must be >= 3.")
+
+  n = (win_length - 1) %/% 2
+
+  # twice sum of integer squared
+  denom = n * (n + 1) * (2 * n + 1) / 3
+
+  specgram = torch::nnf_pad(specgram, c(n, n), mode=mode)
+  kernel = torch::torch_arange(-n, n + 1, 1, device=device, dtype=dtype)$`repeat`(c(specgram$shape[2], 1, 1))
+  output = torch::nnf_conv1d(specgram, kernel, groups=specgram$shape[2]) / denom
+
+  # unpack batch
+  output = output$reshape(shape)
+
+  return(output)
+}
