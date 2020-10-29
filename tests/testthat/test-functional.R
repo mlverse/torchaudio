@@ -262,3 +262,21 @@ test_that("gain", {
   expect_tensor(gain)
   expect_tensor_shape(gain, samp$size())
 })
+
+test_that("add_noise_shaping", {
+  add_noise_shaping <- functional_add_noise_shaping(torch::torch_arange(0,5), torch::torch_arange(0,5))
+  expect_tensor(add_noise_shaping)
+  expect_tensor_shape(add_noise_shaping, 5)
+})
+
+test_that("apply_probability_distribution", {
+  TPDF <- functional_apply_probability_distribution(samp, "TPDF")
+  RPDF <- functional_apply_probability_distribution(samp, "RPDF")
+  GPDF <- functional_apply_probability_distribution(samp, "GPDF")
+  expect_tensor(TPDF)
+  expect_tensor(RPDF)
+  expect_tensor(GPDF)
+  expect_tensor_shape(TPDF, samp$shape)
+  expect_tensor_shape(RPDF, samp$shape)
+  expect_tensor_shape(GPDF, samp$shape)
+})
