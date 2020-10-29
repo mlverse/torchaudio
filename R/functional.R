@@ -1483,7 +1483,7 @@ functional_flanger <- function(
 
   return(output_waveform$clamp(min=-1.0, max=1.0)$view(actual_shape))
 }
-#' Mask Along Axis
+#' Mask Along Axis IID
 #'
 #' Apply a mask along ``axis``. Mask will be applied from indices ``[v_0, v_0 + v)``, where
 #' ``v`` is sampled from ``uniform (0, mask_param)``, and ``v_0`` from ``uniform(0, max_v - v)``.
@@ -1524,4 +1524,53 @@ functional_mask_along_axis_iid <- function(
   specgrams = specgrams$transpose(axis, -1)
 
   return(specgrams)
+}
+#' Mask Along Axis
+#'
+#' Apply a mask along ``axis``. Mask will be applied from indices ``[v_0, v_0 + v)``, where
+#' ``v`` is sampled from ``uniform (0, mask_param)``, and ``v_0`` from ``uniform(0, max_v - v)``.
+#' All examples will have the same mask interval.
+#'
+#' @param specgram  (Tensor): Real spectrogram (channel, freq, time)
+#' @param mask_param  (int): Number of columns to be masked will be uniformly sampled from [0, mask_param]
+#' @param mask_value  (float): Value to assign to the masked columns
+#' @param axis  (int): Axis to apply masking on (2 -> frequency, 3 -> time)
+#'
+#' @return Tensor: Masked spectrogram of dimensions (channel, freq, time)
+#'
+#' @export
+functional_mask_along_axis <- function(
+  specgram,
+  mask_param,
+  mask_value,
+  axis
+) {
+  # pack batch
+  shape = specgram$size()
+  ls = length(shape)
+  specgram = specgram$reshape(c(-1, shape[(ls-1):ls]))
+
+  value = torch::torch_rand(1) * mask_param
+  min_value = torch::torch_rand(1) * (specgram$size(axis) - value)
+
+  mask_start = as.integer((min_value$to(torch::torch_long()))$squeeze())
+  mask_end = as.integer((min_value$to(torch::torch_long()) + value$to(torch::torch_long()))$squeeze())
+
+  if(as.logical((mask_end - mask_start) >= mask_param)) {
+    value_error("mask_end - mask_start >= mask_param")
+  }
+
+  if(axis == 2) {
+    specgram[ , mask_start:mask_end] = mask_value
+  } else if(axis == 3) {
+    specgram[ ,  , mask_start:mask_end] = mask_value
+  } else {
+    value_error("Only Frequency and Time masking are supported")
+  }
+
+  # unpack batch
+  lss = length(specgram$shape)
+  specgram = specgram$reshape(c(shape[1:(ls-2)], specgram$shape[(lss-1):lss]))
+
+  return(specgram)
 }

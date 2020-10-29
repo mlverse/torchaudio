@@ -36,12 +36,14 @@ def_pytorch_to_r_function <- function(script) {
     stringr::str_replace_all("else ?:", "} else {") %>%
     stringr::str_replace_all("elif", "} else if") %>%
     stringr::str_replace_all("raise ValueError", "value_error") %>%
+    stringr::str_remove_all("r@@") %>%
     stringr::str_c("\n}\n")
 
   # documentation prep
   documentation_preped <- documentation %>%
     stringr::str_replace_all("\n|^", "\n#'") %>%
-    stringr::str_replace_all('r?@@@@@', " ") %>%
+    stringr::str_replace_all('r@@@@@', " ") %>%
+    stringr::str_replace_all('@@@@@', " ") %>%
     stringr::str_replace_all("#' *Returns:[^a-zA-Z]*", "#' @return ") %>%
     stringr::str_c("\n#' @export") %>%
     stringr::str_replace_all("(#'[:blank:]+)([^@(\n]+)[(]", "#' @param \\2 (") %>%

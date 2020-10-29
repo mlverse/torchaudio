@@ -238,4 +238,14 @@ test_that("mask_along_axis_iid", {
   expect_tensor_shape(mask_along_axis_iid, c(3, 2, 4, 5))
 })
 
+test_that("mask_along_axis", {
+  mask_along_axis <- functional_mask_along_axis(
+    specgram = torch::torch_rand(2, 4, 5),
+    mask_param = 3,
+    mask_value = 99,
+    axis = 2
+  )
+  expect_tensor(mask_along_axis)
+  expect_tensor_shape(mask_along_axis, c(2, 4, 5))
+})
 
