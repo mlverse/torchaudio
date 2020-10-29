@@ -1179,3 +1179,149 @@ functional_overdrive <- function(
 
   return(output_waveform$clamp(min=-1.0, max=1.0)$view(actual_shape))
 }
+
+#' Phasing Effect
+#'
+#' Apply a phasing effect to the audio. Similar to SoX implementation.
+#'
+#' @param waveform  (Tensor): audio waveform of dimension of `(..., time)`
+#' @param sample_rate  (int): sampling rate of the waveform, e.g. 44100 (Hz)
+#' @param gain_in  (float): desired input gain at the boost (or attenuation) in dB.
+#'  Allowed range of values are 0 to 1
+#' @param gain_out  (float): desired output gain at the boost (or attenuation) in dB.
+#'  Allowed range of values are 0 to 1e9
+#' @param delay_ms  (float): desired delay in milli seconds.
+#'  Allowed range of values are 0 to 5.0
+#' @param decay  (float):  desired decay relative to gain-in. Allowed range of values are 0 to 0.99
+#' @param mod_speed  (float):  modulation speed in Hz.
+#'  Allowed range of values are 0.1 to 2
+#' @param sinusoidal  (bool):  If ``FALSE``, uses sinusoidal modulation (preferable for multiple instruments).
+#'  If ``TRUE``, uses triangular modulation  (gives single instruments a sharper phasing effect)
+#' (Default: ``FALSE``)
+#'
+#' @return `tensor`: Waveform of dimension of `(..., time)`
+#'
+#' @references
+#' - [http://sox.sourceforge.net/sox.html]()
+#' - Scott Lehman, Effects Explained, [http://harmony-central.com/Effects/effects-explained.html]()
+#'
+#' @export
+functional_phaser <- function(
+  waveform,
+  sample_rate,
+  gain_in = 0.4,
+  gain_out = 0.74,
+  delay_ms = 3.0,
+  decay = 0.4,
+  mod_speed = 0.5,
+  sinusoidal = FALSE
+) {
+  actual_shape = waveform$shape
+  device = waveform$device
+  dtype = waveform$dtype
+
+  # convert to 2D (channels,time)
+  las = length(actual_shape)
+  waveform = waveform$view(c(-1, actual_shape[las]))
+
+  delay_buf_len = as.integer((delay_ms * .001 * sample_rate) + .5)
+  delay_buf = torch::torch_zeros(waveform$shape[1], delay_buf_len, dtype=dtype, device=device)
+
+  mod_buf_len = as.integer(sample_rate / mod_speed + .5)
+
+  if(sinusoidal) {
+    wave_type = 'SINE'
+  } else {
+    wave_type = 'TRIANGLE'
+  }
+
+  mod_buf = functional_generate_wave_table(
+    wave_type = wave_type,
+    data_type = 'INT',
+    table_size = mod_buf_len,
+    min = 1.0,
+    max = as.numeric(delay_buf_len),
+    phase = pi / 2,
+    device = device
+  )
+
+  delay_pos = 1
+  mod_pos = 1
+
+  output_waveform_pre_gain_list = list()
+  waveform = waveform * gain_in
+  delay_buf = delay_buf * decay
+  waveform_list = if(ncol(waveform) > 0) Map(function(i) waveform[,i], seq(ncol(waveform))) else list()
+  delay_buf_list = if(ncol(delay_buf) > 0) Map(function(i) delay_buf[,i], seq(ncol(delay_buf))) else list()
+  mod_buf_list = if(nrow(mod_buf) > 0) Map(function(i) mod_buf[i], seq(nrow(mod_buf))) else list()
+
+  lws = length(waveform$shape)
+  for(i in seq.int(waveform$shape[lws])) {
+    idx = as.integer((delay_pos + mod_buf_list[[mod_pos]]) %% delay_buf_len)
+    mod_pos = (mod_pos + 1) %% mod_buf_len
+    delay_pos = (delay_pos + 1) %% delay_buf_len
+    temp = (waveform_list[[i]]) + (delay_buf_list[[idx+1]])
+    delay_buf_list[[delay_pos+1]] = temp * decay
+    output_waveform_pre_gain_list[[length(output_waveform_pre_gain_list) + 1]] <- temp
+  }
+
+  output_waveform = torch::torch_stack(output_waveform_pre_gain_list, dim=2)$to(dtype=dtype, device=device)
+  output_waveform$mul_(gain_out)
+
+  return(output_waveform$clamp(min=-1.0, max=1.0)$view(actual_shape))
+}
+
+#' Wave Table Generator
+#'
+#' A helper function for phaser. Generates a table with given parameters
+#'
+#' @param wave_type  (str): 'SINE' or 'TRIANGULAR'
+#' @param data_type  (str): desired data_type ( `INT` or `FLOAT` )
+#' @param table_size  (int): desired table size
+#' @param min  (float): desired min value
+#' @param max  (float): desired max value
+#' @param phase  (float): desired phase
+#' @param device  (torch_device): Torch device on which table must be generated
+#'
+#' @return `tensor`: A 1D tensor with wave table values
+#'
+#' @export
+functional_generate_wave_table <- function(
+  wave_type,
+  data_type,
+  table_size,
+  min,
+  max,
+  phase,
+  device
+) {
+
+  phase_offset = as.integer(phase / pi / 2 * table_size + 0.5)
+  t = torch::torch_arange(0, table_size, device=device, dtype=torch::torch_int32())
+  point = (t + phase_offset) %% table_size
+  d = torch::torch_zeros_like(point, device=device, dtype=torch::torch_float64())
+
+  if(wave_type == 'SINE') {
+    d = (torch::torch_sin(point$to(torch::torch_float64()) / table_size * 2 * pi) + 1) / 2
+  } else if(wave_type == 'TRIANGLE') {
+    d = (point$to(torch::torch_float64()) * 2) / table_size
+    value = (4 * point) %/% table_size
+    d[value == 0] = d[value == 0] + 0.5
+    d[value == 1] = 1.5 - d[value == 1]
+    d[value == 2] = 1.5 - d[value == 2]
+    d[value == 3] = d[value == 3] - 1.5
+  }
+
+  d = d * (max - min) + min
+
+  if(data_type == 'INT') {
+    mask = d < 0
+    d[mask] = d[mask] - 0.5
+    d[!mask] = d[!mask] + 0.5
+    d = d$to(torch::torch_int32())
+  } else if(data_type == 'FLOAT') {
+    d = d$to(torch::torch_float32())
+  }
+
+  return(d)
+}

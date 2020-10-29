@@ -80,7 +80,7 @@ test_that("functional_magphase", {
 context("filters")
 a_coeffs = torch::torch_tensor(c(1.0, 2.1, 3.3))
 b_coeffs = torch::torch_tensor(c(3.1,3.1,10.0))
-samp_1d = torch::torch_tensor(c(0.5,0.5,0.5,0.5,0.5))
+samp_1d = torch::torch_tensor(c(0.5,-0.5,0.9,-0.9,0.5))
 samp = torch::torch_stack(list(samp_1d, samp_1d, samp_1d))
 
 test_that("functional_lfilter and functional_biquad", {
@@ -200,3 +200,27 @@ test_that("overdrive", {
   expect_tensor(overdrive)
   expect_tensor_shape(overdrive, samp$shape)
 })
+
+test_that("generate_wave_table", {
+  wave_table <- functional_generate_wave_table(
+    wave_type = 'TRIANGLE',
+    data_type = 'INT',
+    table_size = 800,
+    min = 1.0,
+    max = 1.0,
+    phase = pi / 2,
+    device = torch::torch_device("cpu")
+  )
+  expect_tensor(wave_table)
+  expect_tensor_shape(wave_table, 800)
+})
+
+
+
+
+test_that("phaser", {
+  phaser <- functional_phaser(samp, sample_rate = 400)
+  expect_tensor(phaser)
+  expect_tensor_shape(phaser, samp$shape)
+})
+
