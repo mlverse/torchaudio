@@ -1325,3 +1325,203 @@ functional_generate_wave_table <- function(
 
   return(d)
 }
+
+#' Flanger Effect
+#'
+#' Apply a flanger effect to the audio. Similar to SoX implementation.
+#'
+#' @param waveform  (Tensor): audio waveform of dimension of `(..., channel, time)` .
+#'            Max 4 channels allowed
+#' @param sample_rate  (int): sampling rate of the waveform, e.g. 44100 (Hz)
+#' @param delay  (float): desired delay in milliseconds(ms).
+#'            Allowed range of values are 0 to 30
+#' @param depth  (float): desired delay depth in milliseconds(ms).
+#'            Allowed range of values are 0 to 10
+#' @param regen  (float): desired regen(feeback gain) in dB.
+#'            Allowed range of values are -95 to 95
+#' @param width  (float):  desired width(delay gain) in dB.
+#'            Allowed range of values are 0 to 100
+#' @param speed  (float):  modulation speed in Hz.
+#'            Allowed range of values are 0.1 to 10
+#' @param phase  (float):  percentage phase-shift for multi-channel.
+#'            Allowed range of values are 0 to 100
+#' @param modulation  (str):  Use either "sinusoidal" or "triangular" modulation. (Default: ``sinusoidal``)
+#' @param interpolation  (str): Use either "linear" or "quadratic" for delay-line interpolation. (Default: ``linear``)
+#'
+#' @return `tensor`: Waveform of dimension of `(..., channel, time)`
+#'
+#' @references
+#' - [http://sox.sourceforge.net/sox.html]()
+#'- Scott Lehman, Effects Explained, [https://web.archive.org/web/20051125072557/http://www.harmony-central.com/Effects/effects-explained.html]()
+#'
+#' @export
+functional_flanger <- function(
+  waveform,
+  sample_rate,
+  delay = 0.0,
+  depth = 2.0,
+  regen = 0.0,
+  width = 71.0,
+  speed = 0.5,
+  phase = 25.0,
+  modulation = "sinusoidal",
+  interpolation = "linear"
+) {
+
+  if(!modulation %in% c("sinusoidal", "triangular")) {
+    value_error("Only 'sinusoidal' or 'triangular' modulation allowed")
+  }
+
+  if(!interpolation %in% c("linear", "quadratic")) {
+    value_error("Only 'linear' or 'quadratic' interpolation allowed")
+  }
+
+  actual_shape = waveform$shape
+  device = waveform$device
+  dtype = waveform$dtype
+
+  las = length(actual_shape)
+  if(actual_shape[las-1] > 4) {
+    value_error("Max 4 channels allowed")
+  }
+
+  # convert to 3D (batch, channels, time)
+  waveform = waveform$view(c(-1, actual_shape[las-1], actual_shape[las]))
+
+  # Scaling
+  feedback_gain = regen / 100
+  delay_gain = width / 100
+  channel_phase = phase / 100
+  delay_min = delay / 1000
+  delay_depth = depth / 1000
+
+  lws = length(waveform$shape)
+  n_channels = waveform$shape[lws-1]
+
+  if(modulation == "sinusoidal") {
+    wave_type = "SINE"
+  } else {
+    wave_type = "TRIANGLE"
+  }
+
+  # Balance output:
+  in_gain = 1. / (1 + delay_gain)
+  delay_gain = delay_gain / (1 + delay_gain)
+
+  # Balance feedback loop:
+  delay_gain = delay_gain * (1 - abs(feedback_gain))
+
+  delay_buf_length = as.integer((delay_min + delay_depth) * sample_rate + 0.5)
+  delay_buf_length = as.integer(delay_buf_length + 2)
+
+  delay_bufs = torch::torch_zeros(waveform$shape[1], n_channels, delay_buf_length, dtype=dtype, device=device)
+  delay_last = torch::torch_zeros(waveform$shape[1], n_channels, dtype=dtype, device=device)
+
+  lfo_length = as.integer(sample_rate / speed)
+
+  table_min = floor(delay_min * sample_rate + 0.5)
+  table_max = delay_buf_length - 2.
+
+  lfo = functional_generate_wave_table(
+    wave_type = wave_type,
+    data_type = "FLOAT",
+    table_size = lfo_length,
+    min = as.numeric(table_min),
+    max = as.numeric(table_max),
+    phase = 3 * pi / 2,
+    device = device
+  )
+
+  output_waveform = torch::torch_zeros_like(waveform, dtype=dtype, device=device)
+
+  delay_buf_pos = 0L
+  lfo_pos = 0L
+  channel_idxs = torch::torch_arange(0, n_channels, device=device)$to(torch::torch_long())
+
+  for(i in seq.int(waveform$shape[lws])) {
+    delay_buf_pos = (delay_buf_pos + delay_buf_length - 1L) %% delay_buf_length
+
+    cur_channel_phase = (channel_idxs * lfo_length * channel_phase + .5)$to(torch::torch_long())
+    delay_tensor = lfo[((lfo_pos + cur_channel_phase) %% lfo_length)$to(torch::torch_long())]
+    frac_delay = torch::torch_frac(delay_tensor)
+    delay_tensor = torch::torch_floor(delay_tensor)
+
+    int_delay = delay_tensor$to(torch::torch_long())
+
+    temp = waveform[ ,  , i]
+
+    delay_bufs[ ,  , delay_buf_pos+1] = temp + delay_last * feedback_gain
+
+    delayed_0 = delay_bufs[ , channel_idxs, (delay_buf_pos + int_delay) %% delay_buf_length]
+
+    int_delay = int_delay + 1L
+
+    delayed_1 = delay_bufs[ , channel_idxs, (delay_buf_pos + int_delay) %% delay_buf_length]
+
+    int_delay = int_delay + 1
+
+    if(interpolation == "linear") {
+      delayed = delayed_0 + (delayed_1 - delayed_0) * frac_delay
+    } else {
+      delayed_2 = delay_bufs[ , channel_idxs, (delay_buf_pos + int_delay) %% delay_buf_length]
+
+      int_delay = int_delay + 1
+
+      delayed_2 = delayed_2 - delayed_0
+      delayed_1 = delayed_1 - delayed_0
+      a = delayed_2 * .5 - delayed_1
+      b = delayed_1 * 2 - delayed_2 * .5
+
+      delayed = delayed_0 + (a * frac_delay + b) * frac_delay
+    }
+
+    delay_last = delayed
+    output_waveform[ ,  , i] = waveform[ ,  , i] * in_gain + delayed * delay_gain
+
+    lfo_pos = (lfo_pos + 1) %% lfo_length
+  }
+
+  return(output_waveform$clamp(min=-1.0, max=1.0)$view(actual_shape))
+}
+#' Mask Along Axis
+#'
+#' Apply a mask along ``axis``. Mask will be applied from indices ``[v_0, v_0 + v)``, where
+#' ``v`` is sampled from ``uniform (0, mask_param)``, and ``v_0`` from ``uniform(0, max_v - v)``.
+#'
+#' @param specgrams  (Tensor): Real spectrograms (batch, channel, freq, time)
+#' @param mask_param  (int): Number of columns to be masked will be uniformly sampled from [0, mask_param]
+#' @param mask_value  (float): Value to assign to the masked columns
+#' @param axis  (int): Axis to apply masking on (3 -> frequency, 4 -> time)
+#'
+#' @return `tensor`: Masked spectrograms of dimensions (batch, channel, freq, time)
+#'
+#' @export
+functional_mask_along_axis_iid <- function(
+  specgrams,
+  mask_param,
+  mask_value,
+  axis
+) {
+
+  if(axis != 3 & axis != 4) {
+    value_error("Only Frequency (axis 3) and Time (axis 4) masking are supported")
+  }
+
+  device = specgrams$device
+  dtype = specgrams$dtype
+
+  value = torch::torch_rand(specgrams$shape[1:2], device=device, dtype=dtype) * mask_param
+  min_value = torch::torch_rand(specgrams$shape[1:2], device=device, dtype=dtype) * (specgrams$size(axis) - value)
+
+  # Create broadcastable mask
+  mask_start = min_value[.., NULL, NULL]
+  mask_end = (min_value + value)[.., NULL, NULL]
+  mask = torch::torch_arange(0, specgrams$size(axis), device=device, dtype=dtype)
+
+  # Per batch example masking
+  specgrams = specgrams$transpose(axis, -1)
+  specgrams$masked_fill_((mask >= mask_start) & (mask < mask_end), mask_value)
+  specgrams = specgrams$transpose(axis, -1)
+
+  return(specgrams)
+}

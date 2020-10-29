@@ -8,8 +8,10 @@ def_pytorch_to_r_function <- function(script) {
   # signature
   signature <- stringr::str_extract(script, "[^)]+[)]")
   script <- stringr::str_remove(script, stringr::fixed(signature)) %>%
-    stringr::str_remove("-> [^:]+:")
-  documentation <- stringr::str_extract(script, 'r\"\"\"[^"]+\"\"\"')
+    stringr::str_remove("-> [^:]+:") %>%
+    stringr::str_replace_all(stringr::fixed('"""'), "@@@@@@")
+  documentation <- stringr::str_extract(script, '@@@@@[^@]+@@@@@')
+
   body <- stringr::str_remove(script, stringr::fixed(documentation))
 
 
@@ -39,8 +41,7 @@ def_pytorch_to_r_function <- function(script) {
   # documentation prep
   documentation_preped <- documentation %>%
     stringr::str_replace_all("\n|^", "\n#'") %>%
-    stringr::str_replace_all('r?\"\"\"', " ") %>%
-    stringr::str_replace_all('r?\"\"\"', " ") %>%
+    stringr::str_replace_all('r?@@@@@', " ") %>%
     stringr::str_replace_all("#' *Returns:[^a-zA-Z]*", "#' @return ") %>%
     stringr::str_c("\n#' @export") %>%
     stringr::str_replace_all("(#'[:blank:]+)([^@(\n]+)[(]", "#' @param \\2 (") %>%

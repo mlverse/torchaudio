@@ -215,12 +215,27 @@ test_that("generate_wave_table", {
   expect_tensor_shape(wave_table, 800)
 })
 
-
-
-
 test_that("phaser", {
   phaser <- functional_phaser(samp, sample_rate = 400)
   expect_tensor(phaser)
   expect_tensor_shape(phaser, samp$shape)
 })
+
+test_that("flanger", {
+  flanger <- functional_flanger(samp, sample_rate = 400)
+  expect_tensor(flanger)
+  expect_tensor_shape(flanger, samp$shape)
+})
+
+test_that("mask_along_axis_iid", {
+  mask_along_axis_iid <- functional_mask_along_axis_iid(
+    specgrams = torch::torch_rand(3, 2, 4, 5),
+    mask_param = 3L,
+    mask_value = 99,
+    axis = 3
+  )
+  expect_tensor(mask_along_axis_iid)
+  expect_tensor_shape(mask_along_axis_iid, c(3, 2, 4, 5))
+})
+
 
