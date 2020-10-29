@@ -1627,3 +1627,27 @@ functional_compute_deltas <- function(
 
   return(output)
 }
+
+#' Gain
+#'
+#' Apply amplification or attenuation to the whole waveform.
+#'
+#' @param waveform  (Tensor): Tensor of audio of dimension (..., time).
+#' @param gain_db  (float, optional) Gain adjustment in decibels (dB) (Default: ``1.0``).
+#'
+#' @return `tensor`: the whole waveform amplified by gain_db.
+#'
+#' @export
+functional_gain <- function(
+  waveform,
+  gain_db = 1.0
+) {
+
+  if((gain_db == 0)) {
+    return(waveform)
+  }
+
+  ratio = 10 ** (gain_db / 20)
+
+  return(waveform * ratio)
+}

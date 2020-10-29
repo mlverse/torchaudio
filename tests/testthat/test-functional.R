@@ -256,3 +256,9 @@ test_that("compute_deltas", {
   expect_tensor(compute_deltas)
   expect_tensor_shape(compute_deltas, c(1, 4, 10))
 })
+
+test_that("gain", {
+  gain <- functional_gain(samp)
+  expect_tensor(gain)
+  expect_tensor_shape(gain, samp$size())
+})
