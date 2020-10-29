@@ -331,7 +331,7 @@ transform_mfcc <- torch::nn_module(
 
     # (channel, n_mels, time).tranpose(...) dot (n_mels, n_mfcc)
     # -> (channel, time, n_mfcc).tranpose(...)
-    browser()
+
     mfcc = torch::torch_matmul(mel_specgram$transpose(3, 4), self$dct_mat)$transpose(3, 4)
 
     # unpack batch

@@ -1864,12 +1864,12 @@ functional_combine_max <- function(
   b,
   thresh = 0.99
 ) {
-    mask = (a[1] > thresh * b[1])
-    values = mask * a[1] + !mask * b[1]
-    indices = mask * a[2] + !mask * b[2]
+  mask = (a[1] > thresh * b[1])
+  values = mask * a[1] + !mask * b[1]
+  indices = mask * a[2] + !mask * b[2]
 
-    not_implemented_error("Not implemented yet.")
-    return(values, indices)
+  not_implemented_error("Not implemented yet.")
+  return(values, indices)
 }
 
 #' Median Smoothing
@@ -1897,4 +1897,116 @@ functional_median_smoothing <- function(
 
   values = torch::torch_median(roll, -1)[[1]]
   return(values)
+}
+
+#' sliding-window Cepstral Mean Normalization
+#'
+#' Apply sliding-window cepstral mean  (and optionally variance) normalization per utterance.
+#'
+#' @param waveform  (Tensor): Tensor of audio of dimension (..., freq, time)
+#' @param cmn_window  (int, optional): Window in frames for running average CMN computation (int, default = 600)
+#' @param min_cmn_window  (int, optional):  Minimum CMN window used at start of decoding (adds latency only at start).
+#'  Only applicable if center == ``FALSE``, ignored if center==``TRUE``  (int, default = 100)
+#' @param center  (bool, optional): If ``TRUE``, use a window centered on the current frame
+#'  (to the extent possible, modulo end effects). If ``FALSE``, window is to the left. (bool, default = ``FALSE``)
+#' @param norm_vars  (bool, optional): If ``TRUE``, normalize variance to one. (bool, default = ``FALSE``)
+#'
+#' @return `tensor`: Tensor of freq of dimension (..., frame)
+#'
+#' @export
+functional_sliding_window_cmn <- function(
+  waveform,
+  cmn_window = 600,
+  min_cmn_window = 100,
+  center = TRUE,
+  norm_vars = TRUE
+) {
+
+  input_shape = waveform$shape
+  lis = length(input_shape)
+  num_frames = input_shape[lis-1]
+  num_feats = input_shape[lis]
+  waveform = waveform$view(c(-1, num_frames, num_feats))
+  num_channels = waveform$shape[1]
+
+  dtype = waveform$dtype
+  device = waveform$device
+  last_window_start = last_window_end = -1
+  cur_sum = torch::torch_zeros(num_channels, num_feats, dtype=dtype, device=device)
+  cur_sumsq = torch::torch_zeros(num_channels, num_feats, dtype=dtype, device=device)
+  cmn_waveform = torch::torch_zeros(num_channels, num_frames, num_feats, dtype=dtype, device=device)
+  for(t in seq.int(num_frames)) {
+    window_start = 0
+    window_end = 0
+
+    if(center) {
+      window_start = (t - cmn_window) %/% 2
+      window_end = window_start + cmn_window
+    } else {
+      window_start = t - cmn_window
+      window_end = t + 1
+    }
+
+    if(window_start < 0) {
+      window_end = window_end - window_start
+      window_start = 0
+    }
+
+    if(!center) {
+      if(window_end > t) {
+        window_end = max(t + 1, min_cmn_window)
+      }
+    }
+
+    if(window_end > num_frames) {
+      window_start = window_start - (window_end - num_frames)
+      window_end = num_frames
+      if(window_start < 0) {
+        window_start = 0
+      }
+    }
+    if(last_window_start == -1) {
+      input_part = waveform[ , (window_start + 1): (window_end - window_start), ]
+      cur_sum = cur_sum + torch::torch_sum(input_part, 2)
+      if(norm_vars) {
+        cur_sumsq = cur_sumsq + torch::torch_cumsum(input_part ** 2, 2)[, -1, ]
+      }
+    } else {
+      if(window_start > last_window_start) {
+        frame_to_remove = waveform[ , last_window_start, ]
+        cur_sum = cur_sum - frame_to_remove
+        if(norm_vars) {
+          cur_sumsq = cur_sumsq - (frame_to_remove ** 2)
+        }
+      }
+
+      if(window_end > last_window_end) {
+        frame_to_add = waveform[ , last_window_end, ]
+        cur_sum = cur_sum + frame_to_add
+        if(norm_vars) {
+          cur_sumsq = cur_sumsq + (frame_to_add ** 2)
+        }
+      }
+    }
+    window_frames = window_end - window_start
+    last_window_start = window_start
+    last_window_end = window_end
+    cmn_waveform[ , t, ] = waveform[ , t, ] - cur_sum / window_frames
+    if(norm_vars) {
+      if(window_frames == 1) {
+        cmn_waveform[ , t, ] = torch::torch_zeros(num_channels, num_feats, dtype=dtype, device=device)
+      } else {
+        variance = cur_sumsq
+        variance = variance / window_frames
+        variance = variance - ((cur_sum ** 2) / (window_frames ** 2))
+        variance = torch::torch_pow(variance, -0.5)
+        cmn_waveform[ , t, ] = cmn_waveform[ , t, ] * variance
+      }
+    }
+  }
+  cmn_waveform = cmn_waveform$view(c(input_shape[-((lis-1):lis)], num_frames, num_feats))
+  if(length(input_shape) == 2) {
+    cmn_waveform = cmn_waveform$squeeze(1)
+  }
+  return(cmn_waveform)
 }

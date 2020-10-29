@@ -315,9 +315,33 @@ test_that("functional_combine_max",{
 })
 
 test_that("median_smoothing", {
-  median_smoothing <- functional_median_smoothing(samp_1d, 3)
+  w = 3
+  median_smoothing <- functional_median_smoothing(samp_1d, w)
   expect_tensor(median_smoothing)
-  expect_tensor_shape(median_smoothing, samp_1d$size() - (3%/%2))
+  expect_tensor_shape(median_smoothing, samp_1d$size() - (w%/%2))
 })
+
+test_that("detect_pitch_frequency",{
+  # functional_detect_pitch_frequency
+  stop("(TO DO) waiting for _compute_nccf")
+})
+
+test_that("functional_sliding_window_cmn",{
+  # functional_detect_pitch_frequency
+  stop("(TO DO) waiting for _compute_nccf")
+})
+
+test_that("sliding_window_cmn", {
+  sliding_window_cmn <- functional_sliding_window_cmn(
+    waveform = torch::torch_arange(0, 15)$reshape(c(3, 5)),
+    cmn_window = 600,
+    min_cmn_window = 100,
+    center = TRUE,
+    norm_vars = TRUE
+  )
+  expect_tensor(sliding_window_cmn)
+  expect_tensor_shape(sliding_window_cmn, samp$size())
+})
+
 
 
