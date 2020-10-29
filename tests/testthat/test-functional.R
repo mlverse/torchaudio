@@ -313,3 +313,11 @@ test_that("functional_combine_max",{
   # functional_combine_max
   stop("TO DO")
 })
+
+test_that("median_smoothing", {
+  median_smoothing <- functional_median_smoothing(samp_1d, 3)
+  expect_tensor(median_smoothing)
+  expect_tensor_shape(median_smoothing, samp_1d$size() - (3%/%2))
+})
+
+

@@ -1871,3 +1871,30 @@ functional_combine_max <- function(
     not_implemented_error("Not implemented yet.")
     return(values, indices)
 }
+
+#' Median Smoothing
+#'
+#' Apply median smoothing to the 1D tensor over the given window.
+#'
+#' @param indices (Tensor)
+#' @param win_length (int)
+#'
+#' @export
+functional_median_smoothing <- function(
+  indices,
+  win_length
+) {
+  # Centered windowed
+  pad_length = (win_length - 1) %/% 2
+
+  # "replicate" padding in any dimension
+  indices = torch::nnf_pad(
+    indices, c(pad_length, 0), mode="constant", value=0.
+  )
+
+  indices[.., 1:pad_length] = torch::torch_cat(replicate(pad_length, indices[.., pad_length + 1]$unsqueeze(-1)), dim=-1)
+  roll = indices$unfold(-1, win_length, 1)
+
+  values = torch::torch_median(roll, -1)[[1]]
+  return(values)
+}
