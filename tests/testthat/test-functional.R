@@ -326,11 +326,6 @@ test_that("detect_pitch_frequency",{
   stop("(TO DO) waiting for _compute_nccf")
 })
 
-test_that("functional_sliding_window_cmn",{
-  # functional_detect_pitch_frequency
-  stop("(TO DO) waiting for _compute_nccf")
-})
-
 test_that("sliding_window_cmn", {
   sliding_window_cmn <- functional_sliding_window_cmn(
     waveform = torch::torch_arange(0, 15)$reshape(c(3, 5)),
