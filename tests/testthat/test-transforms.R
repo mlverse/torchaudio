@@ -1,16 +1,23 @@
 sample_mp3 <- tuneR::readMP3(system.file("sample_audio_1.mp3", package = "torchaudio"))
+sample_torch <- torch::torch_tensor(sample_mp3@left, dtype = torch::torch_float())
+
+sample_torch2 <- torch::torch_stack(list(sample_torch, sample_torch))
 
 test_that("transform_spectrogram", {
   samples = length(sample_mp3@left)
-  expect_no_error(spec <- transform_spectrogram()(sample_mp3@left))
+  expect_no_error(spec <- transform_spectrogram()(sample_torch))
   expect_tensor(spec)
-  expect_equal(dim(spec)[1], 400 %/% 2 + 1)
+  expect_equal(dim(spec), c(400 %/% 2 + 1, 1709))
+
+  expect_no_error(spec <- transform_spectrogram()(sample_torch2))
+  expect_tensor(spec)
+  expect_equal(dim(spec), c(2, 400 %/% 2 + 1, 1709))
 })
 
 test_that("transform_mel_scale", {
   n_fft = 400
-  samples = length(sample_mp3@left)
-  expect_no_error(spec <- functional_spectrogram(sample_mp3@left, n_fft = n_fft))
+  samples = length(sample_torch)
+  expect_no_error(spec <- functional_spectrogram(sample_torch, n_fft = n_fft))
 
   ms = transform_mel_scale()(spec)
   expect_tensor(ms)
