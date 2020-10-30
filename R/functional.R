@@ -688,8 +688,8 @@ functional_allpass_biquad <- function(
 #' @param sample_rate  (int): sampling rate of the waveform, e.g. 44100 (Hz)
 #' @param central_freq  (float): central frequency (in Hz)
 #' @param Q  (float, optional): [https://en.wikipedia.org/wiki/Q_factor]() (Default: ``0.707``)
-#' @param const_skirt_gain  (bool, optional) : If ``FALSE``, uses a constant skirt gain (peak gain = Q).
-#' @param If ``TRUE``, uses a constant 0dB peak gain.  (Default: ``TRUE``)
+#' @param const_skirt_gain  (bool, optional) : If ``TRUE``, uses a constant skirt gain (peak gain = Q).
+#'   If ``FALSE``, uses a constant 0dB peak gain.  (Default: ``FALSE``)
 #'
 #' @return Tensor: Waveform of dimension of `(..., time)`
 #'
@@ -796,9 +796,9 @@ functional_equalizer_biquad <- function(
 #' @param sample_rate  (int): sampling rate of the waveform, e.g. 44100 (Hz)
 #' @param central_freq  (float): central frequency (in Hz)
 #' @param Q  (float, optional): https://en.wikipedia.org/wiki/Q_factor (Default: ``0.707``).
-#' @param noise  (bool, optional) : If ``FALSE``, uses the alternate mode for un-pitched audio
-#' (e.g. percussion). If ``TRUE``, uses mode oriented to pitched audio, i.e. voice, singing,
-#' or instrumental music  (Default: ``TRUE``).
+#' @param noise  (bool, optional) : If ``TRUE``, uses the alternate mode for un-pitched audio
+#' (e.g. percussion). If ``FALSE``, uses mode oriented to pitched audio, i.e. voice, singing,
+#' or instrumental music  (Default: ``FALSE``).
 #'
 #' @return `tensor`: Waveform of dimension of `(..., time)`
 #'
@@ -812,7 +812,7 @@ functional_band_biquad <- function(
   sample_rate,
   central_freq,
   Q = 0.707,
-  noise = TRUE
+  noise = FALSE
 ) {
 
   w0 = 2 * pi * central_freq / sample_rate
@@ -1192,9 +1192,9 @@ functional_overdrive <- function(
 #' @param decay  (float):  desired decay relative to gain-in. Allowed range of values are 0 to 0.99
 #' @param mod_speed  (float):  modulation speed in Hz.
 #'  Allowed range of values are 0.1 to 2
-#' @param sinusoidal  (bool):  If ``FALSE``, uses sinusoidal modulation (preferable for multiple instruments).
-#'  If ``TRUE``, uses triangular modulation  (gives single instruments a sharper phasing effect)
-#' (Default: ``FALSE``)
+#' @param sinusoidal  (bool):  If ``TRUE``, uses sinusoidal modulation (preferable for multiple instruments).
+#'  If ``FALSE``, uses triangular modulation  (gives single instruments a sharper phasing effect)
+#' (Default: ``TRUE``)
 #'
 #' @return `tensor`: Waveform of dimension of `(..., time)`
 #'
@@ -1211,7 +1211,7 @@ functional_phaser <- function(
   delay_ms = 3.0,
   decay = 0.4,
   mod_speed = 0.5,
-  sinusoidal = FALSE
+  sinusoidal = TRUE
 ) {
   actual_shape = waveform$shape
   device = waveform$device
@@ -1776,7 +1776,7 @@ functional_apply_probability_distribution <- function(
 #'                    Rectangular Probability Density Function - `RPDF`
 #'                    Gaussian Probability Density Function - `GPDF`
 #' @param noise_shaping  (bool, optional): a filtering process that shapes the spectral
-#'  energy of quantisation error  (Default: ``TRUE``)
+#'  energy of quantisation error  (Default: ``FALSE``)
 #'
 #' @return `tensor`: waveform dithered
 #'
@@ -1784,7 +1784,7 @@ functional_apply_probability_distribution <- function(
 functional_dither <- function(
   waveform,
   density_function = "TPDF",
-  noise_shaping = TRUE
+  noise_shaping = FALSE
 ) {
 
   dithered = functional_apply_probability_distribution(waveform, density_function=density_function)
@@ -1994,8 +1994,8 @@ functional_sliding_window_cmn <- function(
   waveform,
   cmn_window = 600,
   min_cmn_window = 100,
-  center = TRUE,
-  norm_vars = TRUE
+  center = FALSE,
+  norm_vars = FALSE
 ) {
 
   input_shape = waveform$shape
