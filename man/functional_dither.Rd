@@ -4,7 +4,7 @@
 \alias{functional_dither}
 \title{Dither}
 \usage{
-functional_dither(waveform, density_function = "TPDF", noise_shaping = TRUE)
+functional_dither(waveform, density_function = "TPDF", noise_shaping = FALSE)
 }
 \arguments{
 \item{waveform}{(Tensor): Tensor of audio of dimension (..., time)}
@@ -15,7 +15,7 @@ Rectangular Probability Density Function - \code{RPDF}
 Gaussian Probability Density Function - \code{GPDF}}
 
 \item{noise_shaping}{(bool, optional): a filtering process that shapes the spectral
-energy of quantisation error  (Default: \code{TRUE})}
+energy of quantisation error  (Default: \code{FALSE})}
 }
 \value{
 \code{tensor}: waveform dithered

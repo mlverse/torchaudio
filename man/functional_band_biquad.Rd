@@ -9,7 +9,7 @@ functional_band_biquad(
   sample_rate,
   central_freq,
   Q = 0.707,
-  noise = TRUE
+  noise = FALSE
 )
 }
 \arguments{
@@ -21,9 +21,9 @@ functional_band_biquad(
 
 \item{Q}{(float, optional): https://en.wikipedia.org/wiki/Q_factor (Default: \code{0.707}).}
 
-\item{noise}{(bool, optional) : If \code{FALSE}, uses the alternate mode for un-pitched audio
-(e.g. percussion). If \code{TRUE}, uses mode oriented to pitched audio, i.e. voice, singing,
-or instrumental music  (Default: \code{TRUE}).}
+\item{noise}{(bool, optional) : If \code{TRUE}, uses the alternate mode for un-pitched audio
+(e.g. percussion). If \code{FALSE}, uses mode oriented to pitched audio, i.e. voice, singing,
+or instrumental music  (Default: \code{FALSE}).}
 }
 \value{
 \code{tensor}: Waveform of dimension of \verb{(..., time)}

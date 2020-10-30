@@ -12,7 +12,7 @@ functional_phaser(
   delay_ms = 3,
   decay = 0.4,
   mod_speed = 0.5,
-  sinusoidal = FALSE
+  sinusoidal = TRUE
 )
 }
 \arguments{
@@ -34,9 +34,9 @@ Allowed range of values are 0 to 5.0}
 \item{mod_speed}{(float):  modulation speed in Hz.
 Allowed range of values are 0.1 to 2}
 
-\item{sinusoidal}{(bool):  If \code{FALSE}, uses sinusoidal modulation (preferable for multiple instruments).
-If \code{TRUE}, uses triangular modulation  (gives single instruments a sharper phasing effect)
-(Default: \code{FALSE})}
+\item{sinusoidal}{(bool):  If \code{TRUE}, uses sinusoidal modulation (preferable for multiple instruments).
+If \code{FALSE}, uses triangular modulation  (gives single instruments a sharper phasing effect)
+(Default: \code{TRUE})}
 }
 \value{
 \code{tensor}: Waveform of dimension of \verb{(..., time)}
