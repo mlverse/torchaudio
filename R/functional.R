@@ -229,7 +229,7 @@ functional_db_to_amplitude <- function(x, ref = 1.0, power = 1.0) {
 #' @param n_mels (int, optional): Number of mel filterbanks. (Default: ``128``)
 #' @param sample_rate (int, optional): Sample rate of audio signal. (Default: ``16000``)
 #' @param f_min (float, optional): Minimum frequency. (Default: ``0.``)
-#' @param f_max (float or NULL, optional): Maximum frequency. (Default: ``sample_rate // 2``)
+#' @param f_max (float or NULL, optional): Maximum frequency. (Default: ``sample_rate %/% 2``)
 #' @param n_stft (int, optional): Number of bins in STFT. Calculated from first input
 #' if NULL is given.  See ``n_fft`` in :class:`Spectrogram`. (Default: ``NULL``)
 #'
@@ -429,7 +429,7 @@ functional_griffinlim <- function(
   # # And initialize the previous iterate to 0
   # rebuilt = torch::torch_tensor(0.)
   #
-  # for _ in range(n_iter):
+  # for . in range(n_iter):
   #   # Store the previous iterate
   #   tprev = rebuilt
   #
@@ -2009,4 +2009,310 @@ functional_sliding_window_cmn <- function(
     cmn_waveform = cmn_waveform$squeeze(1)
   }
   return(cmn_waveform)
+}
+
+
+
+functional_measure <- function(
+  measure_len_ws,
+  samples,
+  spectrum,
+  noise_spectrum,
+  spectrum_window,
+  spectrum_start,
+  spectrum_end,
+  cepstrum_window,
+  cepstrum_start,
+  cepstrum_end,
+  noise_reduction_amount,
+  measure_smooth_time_mult,
+  noise_up_time_mult,
+  noise_down_time_mult,
+  index_ns,
+  boot_count
+) {
+
+  lss = length(spectrum$size())
+  lns = length(noise_spectrum$size())
+  if(spectrum$size()[lss] != noise_spectrum$size()[lns]) value_error("spectrum$size()[-1] != noise_spectrum$size()[-1]")
+
+  lsas = length(samples$size())
+  samplesLen_ns = samples$size()[lsas]
+  dft_len_ws = spectrum$size()[lss]
+
+  dftBuf = torch::torch_zeros(dft_len_ws)
+
+  .index_ns = torch::torch_tensor(c(index_ns, (index_ns + seq(1, measure_len_ws-1)) %% samplesLen_ns ))$to(torch::torch_long())
+  dftBuf[1:measure_len_ws] = samples[.index_ns] * spectrum_window[1:measure_len_ws]
+
+  # memset(c->dftBuf + i, 0, (p->dft_len_ws - i) * sizeof(*c->dftBuf));
+  dftBuf[measure_len_ws:(dft_len_ws-1)]$zero_()
+
+  # lsx_safe_rdft((int)p->dft_len_ws, 1, c->dftBuf);
+  .dftBuf = torch::torch_rfft(dftBuf, 1)
+
+  # memset(c->dftBuf, 0, p->spectrum_start * sizeof(*c->dftBuf));
+  .dftBuf[1:spectrum_start]$zero_()
+
+  mult = if(boot_count >= 0) boot_count / (1. + boot_count) else measure_smooth_time_mult
+
+  spectrum_end_minus_1 = spectrum_end - 1
+  .d = functional_complex_norm(.dftBuf[spectrum_start:spectrum_end_minus_1])
+  spectrum[spectrum_start:spectrum_end_minus_1]$mul_(mult)$add_(.d * (1 - mult))
+  .d = spectrum[spectrum_start:spectrum_end_minus_1] ** 2
+
+  .zeros = torch::torch_zeros(spectrum_end - spectrum_start )
+
+  .mult = if(boot_count >= 0) {
+    .zeros
+  } else {
+    torch::torch_where(
+      .d > noise_spectrum[spectrum_start:spectrum_end_minus_1],
+      torch::torch_tensor(noise_up_time_mult), # if
+      torch::torch_tensor(noise_down_time_mult) # else
+    )
+  }
+
+  noise_spectrum[spectrum_start:spectrum_end_minus_1]$mul_(.mult)$add_(.d * (1 - .mult))
+  .d = torch::torch_sqrt(
+    torch::torch_max(
+      .zeros,
+      other = .d - noise_reduction_amount * noise_spectrum[spectrum_start:spectrum_end_minus_1]
+    )
+  )
+
+  .cepstrum_Buf = torch::torch_zeros(dft_len_ws %/% 2)
+  .cepstrum_Buf[spectrum_start:spectrum_end_minus_1] = .d * cepstrum_window
+  .cepstrum_Buf[spectrum_end:(dft_len_ws %/% 2)]$zero_()
+
+
+  # lsx_safe_rdft((int)p->dft_len_ws >> 1, 1, c->dftBuf);
+  .cepstrum_Buf = torch::torch_rfft(.cepstrum_Buf, 1)
+
+  result = as.numeric(
+    torch::torch_sum(
+      functional_complex_norm(.cepstrum_Buf[cepstrum_start:cepstrum_end], power=2.0)
+    )
+  )
+
+  result = if(result > 0) log(result / (cepstrum_end - cepstrum_start)) else -Inf
+
+  return(max(0, 21 + result))
+}
+
+
+#' Voice Activity Detector.
+#'
+#' Voice Activity Detector. Similar to SoX implementation.
+#'    Attempts to trim silence and quiet background sounds from the ends of recordings of speech.
+#'    The algorithm currently uses a simple cepstral power measurement to detect voice,
+#'    so may be fooled by other things, especially music.
+#'
+#'    The effect can trim only from the front of the audio,
+#'    so in order to trim from the back, the reverse effect must also be used.
+#'
+#' @param waveform  (Tensor): Tensor of audio of dimension `(..., time)`
+#' @param sample_rate  (int): Sample rate of audio signal.
+#' @param trigger_level  (float, optional): The measurement level used to trigger activity detection.
+#'            This may need to be cahnged depending on the noise level, signal level,
+#'     and other characteristics of the input audio.  (Default: 7.0)
+#' @param trigger_time  (float, optional): The time constant (in seconds)
+#'   used to help ignore short bursts of sound.  (Default: 0.25)
+#' @param search_time  (float, optional): The amount of audio (in seconds)
+#'  to search for quieter/shorter bursts of audio to include prior
+#'  to the detected trigger point.  (Default: 1.0)
+#' @param allowed_gap  (float, optional): The allowed gap (in seconds) between
+#'   quiteter/shorter bursts of audio to include prior
+#'  to the detected trigger point.  (Default: 0.25)
+#' @param pre_trigger_time  (float, optional): The amount of audio (in seconds) to preserve
+#'  before the trigger point and any found quieter/shorter bursts.  (Default: 0.0)
+#' @param boot_time  (float, optional) The algorithm (internally) uses adaptive noise
+#'            estimation/reduction in order to detect the start of the wanted audio.
+#'  This option sets the time for the initial noise estimate.  (Default: 0.35)
+#' @param noise_up_time  (float, optional) Time constant used by the adaptive noise estimator
+#'   for when the noise level is increasing.  (Default: 0.1)
+#' @param noise_down_time  (float, optional) Time constant used by the adaptive noise estimator
+#' for when the noise level is decreasing.  (Default: 0.01)
+#' @param noise_reduction_amount  (float, optional) Amount of noise reduction to use in
+#'  the detection algorithm  (e.g. 0, 0.5, ...). (Default: 1.35)
+#' @param measure_freq  (float, optional) Frequency of the algorithm’s
+#'  processing/measurements.  (Default: 20.0)
+#' @param measure_duration:  (float, optional) Measurement duration.
+#'  (Default: Twice the measurement period; i.e. with overlap.)
+#' @param measure_smooth_time  (float, optional) Time constant used to smooth
+#'   spectral measurements.  (Default: 0.4)
+#' @param hp_filter_freq  (float, optional) "Brick-wall" frequency of high-pass filter applied
+#'  at the input to the detector algorithm.  (Default: 50.0)
+#' @param lp_filter_freq  (float, optional) "Brick-wall" frequency of low-pass filter applied
+#'  at the input to the detector algorithm.  (Default: 6000.0)
+#' @param hp_lifter_freq  (float, optional) "Brick-wall" frequency of high-pass lifter used
+#' in the detector algorithm.  (Default: 150.0)
+#' @param lp_lifter_freq  (float, optional) "Brick-wall" frequency of low-pass lifter used
+#'   in the detector algorithm.  (Default: 2000.0)
+#'
+#' @return Tensor: Tensor of audio of dimension (..., time).
+#'
+#' @references
+#' - [http://sox.sourceforge.net/sox.html]()
+#'
+#' @export
+functional_vad <- function(
+  waveform,
+  sample_rate,
+  trigger_level = 7.0,
+  trigger_time = 0.25,
+  search_time = 1.0,
+  allowed_gap = 0.25,
+  pre_trigger_time = 0.0,
+  # Fine-tuning parameters
+  boot_time = .35,
+  noise_up_time = .1,
+  noise_down_time = .01,
+  noise_reduction_amount = 1.35,
+  measure_freq = 20.0,
+  measure_duration = NULL,
+  measure_smooth_time = .4,
+  hp_filter_freq = 50.,
+  lp_filter_freq = 6000.,
+  hp_lifter_freq = 150.,
+  lp_lifter_freq = 2000.
+) {
+
+  measure_duration = if(is.null(measure_duration)) 2.0 / measure_freq else measure_duration
+
+  measure_len_ws = as.integer(sample_rate * measure_duration + .5)
+  measure_len_ns = measure_len_ws
+  # for (dft_len_ws = 16; dft_len_ws < measure_len_ws; dft_len_ws <<= 1);
+  dft_len_ws = 16
+  while (dft_len_ws < measure_len_ws) {
+    dft_len_ws = dft_len_ws * 2
+  }
+
+  measure_period_ns = as.integer(sample_rate / measure_freq + .5)
+  measures_len = ceiling(search_time * measure_freq)
+  search_pre_trigger_len_ns = measures_len * measure_period_ns
+  gap_len = as.integer(allowed_gap * measure_freq + .5)
+
+  fixed_pre_trigger_len_ns = as.integer(pre_trigger_time * sample_rate + .5)
+  samplesLen_ns = fixed_pre_trigger_len_ns + search_pre_trigger_len_ns + measure_len_ns
+
+  # lsx_apply_hann(spectrum_window, (int)measure_len_ws);
+  spectrum_window =  (2.0 / sqrt(measure_len_ws)) * torch::torch_hann_window(measure_len_ws, dtype=torch::torch_float())
+
+  spectrum_start = as.integer(hp_filter_freq / sample_rate * dft_len_ws + .5)
+  spectrum_start = max(spectrum_start, 1L)
+  spectrum_end = as.integer(lp_filter_freq / sample_rate * dft_len_ws + .5)
+  spectrum_end = min(spectrum_end, dft_len_ws %/% 2)
+
+  cepstrum_window =  (2.0 / sqrt(spectrum_end - spectrum_start)) * torch::torch_hann_window(spectrum_end - spectrum_start, dtype=torch::torch_float())
+
+  cepstrum_start = ceiling(sample_rate * .5 / lp_lifter_freq)
+  cepstrum_end = floor(sample_rate * .5 / hp_lifter_freq)
+  cepstrum_end = min(cepstrum_end, dft_len_ws %/% 4)
+
+  if(cepstrum_end <= cepstrum_start) value_error("cepstrum_end <= cepstrum_start")
+
+  noise_up_time_mult = exp(-1. / (noise_up_time * measure_freq))
+  noise_down_time_mult = exp(-1. / (noise_down_time * measure_freq))
+  measure_smooth_time_mult = exp(-1. / (measure_smooth_time * measure_freq))
+  trigger_meas_time_mult = exp(-1. / (trigger_time * measure_freq))
+
+  boot_count_max = as.integer(boot_time * measure_freq - .5)
+  measure_timer_ns = measure_len_ns
+  boot_count = measures_index = flushedLen_ns = samplesIndex_ns = 0
+
+  # pack batch
+  shape = waveform$size()
+  ls = length(shape)
+  waveform = waveform$view(c(-1, shape[ls]))
+
+  n_channels = waveform$size(1)
+  ilen = waveform$size(2)
+
+  mean_meas = torch::torch_zeros(n_channels)
+  samples = torch::torch_zeros(n_channels, samplesLen_ns)
+  spectrum = torch::torch_zeros(n_channels, dft_len_ws)
+  noise_spectrum = torch::torch_zeros(n_channels, dft_len_ws)
+  measures = torch::torch_zeros(n_channels, measures_len)
+
+  has_triggered = FALSE
+  num_measures_to_flush = 0
+  pos = 0
+
+  while(pos < ilen & !has_triggered) {
+    measure_timer_ns = measure_timer_ns - 1
+    for(i in seq.int(n_channels)) {
+      samples[i, samplesIndex_ns+1] = waveform[i, pos+1]
+      # if((!p->measure_timer_ns)
+      if (measure_timer_ns == 0) {
+        index_ns = (samplesIndex_ns + samplesLen_ns - measure_len_ns) %% samplesLen_ns
+        meas = functional_measure(
+          measure_len_ws = measure_len_ws,
+          samples=samples[i],
+          spectrum=spectrum[i],
+          noise_spectrum=noise_spectrum[i],
+          spectrum_window=spectrum_window,
+          spectrum_start=spectrum_start,
+          spectrum_end=spectrum_end,
+          cepstrum_window=cepstrum_window,
+          cepstrum_start=cepstrum_start,
+          cepstrum_end=cepstrum_end,
+          noise_reduction_amount=noise_reduction_amount,
+          measure_smooth_time_mult=measure_smooth_time_mult,
+          noise_up_time_mult=noise_up_time_mult,
+          noise_down_time_mult=noise_down_time_mult,
+          index_ns=index_ns,
+          boot_count=boot_count)
+        measures[i, measures_index+1] = meas
+        mean_meas[i] = mean_meas[i] * trigger_meas_time_mult + meas * (1. - trigger_meas_time_mult)
+
+        has_triggered = has_triggered | as.logical(mean_meas[i] >= trigger_level)
+        if(has_triggered) {
+          n = measures_len
+          k = measures_index
+          jTrigger = n
+          jZero = n
+          j = 0
+
+          for(j in 0:(n-1)) {
+            if(as.logical(measures[i, k+1] >= trigger_level) & as.logical(j <= jTrigger + gap_len)) {
+              jZero = jTrigger = j
+            } else if(as.logical(measures[i, k+1] == 0) & as.logical(jTrigger >= jZero)) {
+              jZero = j
+            }
+            k = (k + n - 1) %% n
+          }
+
+          j = min(j, jZero)
+          # num_measures_to_flush = range_limit(j, num_measures_to_flush, n);
+          num_measures_to_flush = (min(max(num_measures_to_flush, j), n))
+        } # end if(has_triggered)
+      } # end if (measure_timer_ns == 0))
+    } # end for
+    samplesIndex_ns = samplesIndex_ns + 1
+    pos = pos + 1
+    if(samplesIndex_ns == samplesLen_ns) {
+      samplesIndex_ns = 0
+    }
+
+    if(measure_timer_ns == 0) {
+      measure_timer_ns = measure_period_ns
+      measures_index = measures_index + 1
+      measures_index = measures_index %% measures_len
+      if(boot_count >= 0) {
+        boot_count = if(boot_count == boot_count_max) -1 else boot_count + 1
+      }
+    }
+
+    if(has_triggered) {
+      flushedLen_ns = (measures_len - num_measures_to_flush) * measure_period_ns
+      samplesIndex_ns = (samplesIndex_ns + flushedLen_ns) %% samplesLen_ns
+    }
+
+  } # end while
+
+  res = waveform[ , (pos + 1 - samplesLen_ns + flushedLen_ns):waveform$size(2)]
+  # unpack batch
+  lrs = length(res$shape)
+  return(res$view(c(shape[-ls], res$shape[lrs])))
 }

@@ -314,6 +314,11 @@ test_that("functional_combine_max",{
   stop("TO DO")
 })
 
+test_that("functional_find_max_per_frame",{
+  # functional_combine_max
+  stop("(TO DO) waiting for functional_combine_max")
+})
+
 test_that("median_smoothing", {
   w = 3
   median_smoothing <- functional_median_smoothing(samp_1d, w)
@@ -338,5 +343,9 @@ test_that("sliding_window_cmn", {
   expect_tensor_shape(sliding_window_cmn, samp$size())
 })
 
-
+test_that("vad", {
+  vad4 <- functional_vad(waveform = torch::torch_tensor(matrix(sample_mp3@left[1:2000], 2)), sample_rate = 50000L)
+  expect_tensor(vad4)
+  expect_tensor_shape(vad4, c(2, 1000))
+})
 

@@ -22,7 +22,7 @@ functional_mel_scale(
 
 \item{f_min}{(float, optional): Minimum frequency. (Default: \code{0.})}
 
-\item{f_max}{(float or NULL, optional): Maximum frequency. (Default: \verb{sample_rate // 2})}
+\item{f_max}{(float or NULL, optional): Maximum frequency. (Default: \code{sample_rate \%/\% 2})}
 
 \item{n_stft}{(int, optional): Number of bins in STFT. Calculated from first input
 if NULL is given.  See \code{n_fft} in :class:\code{Spectrogram}. (Default: \code{NULL})}
