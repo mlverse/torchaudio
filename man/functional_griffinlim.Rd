@@ -43,7 +43,7 @@ Values near 1 can lead to faster convergence, but above 1 may not converge.}
 
 \item{length}{(int or NULL): Array length of the expected output.}
 
-\item{rand_init}{(bool): Initializes phase randomly if True, to zero otherwise.}
+\item{rand_init}{(bool): Initializes phase randomly if TRUE, to zero otherwise.}
 }
 \value{
 \code{tensor}: waveform of (..., time), where time equals the \code{length} parameter if given.
