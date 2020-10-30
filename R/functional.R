@@ -33,8 +33,6 @@ functional_spectrogram <- function(
   if(is.null(hop_length)) hop_length <- win_length %/% 2
   if(is.function(window)) window <- window(window_length = win_length, dtype = torch::torch_float(), ...)
   if(pad > 0) waveform <- torch::nnf_pad(waveform, c(pad, pad))
-  if(!is_torch_tensor(waveform)) waveform <- torch::torch_tensor(as.vector(as.array(waveform)), dtype = torch::torch_float())
-
 
   # pack batch
   shape = waveform$size()
@@ -370,7 +368,6 @@ functional_magphase <- function(
 #' Compute waveform from a linear scale magnitude spectrogram using the Griffin-Lim transformation.
 #'  Implementation ported from `librosa`.
 #'
-#'
 #' @param specgram (Tensor): A magnitude-only STFT spectrogram of dimension (..., freq, frames)
 #'      where freq is ``n_fft %/% 2 + 1``.
 #' @param window (Tensor): Window tensor that is applied/multiplied to each frame/window
@@ -385,7 +382,7 @@ functional_magphase <- function(
 #'      Setting this to 0 recovers the original Griffin-Lim method.
 #'      Values near 1 can lead to faster convergence, but above 1 may not converge.
 #' @param length (int or NULL): Array length of the expected output.
-#' @param rand_init (bool): Initializes phase randomly if True, to zero otherwise.
+#' @param rand_init (bool): Initializes phase randomly if TRUE, to zero otherwise.
 #'
 #' @return `tensor`: waveform of (..., time), where time equals the ``length`` parameter if given.
 #'
@@ -443,7 +440,7 @@ functional_griffinlim <- function(
   #
   # # Rebuild the spectrogram
   # rebuilt = torch.stft(inverse, n_fft, hop_length, win_length, window,
-  #                      True, 'reflect', False, True)
+  #                      TRUE, 'reflect', FALSE, TRUE)
   #
   # # Update our phase estimates
   # angles = rebuilt
@@ -1872,6 +1869,42 @@ functional_combine_max <- function(
   return(values, indices)
 }
 
+#' Find Max Per Frame
+#'
+#'  For each frame, take the highest value of NCCF,
+#'  apply centered median smoothing, and convert to frequency.
+#'
+#'  Note: If the max among all the lags is very close
+#'  to the first half of lags, then the latter is taken.
+#'
+#' @export
+functional_find_max_per_frame <- function(
+  nccf,
+  sample_rate,
+  freq_high
+) {
+
+  lag_min = as.integer(ceiling(sample_rate / freq_high))
+
+  # Find near enough max that is smallest
+
+  lns = length(nccf$shape)
+  best = torch::torch_max(nccf[.., (lag_min+1):nccf$shape[lns]], -1)
+
+  half_size = nccf$shape[lns] %/% 2
+  half = torch::torch_max(nccf[.., (lag_min+1):half_size], -1)
+
+  best = functional_combine_max(half, best)
+  indices = best[1]
+
+  # Add back minimal lag
+  indices = indices + lag_min
+  # Add 1 empirical calibration offset
+  indices = indices + 1
+
+  return(indices)
+}
+
 #' Median Smoothing
 #'
 #' Apply median smoothing to the 1D tensor over the given window.
@@ -1897,6 +1930,49 @@ functional_median_smoothing <- function(
 
   values = torch::torch_median(roll, -1)[[1]]
   return(values)
+}
+
+#' Detect Pitch Frequency.
+#'
+#' It is implemented using normalized cross-correlation function and median smoothing.
+#'
+#' @param waveform  (Tensor): Tensor of audio of dimension (..., freq, time)
+#' @param sample_rate  (int): The sample rate of the waveform (Hz)
+#' @param frame_time  (float, optional): Duration of a frame (Default: ``10 ** (-2)``).
+#' @param win_length  (int, optional): The window length for median smoothing (in number of frames) (Default: ``30``).
+#' @param freq_low  (int, optional): Lowest frequency that can be detected (Hz) (Default: ``85``).
+#' @param freq_high  (int, optional): Highest frequency that can be detected (Hz) (Default: ``3400``).
+#'
+#' @return Tensor: Tensor of freq of dimension (..., frame)
+#'
+#' @export
+functional_detect_pitch_frequency <- function(
+  waveform,
+  sample_rate,
+  frame_time = 10 ** (-2),
+  win_length = 30,
+  freq_low = 85,
+  freq_high = 3400
+) {
+
+  # pack batch
+  shape = waveform$size()
+  ls = length(shape)
+  waveform = waveform$reshape(c(-1, shape[ls]))
+
+  nccf = functional_compute_nccf(waveform, sample_rate, frame_time, freq_low)
+  indices = functional_find_max_per_frame(nccf, sample_rate, freq_high)
+  indices = functional_median_smoothing(indices, win_length)
+
+  # Convert indices to frequency
+  EPSILON = 10 ** (-9)
+  freq = sample_rate / (EPSILON + indices$to(torch::torch_float()))
+
+  # unpack batch
+  lfs = length(freq$shape)
+  freq = freq$reshape(c(shape[-ls], freq$shape[lfs]))
+
+  return(freq)
 }
 
 #' sliding-window Cepstral Mean Normalization

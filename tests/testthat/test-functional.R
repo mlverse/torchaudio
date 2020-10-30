@@ -4,7 +4,7 @@ samples = length(sample_mp3@left)
 
 test_that("functional_spectrogram", {
   n_fft = 400
-  expect_no_error(spec <- functional_spectrogram(sample_mp3@left, n_fft = n_fft))
+  expect_no_error(spec <- functional_spectrogram(torch::torch_tensor(sample_mp3@left, dtype = torch::torch_float()), n_fft = n_fft))
   expect_tensor(spec)
   expect_equal(dim(spec)[1], n_fft %/% 2 + 1)
 })
@@ -319,6 +319,12 @@ test_that("functional_find_max_per_frame",{
   stop("(TO DO) waiting for functional_combine_max")
 })
 
+test_that("functional_detect_pitch_frequency",{
+  # functional_detect_pitch_frequency
+  stop("(TO DO) waiting for functional_combine_max")
+})
+
+functional_detect_pitch_frequency
 test_that("median_smoothing", {
   w = 3
   median_smoothing <- functional_median_smoothing(samp_1d, w)
