@@ -1,3 +1,4 @@
+#' @export
 AudioMetaData <- R6::R6Class(
   "AudioMetaData",
   public = list(
