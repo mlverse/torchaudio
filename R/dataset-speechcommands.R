@@ -1,3 +1,4 @@
+#' @keywords internal
 load_speechcommands_item <- function(filepath, path, hash_divider = "_nohash_") {
   if(length(filepath) != 1) value_error("length(filepath) should be 1.")
   relpath = fs::path_rel(filepath, path)
@@ -64,7 +65,7 @@ speechcommand_dataset <- torch::dataset(
     basename = basename(url)
     archive = file.path(root, basename)
 
-    basename = sub(ext_archive, "", basename)
+    basename = sub(ext_archive, "", basename, fixed = TRUE)
     folder_in_archive = file.path(folder_in_archive, basename)
 
     self$.path = file.path(root, folder_in_archive)
@@ -73,12 +74,9 @@ speechcommand_dataset <- torch::dataset(
       if(!fs::is_dir(self$.path)) {
         if(!fs::is_file(archive)) {
           checksum = self$.CHECKSUMS[[url]]
-          utils::download.file(url = url, destfile = archive)
-
-          if (!tools::md5sum(archive) == checksum)
-            runtime_error(glue::glue("MD5 sums are not identical for file: {archive}."))
+          download_url(url = url, destfile = archive, checksum = checksum)
         }
-        utils::untar(tarfile = archive, exdir = self$.path)
+        extract_archive(archive, fs::path_dir(archive))
       }
     }
     walker = list.files(self$.path, pattern = "wav$", full.names = TRUE, recursive = TRUE)
