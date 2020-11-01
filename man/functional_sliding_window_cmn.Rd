@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_sliding_window_cmn}
 \alias{functional_sliding_window_cmn}
-\title{sliding-window Cepstral Mean Normalization}
+\title{sliding-window Cepstral Mean Normalization (functional)}
 \usage{
 functional_sliding_window_cmn(
   waveform,

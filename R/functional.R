@@ -1975,7 +1975,7 @@ functional_detect_pitch_frequency <- function(
   return(freq)
 }
 
-#' sliding-window Cepstral Mean Normalization
+#' sliding-window Cepstral Mean Normalization (functional)
 #'
 #' Apply sliding-window cepstral mean  (and optionally variance) normalization per utterance.
 #'
@@ -2000,6 +2000,8 @@ functional_sliding_window_cmn <- function(
 
   input_shape = waveform$shape
   lis = length(input_shape)
+  if(lis < 2) value_error("waveform should have at least 2 dimensions. Expected Tensor(..., freq, time).")
+
   num_frames = input_shape[lis-1]
   num_feats = input_shape[lis]
   waveform = waveform$view(c(-1, num_frames, num_feats))
