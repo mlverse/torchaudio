@@ -49,3 +49,8 @@ test_that("transform_mfcc", {
   expect_tensor(m)
 })
 
+test_that("transform_vad", {
+  vad = transform_vad(sample_mp3@samp.rate)
+  expect_tensor(vad(sample_torch))
+})
+

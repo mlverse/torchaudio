@@ -341,3 +341,124 @@ transform_mfcc <- torch::nn_module(
     return(mfcc)
   }
 )
+
+
+
+
+#' Voice Activity Detector
+#'
+#' Voice Activity Detector. Similar to SoX implementation.
+#'
+#'    Attempts to trim silence and quiet background sounds from the ends of recordings of speech.
+#'    The algorithm currently uses a simple cepstral power measurement to detect voice,
+#'    so may be fooled by other things, especially music.
+#'
+#'    The effect can trim only from the front of the audio,
+#'    so in order to trim from the back, the reverse effect must also be used.
+#'
+#' @param waveform  (Tensor): Tensor of audio of dimension `(..., time)`
+#' @param sample_rate  (int): Sample rate of audio signal.
+#' @param trigger_level  (float, optional): The measurement level used to trigger activity detection.
+#'            This may need to be cahnged depending on the noise level, signal level,
+#'            and other characteristics of the input audio.  (Default: 7.0)
+#' @param trigger_time  (float, optional): The time constant (in seconds)
+#'            used to help ignore short bursts of sound.  (Default: 0.25)
+#' @param search_time  (float, optional): The amount of audio (in seconds)
+#'            to search for quieter/shorter bursts of audio to include prior
+#'            the detected trigger point.  (Default: 1.0)
+#' @param allowed_gap  (float, optional): The allowed gap (in seconds) between
+#'            quiteter/shorter bursts of audio to include prior
+#'            to the detected trigger point.  (Default: 0.25)
+#' @param pre_trigger_time  (float, optional): The amount of audio (in seconds) to preserve
+#'            before the trigger point and any found quieter/shorter bursts.  (Default: 0.0)
+#' @param boot_time  (float, optional) The algorithm (internally) uses adaptive noise
+#'            estimation/reduction in order to detect the start of the wanted audio.
+#'            This option sets the time for the initial noise estimate.  (Default: 0.35)
+#' @param noise_up_time  (float, optional) Time constant used by the adaptive noise estimator
+#'            for when the noise level is increasing.  (Default: 0.1)
+#' @param noise_down_time  (float, optional) Time constant used by the adaptive noise estimator
+#'            for when the noise level is decreasing.  (Default: 0.01)
+#' @param noise_reduction_amount  (float, optional) Amount of noise reduction to use in
+#'            the detection algorithm  (e.g. 0, 0.5, ...). (Default: 1.35)
+#' @param measure_freq  (float, optional) Frequency of the algorithm’s
+#'            processing/measurements.  (Default: 20.0)
+#' @param measure_duration:  (float, optional) Measurement duration. (Default: Twice the measurement period; i.e. with overlap.)
+#' @param measure_smooth_time  (float, optional) Time constant used to smooth spectral measurements.  (Default: 0.4)
+#' @param hp_filter_freq  (float, optional) "Brick-wall" frequency of high-pass filter applied
+#'            at the input to the detector algorithm.  (Default: 50.0)
+#' @param lp_filter_freq  (float, optional) "Brick-wall" frequency of low-pass filter applied
+#'            at the input to the detector algorithm.  (Default: 6000.0)
+#' @param hp_lifter_freq  (float, optional) "Brick-wall" frequency of high-pass lifter used
+#'            in the detector algorithm.  (Default: 150.0)
+#' @param lp_lifter_freq  (float, optional) "Brick-wall" frequency of low-pass lifter used
+#'            in the detector algorithm.  (Default: 2000.0)
+#'
+#' @references
+#' - [http://sox.sourceforge.net/sox.html]()
+#'
+#' @export
+transform_vad <- torch::nn_module(
+  "Vad",
+  initialize = function(
+    sample_rate,
+    trigger_level = 7.0,
+    trigger_time = 0.25,
+    search_time = 1.0,
+    allowed_gap = 0.25,
+    pre_trigger_time = 0.0,
+    boot_time = .35,
+    noise_up_time = .1,
+    noise_down_time = .01,
+    noise_reduction_amount = 1.35,
+    measure_freq = 20.0,
+    measure_duration = NULL,
+    measure_smooth_time = .4,
+    hp_filter_freq = 50.,
+    lp_filter_freq = 6000.,
+    hp_lifter_freq = 150.,
+    lp_lifter_freq = 2000.
+  ) {
+
+    self$sample_rate = sample_rate
+    self$trigger_level = trigger_level
+    self$trigger_time = trigger_time
+    self$search_time = search_time
+    self$allowed_gap = allowed_gap
+    self$pre_trigger_time = pre_trigger_time
+    self$boot_time = boot_time
+    self$noise_up_time = noise_up_time
+    self$noise_down_time = noise_up_time
+    self$noise_reduction_amount = noise_reduction_amount
+    self$measure_freq = measure_freq
+    self$measure_duration = measure_duration
+    self$measure_smooth_time = measure_smooth_time
+    self$hp_filter_freq = hp_filter_freq
+    self$lp_filter_freq = lp_filter_freq
+    self$hp_lifter_freq = hp_lifter_freq
+    self$lp_lifter_freq = lp_lifter_freq
+  },
+
+  forward = function(waveform) {
+    return(functional_vad(
+      waveform=waveform,
+      sample_rate=self$sample_rate,
+      trigger_level=self$trigger_level,
+      trigger_time=self$trigger_time,
+      search_time=self$search_time,
+      allowed_gap=self$allowed_gap,
+      pre_trigger_time=self$pre_trigger_time,
+      boot_time=self$boot_time,
+      noise_up_time=self$noise_up_time,
+      noise_down_time=self$noise_up_time,
+      noise_reduction_amount=self$noise_reduction_amount,
+      measure_freq=self$measure_freq,
+      measure_duration=self$measure_duration,
+      measure_smooth_time=self$measure_smooth_time,
+      hp_filter_freq=self$hp_filter_freq,
+      lp_filter_freq=self$lp_filter_freq,
+      hp_lifter_freq=self$hp_lifter_freq,
+      lp_lifter_freq=self$lp_lifter_freq
+    ))
+  }
+)
+
