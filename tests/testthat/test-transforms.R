@@ -49,6 +49,14 @@ test_that("transform_mfcc", {
   expect_tensor(m)
 })
 
+test_that("transform_sliding_window_cmn", {
+  sliding_window_cmn = transform_sliding_window_cmn()
+  spec = transform_spectrogram()(sample_torch)
+  sliding_window_cmn = sliding_window_cmn(spec)
+  expect_tensor(sliding_window_cmn)
+  expect_equal(dim(sliding_window_cmn), dim(spec))
+})
+
 test_that("transform_vad", {
   vad = transform_vad(sample_mp3@samp.rate)
   expect_tensor(vad(sample_torch))

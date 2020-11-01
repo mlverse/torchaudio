@@ -342,7 +342,45 @@ transform_mfcc <- torch::nn_module(
   }
 )
 
+#' sliding-window Cepstral Mean Normalization
+#'
+#'  Apply sliding-window cepstral mean  (and optionally variance) normalization per utterance.
+#'
+#' @param waveform  (Tensor): Tensor of audio of dimension (..., time).
+#' @param cmn_window  (int, optional): Window in frames for running average CMN computation (int, default = 600)
+#' @param min_cmn_window  (int, optional):  Minimum CMN window used at start of decoding (adds latency only at start).
+#' @param Only applicable if center == ``FALSE``, ignored if center==``TRUE``  (int, default = 100)
+#' @param center  (bool, optional): If ``TRUE``, use a window centered on the current frame
+#'   (to the extent possible, modulo end effects). If ``FALSE``, window is to the left. (bool, default = ``FALSE``)
+#' @param norm_vars  (bool, optional): If ``TRUE``, normalize variance to one. (bool, default = ``FALSE``)
+#'
+#' @return Tensor: Tensor of audio of dimension (..., time).
+#'
+#' @export
+transform_sliding_window_cmn <- torch::nn_module(
+  "SlidingWindowCmn",
+  initialize = function(
+    cmn_window = 600,
+                       min_cmn_window = 100,
+                       center = FALSE,
+                       norm_vars = FALSE) {
+    self$cmn_window = cmn_window
+    self$min_cmn_window = min_cmn_window
+    self$center = center
+    self$norm_vars = norm_vars
+  },
 
+  forward = function(waveform) {
+    cmn_waveform = functional_sliding_window_cmn(
+      waveform,
+      self$cmn_window,
+      self$min_cmn_window,
+      self$center,
+      self$norm_vars
+    )
+    return(cmn_waveform)
+  }
+)
 
 
 #' Voice Activity Detector
