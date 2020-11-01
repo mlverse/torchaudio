@@ -6,24 +6,23 @@ load_cmuarctic_item <- function(
   ext_audio
 ) {
 
-  utterance_id_and_utterance = line[0]$strip()$split(" ", 2)[1:N]
-  utterance_id = utterance_id_and_utterance[1]
-  utterance = utterance_id_and_utterance[2]
-  # Remove space, double quote, and single parenthesis from utterance
-  lu = length(utterance)
-  utterance = utterance[1:(lu-3)]
+  utterance_id_and_utterance = strsplit(strip(line), " ", )[[1]]
+  lu = length(utterance_id_and_utterance)
+  utterance_id = utterance_id_and_utterance[2]
+  utterance = paste(utterance_id_and_utterance[-c(1, 2, lu)], collapse = " ")
+  utterance = gsub("\"", "", utterance) # remove double quote
 
   file_audio = file.path(path, folder_audio, paste0(utterance_id, ext_audio))
 
   # Load audio
-  waveform_and_sample_rate = torchaudio::torchaudio_load(file_audio)
+  waveform_and_sample_rate = torchaudio_load(file_audio)
 
   return(
     list(
       waveform = waveform_and_sample_rate[[1]],
       sample_rate = waveform_and_sample_rate[[2]],
       utterance = utterance,
-      utterance_id = utterance_id$split("_")[1]
+      utterance_id = strsplit(utterance_id, "_")[[1]][2]
     )
   )
 }
@@ -148,6 +147,8 @@ cmuarctic_dataset <- torch::dataset(
   },
 
   .getitem = function(n) {
+    force(n)
+    if(length(n) != 1 || n <= 0) value_error("n should be a single positive integer.")
     line = self$.walker[n]
     return(load_cmuarctic_item(line, self$.path, self$.folder_audio, self$.ext_audio))
   },
@@ -155,7 +156,6 @@ cmuarctic_dataset <- torch::dataset(
   .length = function() {
     length(self$.walker)
   }
-
 )
 
 
