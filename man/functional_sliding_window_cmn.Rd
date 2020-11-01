@@ -8,8 +8,8 @@ functional_sliding_window_cmn(
   waveform,
   cmn_window = 600,
   min_cmn_window = 100,
-  center = TRUE,
-  norm_vars = TRUE
+  center = FALSE,
+  norm_vars = FALSE
 )
 }
 \arguments{

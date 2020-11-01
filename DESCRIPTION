@@ -18,12 +18,16 @@ RoxygenNote: 7.1.1
 Suggests: 
     testthat,
     monitoR,
-    tuneR
+    tuneR,
+    knitr,
+    rmarkdown
 Imports: 
     torch,
     fs,
     rlang,
     rappdirs,
-    utils
+    utils,
+    tools
 Remotes:
     mlverse/torch
+VignetteBuilder: knitr

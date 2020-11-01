@@ -21,9 +21,8 @@ functional_bandpass_biquad(
 
 \item{Q}{(float, optional): \url{https://en.wikipedia.org/wiki/Q_factor} (Default: \code{0.707})}
 
-\item{const_skirt_gain}{(bool, optional) : If \code{FALSE}, uses a constant skirt gain (peak gain = Q).}
-
-\item{If}{\code{TRUE}, uses a constant 0dB peak gain.  (Default: \code{TRUE})}
+\item{const_skirt_gain}{(bool, optional) : If \code{TRUE}, uses a constant skirt gain (peak gain = Q).
+If \code{FALSE}, uses a constant 0dB peak gain.  (Default: \code{FALSE})}
 }
 \value{
 Tensor: Waveform of dimension of \verb{(..., time)}
