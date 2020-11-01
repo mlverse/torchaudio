@@ -1,3 +1,15 @@
+tuneR_backend_read_audio <- function(filepath, ...) {
+  file_ext <- tools::file_ext(filepath)
+  if(file_ext == "mp3") {
+    wave_obj <- tuneR::readMP3(filepath)
+  } else if(file_ext == "wav") {
+    wave_obj <- tuneR::readWave(filepath, ...)
+  } else {
+    runtime_error(glue::glue("Only .mp3 and .wav formats are supported. Got {file_ext}."))
+  }
+  return(wave_obj)
+}
+
 backend_tuneR_backend_load <- function(
   filepath,
   out = NULL,
@@ -28,17 +40,8 @@ backend_tuneR_backend_load <- function(
   if(offset < 0)
     value_error("Expected positive offset value")
 
-
   # load audio file
-  file_ext <- tools::file_ext(filepath)
-  if(file_ext == "mp3") {
-    out <- tuneR::readMP3(filepath)
-  } else if(file_ext == "wav") {
-    out <- tuneR::readWave(filepath)
-  } else {
-    runtime_error(glue::glue("Only .mp3 and .wav formats are supported. Got {file_ext}."))
-  }
-
+  out <- tuneR_backend_read_audio(filepath)
   out <- tuneR::extractWave(out, from = offset+1, to = offset + num_frames, xunit = "samples", interact = FALSE)
   l_out <- length(out)
 
@@ -57,5 +60,6 @@ backend_tuneR_backend_load <- function(
   return(list(out_tensor, sample_rate))
 }
 
-backend_tuneR_backend_save <- function(){}
 backend_tuneR_backend_info <- function(){}
+
+backend_tuneR_backend_save <- function(){}
