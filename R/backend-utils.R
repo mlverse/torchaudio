@@ -11,3 +11,11 @@ backend_utils_list_audio_backends <- function() {
 
   return(backends)
 }
+
+#' Strip
+#'
+#' removes any leading (spaces at the beginning) and trailing (spaces at the end) characters.
+#' Analog to strip() string method from Python.
+#'
+#' @keywords internal
+strip <- function(str) gsub("^\\s+|\\s+$", "", str)

@@ -63,3 +63,6 @@ torchaudio_load <- function(
     runtime_error("Package tuneR not found. Please run install.packages('tuneR') to install it.")
   }
 }
+
+
+torchaudio_info <- function() {}

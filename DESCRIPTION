@@ -20,7 +20,8 @@ Suggests:
     monitoR,
     tuneR,
     knitr,
-    rmarkdown
+    rmarkdown,
+    stringr
 Imports: 
     torch,
     fs,

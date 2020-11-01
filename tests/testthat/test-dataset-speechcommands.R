@@ -7,7 +7,7 @@ test_that("load_speechcommands_item", {
   speechcommand_ds <- speechcommand_dataset(speechcommand_dir, folder_in_archive = "")
   expect_length(speechcommand_ds, 7)
 
-  one_item <- speechcommand_ds$.getitem(1)
+  one_item <- speechcommand_ds[1]
   expect_length(one_item, 5)
   expect_tensor(one_item[[1]])
 })
