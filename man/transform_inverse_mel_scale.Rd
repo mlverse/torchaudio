@@ -33,7 +33,7 @@ transform_inverse_mel_scale(
 
 \item{tolerance_change}{(float, optional): Difference in losses to stop optimization at. (Default: \code{1e-8})}
 
-\item{...}{(optional): Arguments passed for the SGD optimizer. Argument lr will default to 0.1 if not specied.(Default: \code{NULL})}
+\item{...}{(optional): Arguments passed to the SGD optimizer. Argument lr will default to 0.1 if not specied.(Default: \code{NULL})}
 
 \item{melspec}{(Tensor): A Mel frequency spectrogram of dimension (..., \code{n_mels}, time)}
 }

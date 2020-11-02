@@ -8,7 +8,7 @@ transform_spectrogram(
   n_fft = 400,
   win_length = NULL,
   hop_length = NULL,
-  pad = 0,
+  pad = 0L,
   window_fn = torch::torch_hann_window,
   power = 2,
   normalized = FALSE,
@@ -29,12 +29,12 @@ transform_spectrogram(
 
 \item{normalized}{(logical): Whether to normalize by magnitude after stft}
 
+\item{...}{(optional) Arguments for window function.}
+
 \item{waveform}{(tensor): Tensor of audio of dimension (..., time)}
 
 \item{window}{(tensor or function): Window tensor that is applied/multiplied to each
 frame/window or a function that generates the window tensor.}
-
-\item{Arguments}{for window function.}
 }
 \value{
 tensor: Dimension (..., freq, time), freq is n_fft \%/\% 2 + 1 and n_fft is the
