@@ -342,6 +342,46 @@ transform_mfcc <- torch::nn_module(
   }
 )
 
+#' Add a volume to an waveform.
+#'
+#' @param waveform  (Tensor): Tensor of audio of dimension (..., time).
+#' @param gain  (float): Interpreted according to the given gain_type:
+#'            If ``gain_type`` = ``amplitude``, ``gain`` is a positive amplitude ratio.
+#'            If ``gain_type`` = ``power``, ``gain`` is a power  (voltage squared).
+#'            If ``gain_type`` = ``db``, ``gain`` is in decibels.
+#' @param gain_type  (str, optional): Type of gain. One of: ``amplitude``, ``power``, ``db`` (Default: ``amplitude``)
+#'
+#' @return Tensor: Tensor of audio of dimension (..., time).
+#'
+#' @export
+transform_vol <- torch::nn_module(
+  "Vol",
+  initialize = function(
+    gain,
+    gain_type = 'amplitude'
+  ) {
+    self$gain = gain
+    self$gain_type = gain_type
+
+    if(gain_type %in% c('amplitude', 'power') & gain < 0)
+      value_error("If gain_type = amplitude or power, gain must be positive.")
+  },
+
+  forward = function(waveform) {
+
+    if(self$gain_type == "amplitude")
+      waveform = waveform * self$gain
+
+    if(self$gain_type == "db")
+      waveform = functional_gain(waveform, self$gain)
+
+    if(self$gain_type == "power")
+      waveform = functional_gain(waveform, 10 * log10(self$gain))
+
+    return(torch::torch_clamp(waveform, -1, 1))
+  }
+)
+
 #' sliding-window Cepstral Mean Normalization
 #'
 #'  Apply sliding-window cepstral mean  (and optionally variance) normalization per utterance.
@@ -361,9 +401,10 @@ transform_sliding_window_cmn <- torch::nn_module(
   "SlidingWindowCmn",
   initialize = function(
     cmn_window = 600,
-                       min_cmn_window = 100,
-                       center = FALSE,
-                       norm_vars = FALSE) {
+    min_cmn_window = 100,
+    center = FALSE,
+    norm_vars = FALSE
+  ) {
     self$cmn_window = cmn_window
     self$min_cmn_window = min_cmn_window
     self$center = center
