@@ -4,7 +4,7 @@
 \alias{functional_db_to_amplitude}
 \title{DB to Amplitude (functional)}
 \usage{
-functional_db_to_amplitude(x, ref = 1, power = 1)
+functional_db_to_amplitude(x, ref, power)
 }
 \arguments{
 \item{x}{(Tensor): Input tensor before being converted to power/amplitude scale.}

@@ -1,10 +1,11 @@
 sample_mp3 <- tuneR::readMP3(system.file("sample_audio_1.mp3", package = "torchaudio"))
 sample_rate = sample_mp3@samp.rate
 samples = length(sample_mp3@left)
+tt <- torch::torch_tensor
 
 test_that("functional_spectrogram", {
   expect_no_error(spec <- functional_spectrogram(
-    waveform = torch::torch_tensor(sample_mp3@left, dtype = torch::torch_float()),
+    waveform = tt(sample_mp3@left, dtype = torch::torch_float()),
     n_fft = 400,
     pad = 0,
     window = torch::torch_hann_window(window_length = 200L, dtype = torch::torch_float()),
@@ -14,7 +15,7 @@ test_that("functional_spectrogram", {
     normalized = TRUE
   ))
   expect_tensor(spec)
-  expect_equal(dim(spec)[1], n_fft %/% 2 + 1)
+  expect_equal(dim(spec)[1], 400 %/% 2 + 1)
 })
 
 test_that("create_fb_matrix", {
@@ -32,7 +33,7 @@ test_that("create_fb_matrix", {
 
 test_that("complex_norm", {
   tensor_r <- c(1,2,3)
-  tensor_t <- torch::torch_tensor(tensor_r)
+  tensor_t <- tt(tensor_r)
 
   tensor_r_cn <- sum((tensor_r^2))^(0.5)
   tensor_t_cn <- functional_complex_norm(tensor_t)
@@ -55,40 +56,45 @@ test_that("functional_amplitude_to_db and functional_db_to_amplitude", {
   x1 <- torch::torch_arange(0,3, dtype = torch::torch_float())
 
   # amplitude_to_DB
-  x2 <- functional_amplitude_to_db(x1)
-  expect_tensor(x2)
-  expect_tensor_shape(x2, c(3))
-
-  # top_db
-  x2 <- functional_amplitude_to_db(x1, top_db = 1.0)
+  x2 <- functional_amplitude_to_db(x1, multiplier = 10, amin = 1, db_multiplier = 2, top_db = 1)
   expect_tensor(x2)
   expect_tensor_shape(x2, c(3))
 
   # DB_to_amplitude
-  expect_lt( as.numeric(sum(functional_db_to_amplitude(functional_amplitude_to_db(x1)) - x1)), 1e-8)
+  x1 <- functional_db_to_amplitude(x2, 1, 1)
+  expect_tensor(x1)
+  expect_tensor_shape(x1, c(3))
 })
 
 
 test_that("functional_mu_law_encoding and functional_mu_law_decoding", {
+  x1 <- torch::torch_arange(0,3, dtype = torch::torch_float())
   # functional_mu_law_encoding
+  x2 <- functional_mu_law_encoding(x1, quantization_channels = 300)
+  expect_tensor(x2)
   # functional_mu_law_decoding
-  stop("TO DO")
+  x3 <- functional_mu_law_decoding(x2,quantization_channels = 300)
+  expect_tensor(x3)
+  expect_lt(abs(sum(as.numeric(x1) - as.numeric(x3))), 0.01)
 })
 
 test_that("functional_angle", {
-  # functional_angle
-  stop("TO DO")
+  x1 <- tt(matrix(1:10, 5, 2), dtype = torch::torch_float())
+  expect_tensor(functional_angle(x1))
 })
 
 test_that("functional_magphase", {
-  # functional_magphase
-  stop("TO DO")
+  x1 <- tt(matrix(1:10, 5, 2), dtype = torch::torch_float())
+  expect_no_error(m <- functional_magphase(x1, power = -1))
+  expect_tensor(m[[1]])
+  expect_tensor(m[[2]])
+  expect_error(m[[3]])
 })
 
 context("filters")
-a_coeffs = torch::torch_tensor(c(1.0, 2.1, 3.3))
-b_coeffs = torch::torch_tensor(c(3.1,3.1,10.0))
-samp_1d = torch::torch_tensor(c(0.5,-0.5,0.9,-0.9,0.5))
+a_coeffs = tt(c(1.0, 2.1, 3.3))
+b_coeffs = tt(c(3.1,3.1,10.0))
+samp_1d = tt(c(0.5,-0.5,0.9,-0.9,0.5))
 samp = torch::torch_stack(list(samp_1d, samp_1d, samp_1d))
 
 test_that("functional_lfilter and functional_biquad", {
@@ -210,7 +216,7 @@ test_that("overdrive", {
 })
 
 test_that("generate_wave_table", {
-  wave_table <- functional_generate_wave_table(
+  wave_table <- functional__generate_wave_table(
     wave_type = 'TRIANGLE',
     data_type = 'INT',
     table_size = 800,
@@ -318,8 +324,14 @@ test_that("compute_nccf", {
 })
 
 test_that("functional_combine_max",{
-  # functional_combine_max
-  stop("TO DO")
+
+  a = list(tt(c(10,2,3)), tt(c(100,200,300)))
+  b = list(tt(c(5,2,30)), tt(c(99,199,299)))
+
+  expect_no_error(cm <- functional_combine_max(a, b, 0.95))
+  expect_length(cm, 2)
+  expect_tensor(cm[[1]])
+  expect_tensor(cm[[2]])
 })
 
 test_that("functional_find_max_per_frame",{
@@ -358,8 +370,20 @@ test_that("sliding_window_cmn", {
 })
 
 test_that("vad", {
-  vad4 <- functional_vad(waveform = torch::torch_tensor(matrix(sample_mp3@left[1:2000], 2)), sample_rate = 50000L)
+  vad4 <- functional_vad(waveform = tt(matrix(sample_mp3@left[1:2000], 2)), sample_rate = 50000L)
   expect_tensor(vad4)
   expect_tensor_shape(vad4, c(2, 1000))
 })
 
+test_that("_generate_wave_table", {
+  expect_no_error(x <- functional__generate_wave_table(
+    wave_type = "SINE",
+    data_type = 'INT',
+    table_size = 100,
+    min = -10,
+    max = 10,
+    phase = 10,
+    device = torch::torch_device("cpu")
+  ))
+  expect_tensor(x)
+})
