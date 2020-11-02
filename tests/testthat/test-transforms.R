@@ -46,6 +46,14 @@ test_that("transform_mfcc", {
   expect_tensor(m)
 })
 
+test_that("transform_mu_law_encoding and transform_mu_law_decoding", {
+  expect_no_error(m <- transform_mu_law_encoding()(sample_torch))
+  expect_tensor(m)
+  expect_no_error(m2 <- transform_mu_law_decoding()(m))
+  expect_tensor(m2)
+  expect_gt(cor(as.numeric(m2), as.numeric(sample_torch)), 0.995)
+})
+
 test_that("transform_resample", {
   expect_no_error(m <- transform_resample()(sample_torch))
   expect_tensor(m)

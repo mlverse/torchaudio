@@ -342,6 +342,57 @@ transform_mfcc <- torch::nn_module(
   }
 )
 
+#' Mu Law Encoding
+#'
+#' Encode signal based on mu-law companding.  For more info see
+#' the [Wikipedia Entry](https://en.wikipedia.org/wiki/M-law_algorithm)
+#'
+#' @param x  (Tensor): A signal to be encoded.
+#' @param quantization_channels  (int, optional): Number of channels. (Default: ``256``)
+#'
+#' @return x_mu (Tensor): An encoded signal.
+#'
+#' @details
+#' This algorithm assumes the signal has been scaled to between -1 and 1 and
+#' returns a signal encoded with values from 0 to quantization_channels - 1.
+#'
+#' @export
+transform_mu_law_encoding <- torch::nn_module(
+  "MuLawEncoding",
+  initialize = function(quantization_channels = 256) {
+    self$quantization_channels = quantization_channels
+  },
+
+  forward = function(x) {
+    return(functional_mu_law_encoding(x, self$quantization_channels))
+  }
+)
+
+#' Mu Law Decoding
+#'
+#' Decode mu-law encoded signal.  For more info see the
+#'  [Wikipedia Entry](https://en.wikipedia.org/wiki/M-law_algorithm)
+#'
+#'    This expects an input with values between 0 and quantization_channels - 1
+#'    and returns a signal scaled between -1 and 1.
+#'
+#' @param x_mu  (Tensor): A mu-law encoded signal which needs to be decoded.
+#' @param quantization_channels  (int, optional): Number of channels. (Default: ``256``)
+#'
+#' @return Tensor: The signal decoded.
+#'
+#' @export
+transform_mu_law_decoding <- torch::nn_module(
+  "MuLawDecoding",
+  initialize = function(quantization_channels = 256) {
+    self$quantization_channels = quantization_channels
+  },
+
+  forward = function(x_mu) {
+    return(functional_mu_law_decoding(x_mu, self$quantization_channels))
+  }
+)
+
 #' Signal Resample
 #'
 #' Resample a signal from one frequency to another. A resampling method can be given.
