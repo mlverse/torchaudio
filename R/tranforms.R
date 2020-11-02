@@ -342,6 +342,52 @@ transform_mfcc <- torch::nn_module(
   }
 )
 
+#' Signal Resample
+#'
+#' Resample a signal from one frequency to another. A resampling method can be given.
+#'
+#' @param waveform  (Tensor): Tensor of audio of dimension (..., time).
+#' @param orig_freq  (float, optional): The original frequency of the signal. (Default: ``16000``)
+#' @param new_freq  (float, optional): The desired frequency. (Default: ``16000``)
+#' @param resampling_method  (str, optional): The resampling method. (Default: ``'sinc_interpolation'``)
+#'
+#' @return Tensor: Output signal of dimension (..., time).
+#'
+#' @export
+transform_resample <- torch::nn_module(
+  "Resample",
+  initialize = function(
+    orig_freq = 16000,
+    new_freq = 16000,
+    resampling_method = 'sinc_interpolation'
+  ) {
+    self$orig_freq = orig_freq
+    self$new_freq = new_freq
+    self$resampling_method = resampling_method
+  },
+
+  forward = function(waveform) {
+    if(self$resampling_method == 'sinc_interpolation') {
+
+      # pack batch
+      shape = waveform$size()
+      ls = length(shape)
+      waveform = waveform$view(c(-1, shape[ls]))
+
+      waveform = kaldi_resample_waveform(waveform, self$orig_freq, self$new_freq)
+
+      # unpack batch
+      lws = length(waveform$shape)
+      waveform = waveform$view(c(shape[-ls], waveform$shape[lws]))
+
+      return(waveform)
+
+    } else {
+      value_error(glue::glue('Invalid resampling method: {self$resampling_method}'))
+    }
+  }
+)
+
 #' Complex Norm
 #'
 #' Compute the norm of complex tensor input.
@@ -353,14 +399,14 @@ transform_mfcc <- torch::nn_module(
 #'
 #' @export
 trasnform_complex_norm <- torch::nn_module(
- "ComplexNorm",
- initialize = function(power = 1.0) {
-   self$power = power
- },
+  "ComplexNorm",
+  initialize = function(power = 1.0) {
+    self$power = power
+  },
 
- forward = function(complex_tensor) {
-   return(functional_complex_norm(complex_tensor, self$power))
- }
+  forward = function(complex_tensor) {
+    return(functional_complex_norm(complex_tensor, self$power))
+  }
 )
 
 #' Delta Coefficients
