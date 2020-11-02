@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_compute_deltas}
 \alias{functional_compute_deltas}
-\title{Delta Coefficients}
+\title{Delta Coefficients (functional)}
 \usage{
 functional_compute_deltas(specgram, win_length = 5, mode = "replicate")
 }

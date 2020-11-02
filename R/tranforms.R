@@ -342,6 +342,31 @@ transform_mfcc <- torch::nn_module(
   }
 )
 
+#' Delta Coefficients
+#'
+#' Compute delta coefficients of a tensor, usually a spectrogram.
+#'
+#' @param specgram  (Tensor): Tensor of audio of dimension (..., freq, time).
+#' @param win_length  (int): The window length used for computing delta. (Default: ``5``)
+#' @param mode  (str): Mode parameter passed to padding. (Default: ``'replicate'``)
+#'
+#' @details See [torchaudio::functional_compute_deltas] for more details.
+#'
+#' @return Tensor: Tensor of deltas of dimension (..., freq, time).
+#'
+#' @export
+transform_compute_deltas <- torch::nn_module(
+  "ComputeDeltas",
+  initialize = function( win_length = 5, mode = "replicate") {
+    self$win_length = win_length
+    self$mode = mode
+  },
+
+  forward = function(specgram) {
+    return(functional_compute_deltas(specgram, win_length=self$win_length, mode=self$mode))
+  }
+)
+
 #' Time Stretch
 #'
 #' Stretch stft in time without modifying pitch for a given rate.

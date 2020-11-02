@@ -45,6 +45,11 @@ test_that("transform_mfcc", {
   expect_tensor(m)
 })
 
+test_that("transform_compute_deltas", {
+  expect_no_error(m <- transform_compute_deltas()(spec))
+  expect_tensor(m)
+})
+
 test_that("transform_time_stretch", {
   expect_error(m <- transform_time_stretch()(sample_torch), class = "value_error")
   spec_complex = transform_spectrogram(power = NULL)(sample_torch)

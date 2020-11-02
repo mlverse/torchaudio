@@ -1572,7 +1572,7 @@ functional_mask_along_axis <- function(
   return(specgram)
 }
 
-#' Delta Coefficients
+#' Delta Coefficients (functional)
 #'
 #' Compute delta coefficients of a tensor, usually a spectrogram.
 #'
