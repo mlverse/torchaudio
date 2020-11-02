@@ -14,6 +14,19 @@ test_that("kaldi__get_lr_indices_and_weights", {
   expect_error(x[[3]])
 })
 
+test_that("kaldi__get_num_lr_output_samples", {
+  expect_no_error(x <- kaldi__get_num_lr_output_samples(100, 10, 5))
+  expect_tensor(x)
+})
+
 test_that("kaldi_resample_waveform", {
+  expect_no_error(x <- kaldi_resample_waveform(
+    waveform = torch::torch_rand(2, 100),
+    orig_freq = 10,
+    new_freq = 9,
+    lowpass_filter_width = 6
+  ))
+  expect_tensor(x)
+
 })
 
