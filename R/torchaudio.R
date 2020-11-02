@@ -45,24 +45,22 @@ torchaudio_load <- function(
   encodinginfo = NULL,
   filetype = NULL
 ) {
+  package_required("tuneR")
 
   # if tuneR is installed
-  if(requireNamespace("tuneR", quietly = TRUE)) {
-    backend_tuneR_backend_load(
-      filepath = filepath,
-      out = out,
-      normalization = normalization,
-      channels_first = channels_first,
-      num_frames = num_frames,
-      offset = offset,
-      signalinfo = signalinfo,
-      encodinginfo = encodinginfo,
-      filetype = filetype
-    )
-  } else {
-    package_required_error("tuneR")
-  }
+  backend_tuneR_backend_load(
+    filepath = filepath,
+    out = out,
+    normalization = normalization,
+    channels_first = channels_first,
+    num_frames = num_frames,
+    offset = offset,
+    signalinfo = signalinfo,
+    encodinginfo = encodinginfo,
+    filetype = filetype
+  )
 }
+
 
 
 torchaudio_info <- function() {}
