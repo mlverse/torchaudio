@@ -2,7 +2,7 @@
 % Please edit documentation in R/tranforms.R
 \name{transform_fade}
 \alias{transform_fade}
-\title{Add a fade in and/or fade out to an waveform.}
+\title{Fade In/Out}
 \usage{
 transform_fade(fade_in_len = 0, fade_out_len = 0, fade_shape = "linear")
 }

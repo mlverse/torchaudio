@@ -15,10 +15,9 @@ test_that("transform_spectrogram", {
   expect_equal(dim(spec), c(2, 400 %/% 2 + 1, 49))
 })
 
-test_that("transform_mel_scale", {
-  n_fft = 400
-  expect_no_error(spec <- functional_spectrogram(sample_torch, n_fft = n_fft))
+spec <- transform_spectrogram()(sample_torch)
 
+test_that("transform_mel_scale", {
   ms = transform_mel_scale()(spec)
   expect_tensor(ms)
   expect_equal(dim(ms), c(1, 128, 49))
@@ -46,13 +45,19 @@ test_that("transform_mfcc", {
   expect_tensor(m)
 })
 
+test_that("transform_time_stretch", {
+  expect_error(m <- transform_time_stretch()(sample_torch), class = "value_error")
+  spec_complex = transform_spectrogram(power = NULL)(sample_torch)
+  expect_no_error(m <- transform_time_stretch(fixed_rate = 2.0)(spec_complex), class = "value_error")
+  expect_tensor(m)
+})
+
 test_that("transform_fade", {
   expect_no_error(m <- transform_fade(1000L, 1000L)(sample_torch))
   expect_tensor(m)
 })
 
 test_that("transform__axismasking", {
-  spec = transform_spectrogram()(sample_torch)
   expect_no_error(m <- transform__axismasking(10, 2, FALSE)(spec))
   expect_tensor(m)
   # transform_frequencymasking
@@ -72,7 +77,6 @@ test_that("transform_vol", {
 
 test_that("transform_sliding_window_cmn", {
   sliding_window_cmn = transform_sliding_window_cmn()
-  spec = transform_spectrogram()(sample_torch)
   sliding_window_cmn = sliding_window_cmn(spec)
   expect_tensor(sliding_window_cmn)
   expect_equal(dim(sliding_window_cmn), dim(spec))

@@ -342,6 +342,58 @@ transform_mfcc <- torch::nn_module(
   }
 )
 
+#' Time Stretch
+#'
+#' Stretch stft in time without modifying pitch for a given rate.
+#'
+#' @param complex_specgrams  (Tensor): complex spectrogram (..., freq, time, complex=2).
+#' @param hop_length  (int or NULL, optional): Length of hop between STFT windows. (Default: ``win_length // 2``)
+#' @param n_freq  (int, optional): number of filter banks from stft. (Default: ``201``)
+#' @param fixed_rate  (float or NULL, optional): rate to speed up or slow down by.
+#'        If NULL is provided, rate must be passed to the forward method.  (Default: ``NULL``)
+#' @param overriding_rate  (float or NULL, optional): speed up to apply to this batch.
+#' @param If no rate is passed, use ``self$fixed_rate``.  (Default: ``NULL``)
+#'
+#' @return Tensor: Stretched complex spectrogram of dimension (..., freq, ceil(time/rate), complex=2).
+#'
+#' @export
+transform_time_stretch <- torch::nn_module(
+  "TimeStretch",
+  initialize = function(
+    hop_length = NULL,
+    n_freq = 201,
+    fixed_rate = NULL
+  ) {
+    self$fixed_rate = fixed_rate
+    n_fft = (n_freq - 1) * 2
+    hop_length = if(!is.null(hop_length)) hop_length  else n_fft %/% 2
+    self$register_buffer('phase_advance', torch::torch_linspace(0, pi * hop_length, n_freq)[.., NULL])
+  },
+
+  forward = function(complex_specgrams, overriding_rate = NULL) {
+    lcs = length(complex_specgrams$size())
+    if(complex_specgrams$size()[lcs] != 2)
+      value_error("complex_specgrams should be a complex tensor, shape (..., complex=2)")
+
+    if(is.null(overriding_rate)) {
+      rate = self$fixed_rate
+      if(is.null(rate)) {
+        value_error("If no fixed_rate is specified, must pass a valid rate to the forward method.")
+      }
+    } else {
+      rate = overriding_rate
+    }
+
+    if(rate == 1.0) {
+      return(complex_specgrams)
+    } else {
+      return(functional_phase_vocoder(complex_specgrams, rate, self$phase_advance))
+    }
+  }
+)
+
+#' Fade In/Out
+#'
 #' Add a fade in and/or fade out to an waveform.
 #'
 #' @param waveform  (Tensor): Tensor of audio of dimension (..., time).
