@@ -75,10 +75,10 @@ functional_spectrogram <- function(
 #' @export
 functional_create_fb_matrix <- function(
   n_freqs,
+  f_min,
+  f_max,
   n_mels,
-  sample_rate = 16000,
-  f_min = 0,
-  f_max = NULL,
+  sample_rate,
   norm = NULL
 ) {
   if(!is.null(norm) && norm != "slaney")

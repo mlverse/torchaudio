@@ -84,7 +84,7 @@ transform_mel_scale <- torch::nn_module(
   ) {
     self$n_mels = n_mels
     self$sample_rate = sample_rate
-    self$f_max = if(is.null(f_max)) as.numeric(sample_rate %/% 2) else f_max
+    self$f_max =  f_max %||% as.numeric(sample_rate %/% 2)
     self$f_min = f_min
 
     if(self$f_min > self$f_max) value_error(glue::glue("Require f_min: {self$f_min} < f_max: {self$f_max}"))
@@ -116,7 +116,6 @@ transform_mel_scale <- torch::nn_module(
         n_mels = self$n_mels,
         sample_rate = self$sample_rate
       )
-      # Attributes cannot be reassigned outside __init__ so workaround
       self$fb$resize_(tmp_fb$size())
       self$fb$copy_(tmp_fb)
     }
