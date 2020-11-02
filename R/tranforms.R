@@ -342,6 +342,27 @@ transform_mfcc <- torch::nn_module(
   }
 )
 
+#' Complex Norm
+#'
+#' Compute the norm of complex tensor input.
+#'
+#' @param complex_tensor  (Tensor): Tensor shape of `(..., complex=2)`.
+#' @param power  (float, optional): Power of the norm. (Default: to ``1.0``)
+#'
+#' @return Tensor: norm of the input tensor, shape of `(..., )`.
+#'
+#' @export
+trasnform_complex_norm <- torch::nn_module(
+ "ComplexNorm",
+ initialize = function(power = 1.0) {
+   self$power = power
+ },
+
+ forward = function(complex_tensor) {
+   return(functional_complex_norm(complex_tensor, self$power))
+ }
+)
+
 #' Delta Coefficients
 #'
 #' Compute delta coefficients of a tensor, usually a spectrogram.

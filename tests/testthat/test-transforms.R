@@ -15,7 +15,8 @@ test_that("transform_spectrogram", {
   expect_equal(dim(spec), c(2, 400 %/% 2 + 1, 49))
 })
 
-spec <- transform_spectrogram()(sample_torch)
+spec = transform_spectrogram()(sample_torch)
+spec_complex = transform_spectrogram(power = NULL)(sample_torch)
 
 test_that("transform_mel_scale", {
   ms = transform_mel_scale()(spec)
@@ -45,6 +46,12 @@ test_that("transform_mfcc", {
   expect_tensor(m)
 })
 
+test_that("trasnform_complex_norm", {
+  expect_no_error(m <- trasnform_complex_norm()(spec_complex))
+  expect_tensor(m)
+})
+
+
 test_that("transform_compute_deltas", {
   expect_no_error(m <- transform_compute_deltas()(spec))
   expect_tensor(m)
@@ -52,7 +59,6 @@ test_that("transform_compute_deltas", {
 
 test_that("transform_time_stretch", {
   expect_error(m <- transform_time_stretch()(sample_torch), class = "value_error")
-  spec_complex = transform_spectrogram(power = NULL)(sample_torch)
   expect_no_error(m <- transform_time_stretch(fixed_rate = 2.0)(spec_complex), class = "value_error")
   expect_tensor(m)
 })

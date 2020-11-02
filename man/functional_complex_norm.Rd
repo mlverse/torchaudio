@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_complex_norm}
 \alias{functional_complex_norm}
-\title{Complex Norm}
+\title{Complex Norm (functional)}
 \usage{
 functional_complex_norm(complex_tensor, power = 1)
 }

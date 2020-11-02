@@ -151,7 +151,7 @@ functional_create_dct <- function(
   return(dct$t())
 }
 
-#' Complex Norm
+#' Complex Norm (functional)
 #'
 #' Compute the norm of complex tensor input.
 #'
