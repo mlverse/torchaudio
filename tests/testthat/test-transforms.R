@@ -1,11 +1,11 @@
 sample_mp3 <- tuneR::readMP3(system.file("sample_audio_1.mp3", package = "torchaudio"))
-sample_mp3 <- tuneR::extractWave(sample_mp3, 1, 10000)
+sample_mp3 <- tuneR::extractWave(sample_mp3, 20001, 30000)
 sample_torch <- torch::torch_tensor(sample_mp3@left, dtype = torch::torch_float())
+samples = length(sample_torch)
 
 sample_torch2 <- torch::torch_stack(list(sample_torch, sample_torch))
 
 test_that("transform_spectrogram", {
-  samples = length(sample_mp3@left)
   expect_no_error(spec <- transform_spectrogram()(sample_torch))
   expect_tensor(spec)
   expect_equal(dim(spec), c(400 %/% 2 + 1, 49))
@@ -17,7 +17,6 @@ test_that("transform_spectrogram", {
 
 test_that("transform_mel_scale", {
   n_fft = 400
-  samples = length(sample_torch)
   expect_no_error(spec <- functional_spectrogram(sample_torch, n_fft = n_fft))
 
   ms = transform_mel_scale()(spec)
@@ -43,11 +42,21 @@ test_that("transform_amplitude_to_db", {
 })
 
 test_that("transform_mfcc", {
-  samples = length(sample_mp3@left)
-  waveform <- torch::torch_tensor(as.vector(as.array(sample_mp3@left)), dtype = torch::torch_float())
-
-  expect_no_error(m <- transform_mfcc()(waveform))
+  expect_no_error(m <- transform_mfcc()(sample_torch))
   expect_tensor(m)
+})
+
+test_that("transform_fade", {
+  expect_no_error(m <- transform_fade(1000L, 1000L)(sample_torch))
+  expect_tensor(m)
+})
+
+test_that("transform__axismasking", {
+  spec = transform_spectrogram()(sample_torch)
+  expect_no_error(m <- transform__axismasking(10, 2, FALSE)(spec))
+  expect_tensor(m)
+  # transform_frequencymasking
+  # transform_timemasking
 })
 
 test_that("transform_vol", {

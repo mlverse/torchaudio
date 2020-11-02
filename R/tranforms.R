@@ -342,6 +342,160 @@ transform_mfcc <- torch::nn_module(
   }
 )
 
+#' Add a fade in and/or fade out to an waveform.
+#'
+#' @param waveform  (Tensor): Tensor of audio of dimension (..., time).
+#' @param fade_in_len  (int, optional): Length of fade-in (time frames). (Default: ``0``)
+#' @param fade_out_len  (int, optional): Length of fade-out (time frames). (Default: ``0``)
+#' @param fade_shape  (str, optional): Shape of fade. Must be one of: "quarter_sine",
+#'                     "half_sine", "linear", "logarithmic", "exponential".  (Default: ``"linear"``)
+#'
+#' @return Tensor: Tensor of audio of dimension (..., time).
+#'
+#' @export
+transform_fade <- torch::nn_module(
+  "Fade",
+  initialize = function(
+    fade_in_len = 0,
+    fade_out_len = 0,
+    fade_shape = "linear"
+  ) {
+    self$fade_in_len = fade_in_len
+    self$fade_out_len = fade_out_len
+    self$fade_shape = fade_shape
+  },
+
+  forward = function(waveform) {
+    lws = length(waveform$size())
+    waveform_length = waveform$size()[lws]
+    device = waveform$device
+    return(self$.fade_in(waveform_length)$to(device = device) *  self$.fade_out(waveform_length)$to(device = device) * waveform)
+  },
+
+  .fade_in = function(waveform_length) {
+    fade = torch::torch_linspace(0, 1, self$fade_in_len)
+    ones = torch::torch_ones(waveform_length - self$fade_in_len)
+
+    if(self$fade_shape == "linear")
+      fade = fade
+
+    if(self$fade_shape == "exponential")
+      fade = torch::torch_pow(2, (fade - 1)) * fade
+
+    if(self$fade_shape == "logarithmic")
+      fade = torch::torch_log10(.1 + fade) + 1
+
+    if(self$fade_shape == "quarter_sine")
+      fade = torch::torch_sin(fade * pi / 2)
+
+    if(self$fade_shape == "half_sine")
+      fade = torch::torch_sin(fade * pi - pi / 2) / 2 + 0.5
+
+    return(torch::torch_cat(list(fade, ones))$clamp_(0, 1))
+  },
+
+  .fade_out = function( waveform_length) {
+    fade = torch::torch_linspace(0, 1, self$fade_out_len)
+    ones = torch::torch_ones(waveform_length - self$fade_out_len)
+
+    if(self$fade_shape == "linear")
+      fade = - fade + 1
+
+    if(self$fade_shape == "exponential")
+      fade = torch::torch_pow(2, - fade) * (1 - fade)
+
+    if(self$fade_shape == "logarithmic")
+      fade = torch::torch_log10(1.1 - fade) + 1
+
+    if(self$fade_shape == "quarter_sine")
+      fade = torch::torch_sin(fade * pi / 2 + pi / 2)
+
+    if(self$fade_shape == "half_sine")
+      fade = torch::torch_sin(fade * pi + pi / 2) / 2 + 0.5
+
+    return(torch::torch_cat(list(ones, fade))$clamp_(0, 1))
+  }
+)
+
+#' Axis Masking
+#'
+#' Apply masking to a spectrogram.
+#'
+#' @param mask_param  (int): Maximum possible length of the mask.
+#' @param axis  (int): What dimension the mask is applied on.
+#' @param iid_masks  (bool): Applies iid masks to each of the examples in the batch dimension.
+#'                   This option is applicable only when the input tensor is 4D.
+#' @param specgram  (Tensor): Tensor of dimension (..., freq, time).
+#' @param mask_value  (float): Value to assign to the masked columns.
+#'
+#' @return Tensor: Masked spectrogram of dimensions (..., freq, time).
+#'
+#' @export
+transform__axismasking <- torch::nn_module(
+  "_AxisMasking",
+  initialize = function(mask_param, axis, iid_masks) {
+    self$mask_param = mask_param
+    self$axis = axis
+    self$iid_masks = iid_masks
+  },
+
+  forward = function(specgram, mask_value = 0.) {
+    # if(iid_masks flag marked and specgram has a batch dimension
+    if(self$iid_masks & specgram$dim() == 4) {
+      return(functional_mask_along_axis_iid(specgram, self$mask_param, mask_value, self$axis + 1L))
+    } else {
+      return(functional_mask_along_axis(specgram, self$mask_param, mask_value, self$axis))
+    }
+  }
+)
+
+#' Frequency-domain Masking
+#'
+#' Apply masking to a spectrogram in the frequency domain.
+#'
+#' @param freq_mask_param  (int): maximum possible length of the mask.
+#'            Indices uniformly sampled from [0, freq_mask_param).
+#' @param iid_masks  (bool, optional): whether to apply different masks to each
+#'            example/channel in the batch.  (Default: ``FALSE``)
+#'            This option is applicable only when the input tensor is 4D.
+#'
+#' @export
+transform_frequencymasking <- function() {
+  not_implemented_error("Class _AxisMasking to be implemented yet.")
+}
+#   R6::R6Class(
+#   "FrequencyMasking",
+#   inherit = transform__axismasking,
+#   initialize = function(freq_mask_param, iid_masks = FALSE) {
+#     # super(FrequencyMasking, self).__init__(freq_mask_param, 1, iid_masks)
+#     # https://pytorch.org/audio/_modules/torchaudio/transforms.html#FrequencyMasking
+#   }
+# )
+
+#' Time-domain Masking
+#'
+#' Apply masking to a spectrogram in the time domain.
+#'
+#' @param time_mask_param  (int): maximum possible length of the mask.
+#'            Indices uniformly sampled from [0, time_mask_param).
+#' @param iid_masks  (bool, optional): whether to apply different masks to each
+#'            example/channel in the batch.  (Default: ``FALSE``)
+#'            This option is applicable only when the input tensor is 4D.
+#'
+#' @export
+transform_timemasking <- function() {
+  not_implemented_error("Class _AxisMasking to be implemented yet.")
+}
+# torchaudio::transform_axismasking(
+#   "TimeMasking",
+#   initialize = function(time_mask_param, iid_masks = FALSE) {
+#     # super(TimeMasking, self).__init__(time_mask_param, 2, iid_masks)
+#     # https://pytorch.org/audio/_modules/torchaudio/transforms.html#TimeMasking
+#     not_implemented_error("Class _AxisMasking to be implemented yet.")
+#   }
+# )
+
+
 #' Add a volume to an waveform.
 #'
 #' @param waveform  (Tensor): Tensor of audio of dimension (..., time).
