@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_griffinlim}
 \alias{functional_griffinlim}
-\title{Griffin-Lim Transformation}
+\title{Griffin-Lim Transformation (functional)}
 \usage{
 functional_griffinlim(
   specgram,

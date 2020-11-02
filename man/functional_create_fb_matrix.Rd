@@ -2,27 +2,27 @@
 % Please edit documentation in R/functional.R
 \name{functional_create_fb_matrix}
 \alias{functional_create_fb_matrix}
-\title{Frequency Bin Conversion Matrix}
+\title{Frequency Bin Conversion Matrix (functional)}
 \usage{
 functional_create_fb_matrix(
   n_freqs,
+  f_min,
+  f_max,
   n_mels,
-  sample_rate = 16000,
-  f_min = 0,
-  f_max = NULL,
+  sample_rate,
   norm = NULL
 )
 }
 \arguments{
 \item{n_freqs}{(int): Number of frequencies to highlight/apply}
 
-\item{n_mels}{(int): Number of mel filterbanks}
-
-\item{sample_rate}{(int): Sample rate of the audio waveform}
-
 \item{f_min}{(float): Minimum frequency (Hz)}
 
 \item{f_max}{(float or NULL): Maximum frequency (Hz). If NULL defaults to sample_rate \%/\% 2}
+
+\item{n_mels}{(int): Number of mel filterbanks}
+
+\item{sample_rate}{(int): Sample rate of the audio waveform}
 
 \item{norm}{(chr) (Optional): If 'slaney', divide the triangular
 mel weights by the width of the mel band (area normalization). (Default: \code{NULL})}

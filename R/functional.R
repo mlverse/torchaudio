@@ -20,18 +20,14 @@
 #' @export
 functional_spectrogram <- function(
   waveform,
-  pad = 0,
-  n_fft = 400,
-  hop_length = NULL,
-  win_length = NULL,
-  window = torch::torch_hann_window,
-  power = 2,
-  normalized = FALSE,
-  ...
+  pad,
+  window,
+  n_fft,
+  hop_length,
+  win_length,
+  power,
+  normalized
 ) {
-  if(is.null(win_length)) win_length <- n_fft
-  if(is.null(hop_length)) hop_length <- win_length %/% 2
-  if(is.function(window)) window <- window(window_length = win_length, dtype = torch::torch_float(), ...)
   if(pad > 0) waveform <- torch::nnf_pad(waveform, c(pad, pad))
 
   # pack batch
@@ -58,7 +54,7 @@ functional_spectrogram <- function(
   return(spec_f)
 }
 
-#' Frequency Bin Conversion Matrix
+#' Frequency Bin Conversion Matrix (functional)
 #'
 #' Create a frequency bin conversion matrix.
 #'
@@ -79,10 +75,10 @@ functional_spectrogram <- function(
 #' @export
 functional_create_fb_matrix <- function(
   n_freqs,
+  f_min,
+  f_max,
   n_mels,
-  sample_rate = 16000,
-  f_min = 0,
-  f_max = NULL,
+  sample_rate,
   norm = NULL
 ) {
   if(!is.null(norm) && norm != "slaney")
@@ -118,7 +114,7 @@ functional_create_fb_matrix <- function(
   return(fb)
 }
 
-#' DCT transformation matrix
+#' DCT transformation matrix (functional)
 #'
 #' Create a DCT transformation matrix with shape (``n_mels``, ``n_mfcc``),
 #' normalized depending on norm.
@@ -151,7 +147,7 @@ functional_create_dct <- function(
   return(dct$t())
 }
 
-#' Complex Norm
+#' Complex Norm (functional)
 #'
 #' Compute the norm of complex tensor input.
 #'
@@ -186,10 +182,9 @@ functional_complex_norm <- function(complex_tensor, power = 1) {
 #' @export
 functional_amplitude_to_db <- function(
   x,
-  multiplier = 10.0,
-  amin = 1e-10,
-  ref_value = 1.0,
-  db_multiplier = log10(max(amin, ref_value)),
+  multiplier,
+  amin,
+  db_multiplier,
   top_db = NULL
 ) {
   x_db = multiplier * torch::torch_log10(torch::torch_clamp(x, min=amin))
@@ -214,7 +209,7 @@ functional_amplitude_to_db <- function(
 #' @return `tensor`: Output tensor in power/amplitude scale.
 #'
 #' @export
-functional_db_to_amplitude <- function(x, ref = 1.0, power = 1.0) {
+functional_db_to_amplitude <- function(x, ref, power) {
   ref * torch::torch_pow(torch::torch_pow(10.0, 0.1 * x), power)
 }
 
@@ -270,7 +265,7 @@ functional_mel_scale <- function(
 }
 
 
-#' Mu Law Encoding
+#' Mu Law Encoding (functional)
 #'
 #' Encode signal based on mu-law companding.  For more info see
 #' the [Wikipedia Entry](https://en.wikipedia.org/wiki/M-law_algorithm)
@@ -299,7 +294,7 @@ functional_mu_law_encoding <- function(
   return(x_mu)
 }
 
-#' Mu Law Decoding
+#' Mu Law Decoding (functional)
 #'
 #' Decode mu-law encoded signal.  For more info see the
 #'  [Wikipedia Entry](https://en.wikipedia.org/wiki/M-law_algorithm)
@@ -328,7 +323,7 @@ functional_mu_law_decoding <- function(
   return(x)
 }
 
-#' Angle
+#' Angle (functional)
 #'
 #' Compute the angle of complex tensor input.
 #'
@@ -342,7 +337,7 @@ functional_angle <- function(complex_tensor) {
   torch::torch_atan2(complex_tensor[.., 2], complex_tensor[.., 1])
 }
 
-#' Magnitude and Phase
+#' Magnitude and Phase (functional)
 #'
 #' Separate a complex-valued spectrogram with shape `(.., 2)` into its magnitude and phase.
 #'
@@ -363,7 +358,7 @@ functional_magphase <- function(
 
 
 
-#' Griffin-Lim Transformation
+#' Griffin-Lim Transformation (functional)
 #'
 #' Compute waveform from a linear scale magnitude spectrogram using the Griffin-Lim transformation.
 #'  Implementation ported from `librosa`.
@@ -463,7 +458,7 @@ functional_griffinlim <- function(
   not_implemented_error("TO DO (waiting for torch_istft() implementation)")
 }
 
-#' An IIR Filter
+#' An IIR Filter (functional)
 #'
 #' Perform an IIR filter by evaluating difference equation.
 #'
@@ -543,7 +538,7 @@ functional_lfilter <- function(
   return(output)
 }
 
-#' Biquad Filter
+#' Biquad Filter (functional)
 #'
 #' Perform a biquad filter of input tensor.  Initial conditions set to 0.
 #'     [https://en.wikipedia.org/wiki/Digital_biquad_filter]()
@@ -583,7 +578,7 @@ db_to_linear <- function(x) {
   exp(x * log(10) / 20.0)
 }
 
-#' High-pass Biquad Filter
+#' High-pass Biquad Filter (functional)
 #'
 #' Design biquad highpass filter and perform filtering.  Similar to SoX implementation.
 #'
@@ -614,7 +609,7 @@ functional_highpass_biquad <- function(
   return(functional_biquad(waveform, b0, b1, b2, a0, a1, a2))
 }
 
-#' Low-pass Biquad Filter
+#' Low-pass Biquad Filter (functional)
 #'
 #' Design biquad lowpass filter and perform filtering.  Similar to SoX implementation.
 #'
@@ -645,7 +640,7 @@ functional_lowpass_biquad <- function(
   return(functional_biquad(waveform, b0, b1, b2, a0, a1, a2))
 }
 
-#' All-pass Biquad Filter
+#' All-pass Biquad Filter (functional)
 #'
 #' Design two-pole all-pass filter. Similar to SoX implementation.
 #'
@@ -680,7 +675,7 @@ functional_allpass_biquad <- function(
   return(functional_biquad(waveform, b0, b1, b2, a0, a1, a2))
 }
 
-#' Band-pass Biquad Filter
+#' Band-pass Biquad Filter (functional)
 #'
 #' Design two-pole band-pass filter.  Similar to SoX implementation.
 #'
@@ -719,7 +714,7 @@ functional_bandpass_biquad <- function(
   return(functional_biquad(waveform, b0, b1, b2, a0, a1, a2))
 }
 
-#' Band-reject Biquad Filter
+#' Band-reject Biquad Filter (functional)
 #'
 #' Design two-pole band-reject filter.  Similar to SoX implementation.
 #'
@@ -754,7 +749,7 @@ functional_bandreject_biquad <- function(
   return(functional_biquad(waveform, b0, b1, b2, a0, a1, a2))
 }
 
-#' Biquad Peaking Equalizer Filter
+#' Biquad Peaking Equalizer Filter (functional)
 #'
 #' Design biquad peaking equalizer filter and perform filtering.  Similar to SoX implementation.
 #'
@@ -788,7 +783,7 @@ functional_equalizer_biquad <- function(
   return(functional_biquad(waveform, b0, b1, b2, a0, a1, a2))
 }
 
-#' Two-pole Band Filter
+#' Two-pole Band Filter (functional)
 #'
 #' Design two-pole band filter.  Similar to SoX implementation.
 #'
@@ -835,7 +830,7 @@ functional_band_biquad <- function(
   return(functional_biquad(waveform, b0, b1, b2, a0, a1, a2))
 }
 
-#' Treble Tone-control Effect
+#' Treble Tone-control Effect (functional)
 #'
 #' Design a treble tone-control effect.  Similar to SoX implementation.
 #'
@@ -878,7 +873,7 @@ functional_treble_biquad <- function(
   return(functional_biquad(waveform, b0, b1, b2, a0, a1, a2))
 }
 
-#' Bass Tone-control Effect
+#' Bass Tone-control Effect (functional)
 #'
 #' Design a bass tone-control effect.  Similar to SoX implementation.
 #'
@@ -922,7 +917,7 @@ functional_bass_biquad <- function(
 }
 
 
-#' ISO 908 CD De-emphasis IIR Filter
+#' ISO 908 CD De-emphasis IIR Filter (functional)
 #'
 #' Apply ISO 908 CD de-emphasis (shelving) IIR filter.  Similar to SoX implementation.
 #'
@@ -970,7 +965,7 @@ functional_deemph_biquad <- function(
   return(functional_biquad(waveform, b0, b1, b2, a0, a1, a2))
 }
 
-#' RIAA Vinyl Playback Equalisation
+#' RIAA Vinyl Playback Equalisation (functional)
 #'
 #' Apply RIAA vinyl playback equalisation.  Similar to SoX implementation.
 #'
@@ -1037,7 +1032,7 @@ functional_riaa_biquad <- function(
 }
 
 
-#' Contrast Effect
+#' Contrast Effect (functional)
 #'
 #' Apply contrast effect.  Similar to SoX implementation.
 #' Comparable with compression, this effect modifies an audio signal to
@@ -1071,7 +1066,7 @@ functional_contrast <- function(
   return(output_waveform)
 }
 
-#' DC Shift
+#' DC Shift (functional)
 #'
 #' Apply a DC shift to the audio. Similar to SoX implementation.
 #'    This can be useful to remove a DC offset (caused perhaps by a
@@ -1118,7 +1113,7 @@ functional_dcshift <- function(
   return(output_waveform)
 }
 
-#' Overdrive Effect
+#' Overdrive Effect (functional)
 #'
 #' Apply a overdrive effect to the audio. Similar to SoX implementation.
 #'    This effect applies a non linear distortion to the audio signal.
@@ -1177,7 +1172,7 @@ functional_overdrive <- function(
   return(output_waveform$clamp(min=-1.0, max=1.0)$view(actual_shape))
 }
 
-#' Phasing Effect
+#' Phasing Effect (functional)
 #'
 #' Apply a phasing effect to the audio. Similar to SoX implementation.
 #'
@@ -1232,7 +1227,7 @@ functional_phaser <- function(
     wave_type = 'TRIANGLE'
   }
 
-  mod_buf = functional_generate_wave_table(
+  mod_buf = functional__generate_wave_table(
     wave_type = wave_type,
     data_type = 'INT',
     table_size = mod_buf_len,
@@ -1268,7 +1263,7 @@ functional_phaser <- function(
   return(output_waveform$clamp(min=-1.0, max=1.0)$view(actual_shape))
 }
 
-#' Wave Table Generator
+#' Wave Table Generator (functional)
 #'
 #' A helper function for phaser. Generates a table with given parameters
 #'
@@ -1283,7 +1278,7 @@ functional_phaser <- function(
 #' @return `tensor`: A 1D tensor with wave table values
 #'
 #' @export
-functional_generate_wave_table <- function(
+functional__generate_wave_table <- function(
   wave_type,
   data_type,
   table_size,
@@ -1323,7 +1318,7 @@ functional_generate_wave_table <- function(
   return(d)
 }
 
-#' Flanger Effect
+#' Flanger Effect (functional)
 #'
 #' Apply a flanger effect to the audio. Similar to SoX implementation.
 #'
@@ -1419,7 +1414,7 @@ functional_flanger <- function(
   table_min = floor(delay_min * sample_rate + 0.5)
   table_max = delay_buf_length - 2.
 
-  lfo = functional_generate_wave_table(
+  lfo = functional__generate_wave_table(
     wave_type = wave_type,
     data_type = "FLOAT",
     table_size = lfo_length,
@@ -1480,7 +1475,8 @@ functional_flanger <- function(
 
   return(output_waveform$clamp(min=-1.0, max=1.0)$view(actual_shape))
 }
-#' Mask Along Axis IID
+
+#' Mask Along Axis IID (functional)
 #'
 #' Apply a mask along ``axis``. Mask will be applied from indices ``[v_0, v_0 + v)``, where
 #' ``v`` is sampled from ``uniform (0, mask_param)``, and ``v_0`` from ``uniform(0, max_v - v)``.
@@ -1500,9 +1496,8 @@ functional_mask_along_axis_iid <- function(
   axis
 ) {
 
-  if(axis != 3 & axis != 4) {
+  if(axis != 3 & axis != 4)
     value_error("Only Frequency (axis 3) and Time (axis 4) masking are supported")
-  }
 
   device = specgrams$device
   dtype = specgrams$dtype
@@ -1522,7 +1517,8 @@ functional_mask_along_axis_iid <- function(
 
   return(specgrams)
 }
-#' Mask Along Axis
+
+#' Mask Along Axis (functional)
 #'
 #' Apply a mask along ``axis``. Mask will be applied from indices ``[v_0, v_0 + v)``, where
 #' ``v`` is sampled from ``uniform (0, mask_param)``, and ``v_0`` from ``uniform(0, max_v - v)``.
@@ -1572,7 +1568,7 @@ functional_mask_along_axis <- function(
   return(specgram)
 }
 
-#' Delta Coefficients
+#' Delta Coefficients (functional)
 #'
 #' Compute delta coefficients of a tensor, usually a spectrogram.
 #'
@@ -1625,7 +1621,7 @@ functional_compute_deltas <- function(
   return(output)
 }
 
-#' Gain
+#' Gain (functional)
 #'
 #' Apply amplification or attenuation to the whole waveform.
 #'
@@ -1649,7 +1645,7 @@ functional_gain <- function(
   return(waveform * ratio)
 }
 
-#' Noise Shaping
+#' Noise Shaping (functional)
 #'
 #' Noise shaping is calculated by error:
 #'    error[n] = dithered[n] - original[n]
@@ -1685,7 +1681,7 @@ functional_add_noise_shaping <- function(
   return(noise_shaped$reshape(c(dithered_shape[-lds], noise_shaped$shape[length(noise_shaped$shape)])))
 }
 
-#' Probability Distribution Apply
+#' Probability Distribution Apply (functional)
 #'
 #' Apply a probability distribution function on a waveform.
 #'
@@ -1765,7 +1761,7 @@ functional_apply_probability_distribution <- function(
   return(quantised_signal$reshape(c(shape[-ls], quantised_signal$shape[length(quantised_signal$shape)])))
 }
 
-#' Dither
+#' Dither (functional)
 #'
 #' Dither increases the perceived dynamic range of audio stored at a
 #'    particular bit-depth by eliminating nonlinear truncation distortion
@@ -1796,7 +1792,7 @@ functional_dither <- function(
   }
 }
 
-#' Normalized Cross-Correlation Function
+#' Normalized Cross-Correlation Function (functional)
 #'
 #' Compute Normalized Cross-Correlation Function  (NCCF).
 #'
@@ -1847,7 +1843,7 @@ functional_compute_nccf <- function(
   return(nccf)
 }
 
-#' Combine Max
+#' Combine Max (functional)
 #'
 #' Take value from first if bigger than a multiplicative factor of the second, elementwise.
 #'
@@ -1861,15 +1857,14 @@ functional_combine_max <- function(
   b,
   thresh = 0.99
 ) {
-  mask = (a[1] > thresh * b[1])
-  values = mask * a[1] + !mask * b[1]
-  indices = mask * a[2] + !mask * b[2]
+  mask = (a[[1]] > thresh * b[[1]])
+  values = mask * a[[1]] + (!mask) * b[[1]]
+  indices = mask * a[[2]] + (!mask) * b[[2]]
 
-  not_implemented_error("Not implemented yet.")
-  return(values, indices)
+  return(list(values, indices))
 }
 
-#' Find Max Per Frame
+#' Find Max Per Frame (functional)
 #'
 #'  For each frame, take the highest value of NCCF,
 #'  apply centered median smoothing, and convert to frequency.
@@ -1905,7 +1900,7 @@ functional_find_max_per_frame <- function(
   return(indices)
 }
 
-#' Median Smoothing
+#' Median Smoothing (functional)
 #'
 #' Apply median smoothing to the 1D tensor over the given window.
 #'
@@ -1932,7 +1927,7 @@ functional_median_smoothing <- function(
   return(values)
 }
 
-#' Detect Pitch Frequency.
+#' Detect Pitch Frequency (functional)
 #'
 #' It is implemented using normalized cross-correlation function and median smoothing.
 #'
@@ -1975,7 +1970,7 @@ functional_detect_pitch_frequency <- function(
   return(freq)
 }
 
-#' sliding-window Cepstral Mean Normalization
+#' sliding-window Cepstral Mean Normalization (functional)
 #'
 #' Apply sliding-window cepstral mean  (and optionally variance) normalization per utterance.
 #'
@@ -2000,6 +1995,8 @@ functional_sliding_window_cmn <- function(
 
   input_shape = waveform$shape
   lis = length(input_shape)
+  if(lis < 2) value_error("waveform should have at least 2 dimensions. Expected Tensor(..., freq, time).")
+
   num_frames = input_shape[lis-1]
   num_feats = input_shape[lis]
   waveform = waveform$view(c(-1, num_frames, num_feats))
@@ -2177,7 +2174,7 @@ functional_measure <- function(
 }
 
 
-#' Voice Activity Detector.
+#' Voice Activity Detector (functional)
 #'
 #' Voice Activity Detector. Similar to SoX implementation.
 #'    Attempts to trim silence and quiet background sounds from the ends of recordings of speech.

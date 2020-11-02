@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_mask_along_axis_iid}
 \alias{functional_mask_along_axis_iid}
-\title{Mask Along Axis IID}
+\title{Mask Along Axis IID (functional)}
 \usage{
 functional_mask_along_axis_iid(specgrams, mask_param, mask_value, axis)
 }

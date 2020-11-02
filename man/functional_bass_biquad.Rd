@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_bass_biquad}
 \alias{functional_bass_biquad}
-\title{Bass Tone-control Effect}
+\title{Bass Tone-control Effect (functional)}
 \usage{
 functional_bass_biquad(
   waveform,

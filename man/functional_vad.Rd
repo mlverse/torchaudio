@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_vad}
 \alias{functional_vad}
-\title{Voice Activity Detector.}
+\title{Voice Activity Detector (functional)}
 \usage{
 functional_vad(
   waveform,

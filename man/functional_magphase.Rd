@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_magphase}
 \alias{functional_magphase}
-\title{Magnitude and Phase}
+\title{Magnitude and Phase (functional)}
 \usage{
 functional_magphase(complex_tensor, power = 1)
 }

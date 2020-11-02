@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_contrast}
 \alias{functional_contrast}
-\title{Contrast Effect}
+\title{Contrast Effect (functional)}
 \usage{
 functional_contrast(waveform, enhancement_amount = 75)
 }

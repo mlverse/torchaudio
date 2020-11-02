@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_biquad}
 \alias{functional_biquad}
-\title{Biquad Filter}
+\title{Biquad Filter (functional)}
 \usage{
 functional_biquad(waveform, b0, b1, b2, a0, a1, a2)
 }

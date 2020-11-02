@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_detect_pitch_frequency}
 \alias{functional_detect_pitch_frequency}
-\title{Detect Pitch Frequency.}
+\title{Detect Pitch Frequency (functional)}
 \usage{
 functional_detect_pitch_frequency(
   waveform,

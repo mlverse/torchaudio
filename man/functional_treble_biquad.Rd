@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_treble_biquad}
 \alias{functional_treble_biquad}
-\title{Treble Tone-control Effect}
+\title{Treble Tone-control Effect (functional)}
 \usage{
 functional_treble_biquad(
   waveform,

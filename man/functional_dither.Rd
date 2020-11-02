@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_dither}
 \alias{functional_dither}
-\title{Dither}
+\title{Dither (functional)}
 \usage{
 functional_dither(waveform, density_function = "TPDF", noise_shaping = FALSE)
 }

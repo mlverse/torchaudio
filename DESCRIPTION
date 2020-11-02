@@ -21,14 +21,16 @@ Suggests:
     tuneR,
     knitr,
     rmarkdown,
-    stringr
+    stringr,
+    numbers
 Imports: 
     torch,
     fs,
     rlang,
     rappdirs,
     utils,
-    tools
+    tools,
+    glue
 Remotes:
     mlverse/torch
 VignetteBuilder: knitr

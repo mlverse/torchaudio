@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_bandpass_biquad}
 \alias{functional_bandpass_biquad}
-\title{Band-pass Biquad Filter}
+\title{Band-pass Biquad Filter (functional)}
 \usage{
 functional_bandpass_biquad(
   waveform,

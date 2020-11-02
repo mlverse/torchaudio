@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_bandreject_biquad}
 \alias{functional_bandreject_biquad}
-\title{Band-reject Biquad Filter}
+\title{Band-reject Biquad Filter (functional)}
 \usage{
 functional_bandreject_biquad(waveform, sample_rate, central_freq, Q = 0.707)
 }

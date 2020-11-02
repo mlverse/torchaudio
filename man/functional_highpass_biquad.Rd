@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_highpass_biquad}
 \alias{functional_highpass_biquad}
-\title{High-pass Biquad Filter}
+\title{High-pass Biquad Filter (functional)}
 \usage{
 functional_highpass_biquad(waveform, sample_rate, cutoff_freq, Q = 0.707)
 }

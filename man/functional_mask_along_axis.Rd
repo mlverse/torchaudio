@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_mask_along_axis}
 \alias{functional_mask_along_axis}
-\title{Mask Along Axis}
+\title{Mask Along Axis (functional)}
 \usage{
 functional_mask_along_axis(specgram, mask_param, mask_value, axis)
 }

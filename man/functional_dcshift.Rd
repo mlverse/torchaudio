@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_dcshift}
 \alias{functional_dcshift}
-\title{DC Shift}
+\title{DC Shift (functional)}
 \usage{
 functional_dcshift(waveform, shift, limiter_gain = NULL)
 }

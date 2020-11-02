@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_create_dct}
 \alias{functional_create_dct}
-\title{DCT transformation matrix}
+\title{DCT transformation matrix (functional)}
 \usage{
 functional_create_dct(n_mfcc, n_mels, norm = NULL)
 }
