@@ -18,10 +18,15 @@ test_that("transform_spectrogram", {
 spec = transform_spectrogram()(sample_torch)
 spec_complex = transform_spectrogram(power = NULL)(sample_torch)
 
-test_that("transform_mel_scale", {
-  ms = transform_mel_scale()(spec)
-  expect_tensor(ms)
-  expect_equal(dim(ms), c(1, 128, 49))
+test_that("transform_mel_scale and functional_inverse_mel_scale", {
+  expect_warning(m <- transform_mel_scale()(sample_torch), class = "value_warning")
+  expect_no_error(m <- transform_mel_scale()(spec))
+  expect_tensor(m)
+  expect_equal(dim(m), c(1, 128, 49))
+
+  expect_no_error(m <- transform_inverse_mel_scale(n_stft = 128, momentum = 0.2, max_iter = 4)(m))
+  expect_tensor(m)
+  expect_equal(dim(m), c(1, 128, 49))
 })
 
 test_that("transform_amplitude_to_db", {

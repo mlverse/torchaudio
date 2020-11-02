@@ -342,6 +342,110 @@ transform_mfcc <- torch::nn_module(
   }
 )
 
+#' Inverse Mel Scale
+#'
+#'  Solve for a normal STFT from a mel frequency STFT, using a conversion
+#'  matrix.  This uses triangular filter banks.
+#'
+#' @param melspec  (Tensor): A Mel frequency spectrogram of dimension (..., ``n_mels``, time)
+#' @param n_stft  (int): Number of bins in STFT. See ``n_fft`` in [torchaudio::transform_spectrogram].
+#' @param n_mels  (int, optional): Number of mel filterbanks. (Default: ``128``)
+#' @param sample_rate  (int, optional): Sample rate of audio signal. (Default: ``16000``)
+#' @param f_min  (float, optional): Minimum frequency. (Default: ``0.``)
+#' @param f_max  (float or NULL, optional): Maximum frequency. (Default: ``sample_rate %/% 2``)
+#' @param max_iter  (int, optional): Maximum number of optimization iterations. (Default: ``100000``)
+#' @param tolerance_loss  (float, optional): Value of loss to stop optimization at. (Default: ``1e-5``)
+#' @param tolerance_change  (float, optional): Difference in losses to stop optimization at. (Default: ``1e-8``)
+#' @param ...  (optional): Arguments passed for the SGD optimizer. Argument lr will default to 0.1 if not specied.(Default: ``NULL``)
+#'
+#' @details
+#' It minimizes the euclidian norm between the input mel-spectrogram and the product between
+#' the estimated spectrogram and the filter banks using SGD.
+#'
+#' @return Tensor: Linear scale spectrogram of size (..., freq, time)
+#'
+#' @export
+transform_inverse_mel_scale <- torch::nn_module(
+  "InverseMelScale",
+  initialize = function(
+    n_stft,
+    n_mels = 128,
+    sample_rate = 16000,
+    f_min = 0.,
+    f_max = NULL,
+    max_iter = 100000,
+    tolerance_loss = 1e-5,
+    tolerance_change = 1e-8,
+    ...
+  ) {
+    self$n_mels = n_mels
+    self$sample_rate = sample_rate
+    self$f_max = f_max %||% as.numeric(sample_rate %/% 2)
+    self$f_min = f_min
+    self$max_iter = max_iter
+    self$tolerance_loss = tolerance_loss
+    self$tolerance_change = tolerance_change
+    self$sgdargs = list(...) %||% list('lr' = 0.1, 'momentum' = 0.9)
+    self$sgdargs$lr = self$sgdargs$lr %||% 0.1 # lr is required for torch::optim_sgd()
+
+    if(f_min > self$f_max)
+      value_error(glue::glue('Require f_min: {f_min} < f_max: {self$f_max}'))
+
+    fb = functional_create_fb_matrix(
+      n_freqs = n_stft,
+      f_min = self$f_min,
+      f_max = self$f_max,
+      n_mels = self$n_mels,
+      sample_rate = self$sample_rate
+    )
+    self$register_buffer('fb', fb)
+  },
+
+  forward = function(melspec) {
+    # pack batch
+    shape = melspec$size()
+    ls = length(shape)
+    melspec = melspec$view(c(-1, shape[ls-1], shape[ls]))
+
+    n_mels = shape[ls-1]
+    time = shape[ls]
+
+    freq = self$fb$size(1) # (freq, n_mels)
+    melspec = melspec$transpose(-1, -2)
+    if(self$n_mels != n_mels) runtime_error("self$n_mels != n_mels")
+
+    specgram = torch::torch_rand(melspec$size()[1], time, freq, requires_grad=TRUE,
+                                 dtype=melspec$dtype, device=melspec$device)
+    self$sgdargs$params <- specgram
+    optim = do.call(torch::optim_sgd, self$sgdargs)
+
+    loss = Inf
+    for(i in seq.int(self$max_iter)){
+      optim$zero_grad()
+      diff = melspec - specgram$matmul(self$fb)
+      new_loss = diff$pow(2)$sum(dim=-1)$mean()
+      # take sum over mel-frequency then average over other dimensions
+      # so that loss threshold is applied par unit timeframe
+      new_loss$backward()
+      optim$step()
+      specgram$set_data(specgram$data()$clamp(min=0))
+
+      new_loss = new_loss$item()
+      if(new_loss < self$tolerance_loss | abs(loss - new_loss) < self$tolerance_change)
+        break
+
+      loss = new_loss
+    }
+
+    specgram$requires_grad_(FALSE)
+    specgram = specgram$clamp(min=0)$transpose(-1, -2)
+
+    # unpack batch
+    specgram = specgram$view(c(shape[1:(ls-2)], freq, time))
+    return(specgram)
+  }
+)
+
 #' Mu Law Encoding
 #'
 #' Encode signal based on mu-law companding.  For more info see
