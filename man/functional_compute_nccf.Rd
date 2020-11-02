@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_compute_nccf}
 \alias{functional_compute_nccf}
-\title{Normalized Cross-Correlation Function}
+\title{Normalized Cross-Correlation Function (functional)}
 \usage{
 functional_compute_nccf(waveform, sample_rate, frame_time, freq_low)
 }

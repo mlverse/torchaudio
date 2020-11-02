@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_overdrive}
 \alias{functional_overdrive}
-\title{Overdrive Effect}
+\title{Overdrive Effect (functional)}
 \usage{
 functional_overdrive(waveform, gain = 20, colour = 20)
 }

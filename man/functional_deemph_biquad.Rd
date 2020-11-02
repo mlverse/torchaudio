@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_deemph_biquad}
 \alias{functional_deemph_biquad}
-\title{ISO 908 CD De-emphasis IIR Filter}
+\title{ISO 908 CD De-emphasis IIR Filter (functional)}
 \usage{
 functional_deemph_biquad(waveform, sample_rate)
 }

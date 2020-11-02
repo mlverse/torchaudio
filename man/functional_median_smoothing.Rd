@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_median_smoothing}
 \alias{functional_median_smoothing}
-\title{Median Smoothing}
+\title{Median Smoothing (functional)}
 \usage{
 functional_median_smoothing(indices, win_length)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_flanger}
 \alias{functional_flanger}
-\title{Flanger Effect}
+\title{Flanger Effect (functional)}
 \usage{
 functional_flanger(
   waveform,

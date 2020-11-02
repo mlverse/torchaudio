@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_lowpass_biquad}
 \alias{functional_lowpass_biquad}
-\title{Low-pass Biquad Filter}
+\title{Low-pass Biquad Filter (functional)}
 \usage{
 functional_lowpass_biquad(waveform, sample_rate, cutoff_freq, Q = 0.707)
 }

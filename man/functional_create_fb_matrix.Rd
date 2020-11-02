@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_create_fb_matrix}
 \alias{functional_create_fb_matrix}
-\title{Frequency Bin Conversion Matrix}
+\title{Frequency Bin Conversion Matrix (functional)}
 \usage{
 functional_create_fb_matrix(
   n_freqs,

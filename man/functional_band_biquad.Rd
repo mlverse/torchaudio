@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_band_biquad}
 \alias{functional_band_biquad}
-\title{Two-pole Band Filter}
+\title{Two-pole Band Filter (functional)}
 \usage{
 functional_band_biquad(
   waveform,

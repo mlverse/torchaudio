@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_add_noise_shaping}
 \alias{functional_add_noise_shaping}
-\title{Noise Shaping}
+\title{Noise Shaping (functional)}
 \usage{
 functional_add_noise_shaping(dithered_waveform, waveform)
 }

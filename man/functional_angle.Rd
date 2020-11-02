@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_angle}
 \alias{functional_angle}
-\title{Angle}
+\title{Angle (functional)}
 \usage{
 functional_angle(complex_tensor)
 }

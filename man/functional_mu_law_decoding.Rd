@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_mu_law_decoding}
 \alias{functional_mu_law_decoding}
-\title{Mu Law Decoding}
+\title{Mu Law Decoding (functional)}
 \usage{
 functional_mu_law_decoding(x_mu, quantization_channels)
 }
