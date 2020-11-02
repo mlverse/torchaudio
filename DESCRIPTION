@@ -21,7 +21,8 @@ Suggests:
     tuneR,
     knitr,
     rmarkdown,
-    stringr
+    stringr,
+    numbers
 Imports: 
     torch,
     fs,

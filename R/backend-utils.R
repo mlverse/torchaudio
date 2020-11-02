@@ -26,6 +26,7 @@ strip <- function(str) gsub("^\\s+|\\s+$", "", str)
 #'
 #' @noRd
 #'
+#' @keywords internal
 #' @examples
 #' NULL %||% 1
 "%||%" <- function(x, y){
@@ -35,3 +36,5 @@ strip <- function(str) gsub("^\\s+|\\s+$", "", str)
     x
   }
 }
+
+
