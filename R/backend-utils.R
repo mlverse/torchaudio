@@ -19,3 +19,19 @@ backend_utils_list_audio_backends <- function() {
 #'
 #' @keywords internal
 strip <- function(str) gsub("^\\s+|\\s+$", "", str)
+
+#' If x is `NULL`, return y, otherwise return x
+#'
+#' @param x,y Two elements to test, one potentially `NULL`
+#'
+#' @noRd
+#'
+#' @examples
+#' NULL %||% 1
+"%||%" <- function(x, y){
+  if (is.null(x) || length(x) == 0) {
+    y
+  } else {
+    x
+  }
+}

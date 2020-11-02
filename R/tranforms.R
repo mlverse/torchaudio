@@ -13,10 +13,11 @@
 #' @param power (numeric): Exponent for the magnitude spectrogram, (must be > 0) e.g.,
 #'  1 for energy, 2 for power, etc. If NULL, then the complex spectrum is returned instead.
 #' @param normalized (logical): Whether to normalize by magnitude after stft
-#' @param Arguments for window function.
+#' @param ... (optional) Arguments for window function.
 #'
 #' @return tensor: Dimension (..., freq, time), freq is n_fft %/% 2 + 1 and n_fft is the
 #' number of Fourier bins, and time is the number of window hops (n_frame).
+#'
 #' @export
 transform_spectrogram <- torch::nn_module(
   "Spectrogram",
@@ -24,7 +25,7 @@ transform_spectrogram <- torch::nn_module(
     n_fft = 400,
     win_length = NULL,
     hop_length = NULL,
-    pad = 0,
+    pad = 0L,
     window_fn = torch::torch_hann_window,
     power = 2,
     normalized = FALSE,
@@ -34,8 +35,8 @@ transform_spectrogram <- torch::nn_module(
 
     # number of FFT bins. the returned STFT result will have n_fft // 2 + 1
     # number of frequecies due to onesided=True in torch.stft
-    self$win_length = if(!is.null(win_length)) win_length else n_fft
-    self$hop_length = if(!is.null(hop_length)) hop_length else self$win_length %/% 2
+    self$win_length = win_length %||% n_fft
+    self$hop_length = hop_length %||% self$win_length %/% 2
     window = window_fn(window_length = self$win_length, dtype = torch::torch_float(), ...)
     self$register_buffer('window', window)
     self$pad = pad
@@ -356,7 +357,7 @@ transform_mfcc <- torch::nn_module(
 #' @param max_iter  (int, optional): Maximum number of optimization iterations. (Default: ``100000``)
 #' @param tolerance_loss  (float, optional): Value of loss to stop optimization at. (Default: ``1e-5``)
 #' @param tolerance_change  (float, optional): Difference in losses to stop optimization at. (Default: ``1e-8``)
-#' @param ...  (optional): Arguments passed for the SGD optimizer. Argument lr will default to 0.1 if not specied.(Default: ``NULL``)
+#' @param ...  (optional): Arguments passed to the SGD optimizer. Argument lr will default to 0.1 if not specied.(Default: ``NULL``)
 #'
 #' @details
 #' It minimizes the euclidian norm between the input mel-spectrogram and the product between

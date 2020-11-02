@@ -20,18 +20,14 @@
 #' @export
 functional_spectrogram <- function(
   waveform,
-  pad = 0,
-  n_fft = 400,
-  hop_length = NULL,
-  win_length = NULL,
-  window = torch::torch_hann_window,
-  power = 2,
-  normalized = FALSE,
-  ...
+  pad,
+  window,
+  n_fft,
+  hop_length,
+  win_length,
+  power,
+  normalized
 ) {
-  if(is.null(win_length)) win_length <- n_fft
-  if(is.null(hop_length)) hop_length <- win_length %/% 2
-  if(is.function(window)) window <- window(window_length = win_length, dtype = torch::torch_float(), ...)
   if(pad > 0) waveform <- torch::nnf_pad(waveform, c(pad, pad))
 
   # pack batch
