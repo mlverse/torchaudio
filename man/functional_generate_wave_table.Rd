@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_generate_wave_table}
 \alias{functional_generate_wave_table}
-\title{Wave Table Generator}
+\title{Wave Table Generator (functional)}
 \usage{
 functional_generate_wave_table(
   wave_type,

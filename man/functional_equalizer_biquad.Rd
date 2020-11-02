@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_equalizer_biquad}
 \alias{functional_equalizer_biquad}
-\title{Biquad Peaking Equalizer Filter}
+\title{Biquad Peaking Equalizer Filter (functional)}
 \usage{
 functional_equalizer_biquad(
   waveform,

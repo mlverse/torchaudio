@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_allpass_biquad}
 \alias{functional_allpass_biquad}
-\title{All-pass Biquad Filter}
+\title{All-pass Biquad Filter (functional)}
 \usage{
 functional_allpass_biquad(waveform, sample_rate, central_freq, Q = 0.707)
 }

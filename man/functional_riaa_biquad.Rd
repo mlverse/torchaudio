@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_riaa_biquad}
 \alias{functional_riaa_biquad}
-\title{RIAA Vinyl Playback Equalisation}
+\title{RIAA Vinyl Playback Equalisation (functional)}
 \usage{
 functional_riaa_biquad(waveform, sample_rate)
 }

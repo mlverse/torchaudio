@@ -28,7 +28,8 @@ Imports:
     rlang,
     rappdirs,
     utils,
-    tools
+    tools,
+    glue
 Remotes:
     mlverse/torch
 VignetteBuilder: knitr

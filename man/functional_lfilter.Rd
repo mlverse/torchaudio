@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_lfilter}
 \alias{functional_lfilter}
-\title{An IIR Filter}
+\title{An IIR Filter (functional)}
 \usage{
 functional_lfilter(waveform, a_coeffs, b_coeffs, clamp = TRUE)
 }

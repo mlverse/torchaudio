@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_find_max_per_frame}
 \alias{functional_find_max_per_frame}
-\title{Find Max Per Frame}
+\title{Find Max Per Frame (functional)}
 \usage{
 functional_find_max_per_frame(nccf, sample_rate, freq_high)
 }

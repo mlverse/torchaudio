@@ -6,14 +6,13 @@
 \usage{
 functional_spectrogram(
   waveform,
-  pad = 0,
-  n_fft = 400,
-  hop_length = NULL,
-  win_length = NULL,
-  window = torch::torch_hann_window,
-  power = 2,
-  normalized = FALSE,
-  ...
+  pad,
+  window,
+  n_fft,
+  hop_length,
+  win_length,
+  power,
+  normalized
 )
 }
 \arguments{
@@ -21,14 +20,14 @@ functional_spectrogram(
 
 \item{pad}{(integer): Two sided padding of signal}
 
+\item{window}{(tensor or function): Window tensor that is applied/multiplied to each
+frame/window or a function that generates the window tensor.}
+
 \item{n_fft}{(integer): Size of FFT}
 
 \item{hop_length}{(integer): Length of hop between STFT windows}
 
 \item{win_length}{(integer): Window size}
-
-\item{window}{(tensor or function): Window tensor that is applied/multiplied to each
-frame/window or a function that generates the window tensor.}
 
 \item{power}{(numeric): Exponent for the magnitude spectrogram, (must be > 0) e.g.,
 1 for energy, 2 for power, etc. If NULL, then the complex spectrum is returned instead.}

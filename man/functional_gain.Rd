@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_gain}
 \alias{functional_gain}
-\title{Gain}
+\title{Gain (functional)}
 \usage{
 functional_gain(waveform, gain_db = 1)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_combine_max}
 \alias{functional_combine_max}
-\title{Combine Max}
+\title{Combine Max (functional)}
 \usage{
 functional_combine_max(a, b, thresh = 0.99)
 }

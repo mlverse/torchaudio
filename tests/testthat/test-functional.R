@@ -3,8 +3,16 @@ sample_rate = sample_mp3@samp.rate
 samples = length(sample_mp3@left)
 
 test_that("functional_spectrogram", {
-  n_fft = 400
-  expect_no_error(spec <- functional_spectrogram(torch::torch_tensor(sample_mp3@left, dtype = torch::torch_float()), n_fft = n_fft))
+  expect_no_error(spec <- functional_spectrogram(
+    waveform = torch::torch_tensor(sample_mp3@left, dtype = torch::torch_float()),
+    n_fft = 400,
+    pad = 0,
+    window = torch::torch_hann_window(window_length = 200L, dtype = torch::torch_float()),
+    hop_length = 200,
+    win_length = 200,
+    power = 2,
+    normalized = TRUE
+  ))
   expect_tensor(spec)
   expect_equal(dim(spec)[1], n_fft %/% 2 + 1)
 })

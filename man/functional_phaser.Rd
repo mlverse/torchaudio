@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_phaser}
 \alias{functional_phaser}
-\title{Phasing Effect}
+\title{Phasing Effect (functional)}
 \usage{
 functional_phaser(
   waveform,

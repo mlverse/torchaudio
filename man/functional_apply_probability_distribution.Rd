@@ -2,7 +2,7 @@
 % Please edit documentation in R/functional.R
 \name{functional_apply_probability_distribution}
 \alias{functional_apply_probability_distribution}
-\title{Probability Distribution Apply}
+\title{Probability Distribution Apply (functional)}
 \usage{
 functional_apply_probability_distribution(waveform, density_function = "TPDF")
 }
