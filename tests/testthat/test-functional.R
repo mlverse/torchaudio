@@ -216,7 +216,7 @@ test_that("overdrive", {
 })
 
 test_that("generate_wave_table", {
-  wave_table <- functional_generate_wave_table(
+  wave_table <- functional__generate_wave_table(
     wave_type = 'TRIANGLE',
     data_type = 'INT',
     table_size = 800,
@@ -375,3 +375,15 @@ test_that("vad", {
   expect_tensor_shape(vad4, c(2, 1000))
 })
 
+test_that("_generate_wave_table", {
+  expect_no_error(x <- functional__generate_wave_table(
+    wave_type = "SINE",
+    data_type = 'INT',
+    table_size = 100,
+    min = -10,
+    max = 10,
+    phase = 10,
+    device = torch::torch_device("cpu")
+  ))
+  expect_tensor(x)
+})

@@ -1227,7 +1227,7 @@ functional_phaser <- function(
     wave_type = 'TRIANGLE'
   }
 
-  mod_buf = functional_generate_wave_table(
+  mod_buf = functional__generate_wave_table(
     wave_type = wave_type,
     data_type = 'INT',
     table_size = mod_buf_len,
@@ -1278,7 +1278,7 @@ functional_phaser <- function(
 #' @return `tensor`: A 1D tensor with wave table values
 #'
 #' @export
-functional_generate_wave_table <- function(
+functional__generate_wave_table <- function(
   wave_type,
   data_type,
   table_size,
@@ -1414,7 +1414,7 @@ functional_flanger <- function(
   table_min = floor(delay_min * sample_rate + 0.5)
   table_max = delay_buf_length - 2.
 
-  lfo = functional_generate_wave_table(
+  lfo = functional__generate_wave_table(
     wave_type = wave_type,
     data_type = "FLOAT",
     table_size = lfo_length,
