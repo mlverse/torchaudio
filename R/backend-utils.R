@@ -35,3 +35,5 @@ strip <- function(str) gsub("^\\s+|\\s+$", "", str)
     x
   }
 }
+
+
