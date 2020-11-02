@@ -182,10 +182,9 @@ functional_complex_norm <- function(complex_tensor, power = 1) {
 #' @export
 functional_amplitude_to_db <- function(
   x,
-  multiplier = 10.0,
-  amin = 1e-10,
-  ref_value = 1.0,
-  db_multiplier = log10(max(amin, ref_value)),
+  multiplier,
+  amin,
+  db_multiplier,
   top_db = NULL
 ) {
   x_db = multiplier * torch::torch_log10(torch::torch_clamp(x, min=amin))
@@ -210,7 +209,7 @@ functional_amplitude_to_db <- function(
 #' @return `tensor`: Output tensor in power/amplitude scale.
 #'
 #' @export
-functional_db_to_amplitude <- function(x, ref = 1.0, power = 1.0) {
+functional_db_to_amplitude <- function(x, ref, power) {
   ref * torch::torch_pow(torch::torch_pow(10.0, 0.1 * x), power)
 }
 
@@ -1858,12 +1857,11 @@ functional_combine_max <- function(
   b,
   thresh = 0.99
 ) {
-  mask = (a[1] > thresh * b[1])
-  values = mask * a[1] + !mask * b[1]
-  indices = mask * a[2] + !mask * b[2]
+  mask = (a[[1]] > thresh * b[[1]])
+  values = mask * a[[1]] + (!mask) * b[[1]]
+  indices = mask * a[[2]] + (!mask) * b[[2]]
 
-  not_implemented_error("Not implemented yet.")
-  return(values, indices)
+  return(list(values, indices))
 }
 
 #' Find Max Per Frame (functional)

@@ -4,14 +4,7 @@
 \alias{functional_amplitude_to_db}
 \title{Amplitude to DB (functional)}
 \usage{
-functional_amplitude_to_db(
-  x,
-  multiplier = 10,
-  amin = 1e-10,
-  ref_value = 1,
-  db_multiplier = log10(max(amin, ref_value)),
-  top_db = NULL
-)
+functional_amplitude_to_db(x, multiplier, amin, db_multiplier, top_db = NULL)
 }
 \arguments{
 \item{x}{(Tensor): Input tensor before being converted to decibel scale}
@@ -20,12 +13,12 @@ functional_amplitude_to_db(
 
 \item{amin}{(float): Number to clamp \code{x} (Default: \code{1e-10})}
 
-\item{ref_value}{(float): Reference which the output will be scaled by.}
-
 \item{db_multiplier}{(float): Log10(max(ref_value and amin))}
 
 \item{top_db}{(float or NULL, optional): Minimum negative cut-off in decibels. A reasonable number
 is 80. (Default: \code{NULL})}
+
+\item{ref_value}{(float): Reference which the output will be scaled by.}
 }
 \value{
 \code{tensor}: Output tensor in decibel scale
