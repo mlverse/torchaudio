@@ -136,9 +136,9 @@ cmuarctic_dataset <- torch::dataset(
       if(!fs::is_dir(self$.path)) {
         if(!fs::is_file(archive)){
           checksum = self$.CHECKSUMS[[url]]
-          torchaudio:::download_url(url = url, destfile = archive, checksum = checksum)
+          download_url(url = url, destfile = archive, checksum = checksum)
         }
-        torchaudio:::extract_archive(archive, fs::path_dir(archive))
+        extract_archive(archive, fs::path_dir(archive))
       }
     }
 
