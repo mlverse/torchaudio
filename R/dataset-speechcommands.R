@@ -44,10 +44,12 @@ speechcommand_dataset <- torch::dataset(
       "6b74f3901214cb2c2934e98196829835"
   ),
 
-  initialize = function(root,
-                        url = "speech_commands_v0.02",
-                        folder_in_archive = "SpeechCommands",
-                        download = FALSE) {
+  initialize = function(
+    root,
+    url = "speech_commands_v0.02",
+    folder_in_archive = "SpeechCommands",
+    download = FALSE
+  ) {
 
     self$URL <- url
     self$FOLDER_IN_ARCHIVE <- folder_in_archive

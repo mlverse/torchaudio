@@ -54,4 +54,6 @@ walk_files <- function(
 ) {
   out <- list.files(root, pattern = suffix, full.names = prefix, recursive = TRUE)
   if(remove_suffix) out <- gsub(suffix, "", out)
+
+  out
 }
