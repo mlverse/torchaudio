@@ -33,8 +33,8 @@ MelResNet layer uses a stack of ResBlocks on spectrogram.
 Pass the input through the MelResNet layer.
 }
 \examples{
- melresnet = MelResNet ()
- input = torch$rand (10, 128, 512)  # a random spectrogram
- output = melresnet (input)  # shape: (10, 128, 508)
+ melresnet = model_melresnet()
+ input = torch::torch_rand(10, 128, 512)  # a random spectrogram
+ output = melresnet(input)  # shape: (10, 128, 508)
 
 }

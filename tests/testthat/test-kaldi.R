@@ -16,7 +16,7 @@ test_that("kaldi__get_lr_indices_and_weights", {
 
 test_that("kaldi__get_num_lr_output_samples", {
   expect_no_error(x <- kaldi__get_num_lr_output_samples(100, 10, 5))
-  expect_tensor(x)
+  expect_equal(x, 50)
 })
 
 test_that("kaldi_resample_waveform", {

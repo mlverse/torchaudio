@@ -38,8 +38,8 @@ Upscale the dimensions of a spectrogram.
 Pass the input through the UpsampleNetwork layer.
 }
 \examples{
- upsamplenetwork = model_upsample_network(upsample_scales=[4, 4, 16])
- input = torch$rand (10, 128, 10)  # a random spectrogram
+ upsamplenetwork = model_upsample_network(upsample_scales=c(4, 4, 16))
+ input = torch::torch_rand (10, 128, 10)  # a random spectrogram
  output = upsamplenetwork (input)  # shape: (10, 1536, 128), (10, 1536, 128)
 
 }

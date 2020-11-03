@@ -23,7 +23,7 @@ Pass the input through the Stretch2d layer.
 \examples{
  stretch2d = model_stretch2d(time_scale=10, freq_scale=5)
 
- input = torch$rand(10, 100, 512)  # a random spectrogram
+ input = torch::torch_rand(10, 100, 512)  # a random spectrogram
  output = stretch2d(input)  # shape: (10, 500, 5120)
 
 }
