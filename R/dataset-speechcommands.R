@@ -79,7 +79,7 @@ speechcommand_dataset <- torch::dataset(
         extract_archive(archive, fs::path_dir(archive))
       }
     }
-    walker = list.files(self$.path, pattern = "wav$", full.names = TRUE, recursive = TRUE)
+    walker = walk_files(self$.path, suffix = "wav$", prefix = TRUE)
     walker = walker[!grepl(paste(self$EXCEPT_FOLDER, collapse = "|"), walker)]
     self$.walker = walker
   },
