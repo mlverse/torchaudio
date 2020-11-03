@@ -147,6 +147,7 @@ model_upsample_network <- torch::nn_module(
     kernel_size = 5
   ) {
 
+    total_scale = prod(upsample_scales)
     self$indent = ((kernel_size - 1) %/% 2) * total_scale
     self$resnet = model_melresnet(n_res_block, n_freq, n_hidden, n_output, kernel_size)
     self$resnet_stretch = model_stretch2d(total_scale, 1)
@@ -175,7 +176,7 @@ model_upsample_network <- torch::nn_module(
     upsampling_output = self$upsample_layers(specgram)
     upsampling_output_size = upsampling_output$size()
     lu = length(upsampling_output_size)
-    upsampling_output = upsampling_output$squeeze(2)[ ,  , self$indent:(upsampling_output_size[lu]-self$indent)]
+    upsampling_output = upsampling_output$squeeze(2)[ ,  , (self$indent+1):(upsampling_output_size[lu]-self$indent)]
 
     return(list(upsampling_output, resnet_output))
   }

@@ -19,14 +19,19 @@ spec = transform_spectrogram()(sample_torch)
 spec_complex = transform_spectrogram(power = NULL)(sample_torch)
 
 test_that("transform_mel_scale and functional_inverse_mel_scale", {
-  expect_warning(m <- transform_mel_scale()(sample_torch), class = "value_warning")
-  expect_no_error(m <- transform_mel_scale()(spec))
+  expect_no_error(m <- transform_mel_scale(n_mels = 10)(spec[..,1:10]))
   expect_tensor(m)
-  expect_equal(dim(m), c(1, 128, 49))
+  expect_equal(dim(m), c(10, 10))
 
-  expect_no_error(m <- transform_inverse_mel_scale(n_stft = 128, momentum = 0.2, max_iter = 4)(m))
+  expect_no_error(m <- transform_inverse_mel_scale(n_stft = 10, n_mels = 10)(m))
   expect_tensor(m)
-  expect_equal(dim(m), c(1, 128, 49))
+  expect_equal(dim(m), c(10, 10))
+})
+
+test_that("transform_mel_spectrogram", {
+  expect_no_error(m <- transform_mel_spectrogram(hop_length = 200)(sample_torch))
+  expect_tensor(m)
+  expect_equal(dim(m), c(128, 49))
 })
 
 test_that("transform_amplitude_to_db", {

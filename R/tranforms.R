@@ -36,7 +36,7 @@ transform_spectrogram <- torch::nn_module(
     # number of FFT bins. the returned STFT result will have n_fft // 2 + 1
     # number of frequecies due to onesided=True in torch.stft
     self$win_length = win_length %||% n_fft
-    self$hop_length = hop_length %||% self$win_length %/% 2
+    self$hop_length = hop_length %||% (self$win_length %/% 2)
     window = window_fn(window_length = self$win_length, dtype = torch::torch_float(), ...)
     self$register_buffer('window', window)
     self$pad = pad
@@ -94,10 +94,10 @@ transform_mel_scale <- torch::nn_module(
     } else {
       functional_create_fb_matrix(
         n_freqs = n_stft,
-        f_min = f_min,
-        f_max = f_max,
-        n_mels = n_mels,
-        sample_rate = sample_rate
+        f_min = self$f_min,
+        f_max = self$f_max,
+        n_mels = self$n_mels,
+        sample_rate = self$sample_rate
       )
     }
     self$register_buffer('fb', fb)
@@ -126,7 +126,7 @@ transform_mel_scale <- torch::nn_module(
 
     # unpack batch
     lspec = length(mel_specgram$shape)
-    mel_specgram = mel_specgram$reshape(c(shape[-((ls-1):ls)], mel_specgram$shape[(lspec-2):lspec]))
+    mel_specgram = mel_specgram$reshape(c(shape[-((ls-1):ls)], mel_specgram$shape[(lspec-1):lspec]))
 
     return(mel_specgram)
   }
@@ -223,8 +223,8 @@ transform_mel_spectrogram <- torch::nn_module(
   ) {
     self$sample_rate = sample_rate
     self$n_fft = n_fft
-    self$win_length = if(!is.null(win_length)) win_length else n_fft
-    self$hop_length = if(!is.null(hop_length)) hop_length else self$win_length %/% 2
+    self$win_length = win_length %||% n_fft
+    self$hop_length = hop_length %||% (self$win_length %/% 2)
     self$pad = pad
     self$power = power
     self$normalized = normalized
@@ -247,7 +247,7 @@ transform_mel_spectrogram <- torch::nn_module(
       sample_rate = self$sample_rate,
       f_min = self$f_min,
       f_max = self$f_max,
-      n_stft = self$n_fft %/% 2 + 1
+      n_stft = (self$n_fft %/% 2) + 1
     )
   },
 
@@ -288,7 +288,6 @@ transform_mfcc <- torch::nn_module(
     log_mels = FALSE,
     ...
   ) {
-
     supported_dct_types = c(2)
     if(!dct_type %in% supported_dct_types) {
       value_error(paste0('DCT type not supported:', dct_type))
@@ -332,11 +331,11 @@ transform_mfcc <- torch::nn_module(
     # (channel, n_mels, time).tranpose(...) dot (n_mels, n_mfcc)
     # -> (channel, time, n_mfcc).tranpose(...)
 
-    mfcc = torch::torch_matmul(mel_specgram$transpose(3, 4), self$dct_mat)$transpose(3, 4)
+    mfcc = torch::torch_matmul(mel_specgram$transpose(2, 3), self$dct_mat)$transpose(2, 3)
 
     # unpack batch
     lspec = length(mfcc$shape)
-    mfcc = mfcc$reshape(c(shape[-((ls-1):ls)], mfcc$shape[(lspec-2):lspec]))
+    mfcc = mfcc$reshape(c(shape[-ls], mfcc$shape[(lspec-1):lspec]))
 
     return(mfcc)
   }
@@ -378,6 +377,7 @@ transform_inverse_mel_scale <- torch::nn_module(
     tolerance_change = 1e-8,
     ...
   ) {
+
     self$n_mels = n_mels
     self$sample_rate = sample_rate
     self$f_max = f_max %||% as.numeric(sample_rate %/% 2)
@@ -398,7 +398,7 @@ transform_inverse_mel_scale <- torch::nn_module(
       n_mels = self$n_mels,
       sample_rate = self$sample_rate
     )
-    self$register_buffer('fb', fb)
+    self$fb <- fb
   },
 
   forward = function(melspec) {
@@ -417,7 +417,7 @@ transform_inverse_mel_scale <- torch::nn_module(
     specgram = torch::torch_rand(melspec$size()[1], time, freq, requires_grad=TRUE,
                                  dtype=melspec$dtype, device=melspec$device)
     self$sgdargs$params <- specgram
-    optim = do.call(torch::optim_sgd, self$sgdargs)
+    optim <- do.call(torch::optim_sgd, self$sgdargs)
 
     loss = Inf
     for(i in seq.int(self$max_iter)){
@@ -441,7 +441,7 @@ transform_inverse_mel_scale <- torch::nn_module(
     specgram = specgram$clamp(min=0)$transpose(-1, -2)
 
     # unpack batch
-    specgram = specgram$view(c(shape[1:(ls-2)], freq, time))
+    specgram = specgram$view(c(shape[-c(ls-1, ls)], freq, time))
     return(specgram)
   }
 )
