@@ -48,9 +48,9 @@ model_resblock <- torch::nn_module(
 #' Tensor shape:  (n_batch, n_output, n_time - kernel_size + 1)
 #'
 #' @examples
-#'  melresnet = MelResNet ()
-#'  input = torch$rand (10, 128, 512)  # a random spectrogram
-#'  output = melresnet (input)  # shape: (10, 128, 508)
+#'  melresnet = model_melresnet()
+#'  input = torch::torch_rand(10, 128, 512)  # a random spectrogram
+#'  output = melresnet(input)  # shape: (10, 128, 508)
 #'
 #' @export
 model_melresnet <- torch::nn_module(
@@ -63,15 +63,15 @@ model_melresnet <- torch::nn_module(
     kernel_size = 5
   ) {
 
-    # ResBlocks = [model_resblock(n_hidden) for _ in range(n_res_block)]
-    #
-    # self$melresnet_model = torch::nn_sequential(
-    #   torch::nn_conv1d(in_channels=n_freq, out_channels=n_hidden, kernel_size=kernel_size, bias=FALSE),
-    #   torch::nn_batch_norm1d(n_hidden),
-    #   torch::nn_relu(inplace=TRUE),
-    #   *ResBlocks,
-    #   torch::nn_conv1d(in_channels=n_hidden, out_channels=n_output, kernel_size=1)
-    # )
+    ResBlocks = replicate(n_res_block, model_resblock(n_hidden))
+
+    self$melresnet_model = torch::nn_sequential(
+      torch::nn_conv1d(in_channels=n_freq, out_channels=n_hidden, kernel_size=kernel_size, bias=FALSE),
+      torch::nn_batch_norm1d(n_hidden),
+      torch::nn_relu(inplace=TRUE),
+      !!!(ResBlocks),
+      torch::nn_conv1d(in_channels=n_hidden, out_channels=n_output, kernel_size=1)
+    )
   },
 
   forward = function(specgram) {
@@ -94,7 +94,7 @@ model_melresnet <- torch::nn_module(
 #' @examples
 #'  stretch2d = model_stretch2d(time_scale=10, freq_scale=5)
 #'
-#'  input = torch$rand(10, 100, 512)  # a random spectrogram
+#'  input = torch::torch_rand(10, 100, 512)  # a random spectrogram
 #'  output = stretch2d(input)  # shape: (10, 500, 5120)
 #'
 #' @export
@@ -104,10 +104,9 @@ model_stretch2d <- torch::nn_module(
     time_scale,
     freq_scale
   ) {
-    self$freq_scale = freq_scale
-    self$time_scale = time_scale
+    self$freq_scale = as.integer(freq_scale)
+    self$time_scale = as.integer(time_scale)
   },
-
   forward = function(specgram) {
     return(specgram$repeat_interleave(self$freq_scale, -2)$repeat_interleave(self$time_scale, -1))
   }
@@ -132,8 +131,8 @@ model_stretch2d <- torch::nn_module(
 #'  where total_scale is the product of all elements in upsample_scales.
 #'
 #' @examples
-#'  upsamplenetwork = model_upsample_network(upsample_scales=[4, 4, 16])
-#'  input = torch$rand (10, 128, 10)  # a random spectrogram
+#'  upsamplenetwork = model_upsample_network(upsample_scales=c(4, 4, 16))
+#'  input = torch::torch_rand (10, 128, 10)  # a random spectrogram
 #'  output = upsamplenetwork (input)  # shape: (10, 1536, 128), (10, 1536, 128)
 #'
 #' @export
@@ -148,12 +147,6 @@ model_upsample_network <- torch::nn_module(
     kernel_size = 5
   ) {
 
-
-    total_scale = 1
-    for(upsample_scale in upsample_scales) {
-      total_scale = total_scale * upsample_scale
-    }
-
     self$indent = ((kernel_size - 1) %/% 2) * total_scale
     self$resnet = model_melresnet(n_res_block, n_freq, n_hidden, n_output, kernel_size)
     self$resnet_stretch = model_stretch2d(total_scale, 1)
@@ -163,24 +156,26 @@ model_upsample_network <- torch::nn_module(
       stretch = model_stretch2d(scale, 1)
       conv = torch::nn_conv2d(in_channels=1,
                               out_channels=1,
-                              kernel_size=c(1, scale * 2 + 1),
-                              padding=c(0, scale),
+                              kernel_size=list(1, scale * 2 + 1),
+                              padding=list(0, scale),
                               bias=FALSE)
-      conv.weight.data.fill_(1. / (scale * 2 + 1))
-      up_layers$append(stretch)
-      up_layers$append(conv)
+      conv$parameters$weight$data()$fill_(1. / (scale * 2 + 1))
+      up_layers[[length(up_layers) + 1]] <- stretch
+      up_layers[[length(up_layers) + 1]] <- conv
     }
-    # self$upsample_layers = torch::nn_sequential(*up_layers)
+    self$upsample_layers = torch::nn_sequential(!!!up_layers)
   },
 
   forward = function(specgram) {
-    resnet_output = self$resnet(specgram)$unsqueeze(1)
+    resnet_output = self$resnet(specgram)$unsqueeze(2)
     resnet_output = self$resnet_stretch(resnet_output)
-    resnet_output = resnet_output$squeeze(1)
+    resnet_output = resnet_output$squeeze(2)
 
-    specgram = specgram$unsqueeze(1)
+    specgram = specgram$unsqueeze(2)
     upsampling_output = self$upsample_layers(specgram)
-    upsampling_output = upsampling_output$squeeze(1)[ ,  , self$indent:-self$indent]
+    upsampling_output_size = upsampling_output$size()
+    lu = length(upsampling_output_size)
+    upsampling_output = upsampling_output$squeeze(2)[ ,  , self$indent:(upsampling_output_size[lu]-self$indent)]
 
     return(list(upsampling_output, resnet_output))
   }
@@ -234,8 +229,8 @@ model_wavernn <- torch::nn_module(
     kernel_size = 5,
     n_freq = 128,
     n_hidden = 128,
-    n_output = 128) {
-
+    n_output = 128
+    ) {
 
     self$kernel_size = kernel_size
     self$n_rnn = n_rnn
@@ -243,19 +238,18 @@ model_wavernn <- torch::nn_module(
     self$hop_length = hop_length
     self$n_classes = n_classes
 
-    total_scale = 1
-    for(upsample_scale in upsample_scales){
-      total_scale = total_scale * upsample_scale
-    }
+    total_scale = prod(upsample_scales)
     if(total_scale != self$hop_length)
       value_error(glue::glue("Expected: total_scale == hop_length, but found {total_scale} != {hop_length}"))
 
-    self$upsample = model_upsample_network(upsample_scales,
-                                    n_res_block,
-                                    n_freq,
-                                    n_hidden,
-                                    n_output,
-                                    kernel_size)
+    self$upsample = model_upsample_network(
+      upsample_scales,
+      n_res_block,
+      n_freq,
+      n_hidden,
+      n_output,
+      kernel_size
+    )
     self$fc = torch::nn_linear(n_freq + self$n_aux + 1, n_rnn)
 
     self$rnn1 = nn.GRU(n_rnn, n_rnn, batch_first=TRUE)
@@ -271,35 +265,36 @@ model_wavernn <- torch::nn_module(
 
 
   forward = function(waveform, specgram) {
+    waveform = torch::torch_rand(4, 1, (100 - kernel_size + 1) * hop_length)
+    specgram = torch::torch_rand(4, 1, n_freq, 100)
 
-
-    if(waveform$size(1) != 1) value_error('Require the input channel of waveform is 1')
-    if(specgram$size(1) != 1) value_error('Require the input channel of specgram is 1')
+    if(waveform$size(2) != 1) value_error('Require the input channel of waveform is 1')
+    if(specgram$size(2) != 1) value_error('Require the input channel of specgram is 1')
 
     # remove channel dimension until the end
-    waveform = waveform$squeeze(1)
-    specgram = specgram$squeeze(1)
-    batch_size = waveform$size(0)
+    waveform = waveform$squeeze(2)
+    specgram = specgram$squeeze(2)
+    batch_size = waveform$size(1)
     h1 = torch::torch_zeros(1, batch_size, self$n_rnn, dtype=waveform$dtype, device=waveform$device)
     h2 = torch::torch_zeros(1, batch_size, self$n_rnn, dtype=waveform$dtype, device=waveform$device)
     # output of upsample:
     # specgram: (n_batch, n_freq, (n_time - kernel_size + 1) * total_scale)
     # aux: (n_batch, n_output, (n_time - kernel_size + 1) * total_scale)
     specgram_and_aux = self$upsample(specgram)
-    specgram = specgram_and_aux[[1]]$transpose(1, 2)
-    aux = specgram_and_aux[[2]]$transpose(1, 2)
+    specgram = specgram_and_aux[[1]]$transpose(2, 3)
+    aux = specgram_and_aux[[2]]$transpose(2, 3)
 
-    # aux_idx = [self$n_aux * i for i in range(5)]
-    # a1 = aux[ ,  , aux_idx[0]:aux_idx[1]]
-    # a2 = aux[ ,  , aux_idx[1]:aux_idx[2]]
-    # a3 = aux[ ,  , aux_idx[2]:aux_idx[3]]
-    # a4 = aux[ ,  , aux_idx[3]:aux_idx[4]]
-    #
-    # x = torch::torch_cat([waveform$unsqueeze(-1), specgram, a1], dim=-1)
-    # x = self$fc(x)
-    # res = x
+    aux_idx = (self$n_aux*(0:4))
+    a1 = aux[ ,  , (aux_idx[0+1] +1):aux_idx[1+1]]
+    a2 = aux[ ,  , (aux_idx[1+1] +1):aux_idx[2+1]]
+    a3 = aux[ ,  , (aux_idx[2+1] +1):aux_idx[3+1]]
+    a4 = aux[ ,  , (aux_idx[3+1] +1):aux_idx[4+1]]
+
+    x = torch::torch_cat(list(waveform$unsqueeze(-1), specgram[ , , ], a1), dim=-1L)
+    x = self$fc(x)
+    res = x
     # x, _ = self$rnn1(x, h1)
-    #
+
     # x = x + res
     # res = x
     # x = torch::torch_cat([x, a2], dim=-1)
@@ -316,6 +311,6 @@ model_wavernn <- torch::nn_module(
     # x = self$fc3(x)
 
     # bring back channel dimension
-    return(x$unsqueeze(1))
+    return(x$unsqueeze(2))
   }
 )
