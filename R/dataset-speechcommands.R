@@ -44,10 +44,12 @@ speechcommand_dataset <- torch::dataset(
       "6b74f3901214cb2c2934e98196829835"
   ),
 
-  initialize = function(root,
-                        url = "speech_commands_v0.02",
-                        folder_in_archive = "SpeechCommands",
-                        download = FALSE) {
+  initialize = function(
+    root,
+    url = "speech_commands_v0.02",
+    folder_in_archive = "SpeechCommands",
+    download = FALSE
+  ) {
 
     self$URL <- url
     self$FOLDER_IN_ARCHIVE <- folder_in_archive
@@ -79,7 +81,7 @@ speechcommand_dataset <- torch::dataset(
         extract_archive(archive, fs::path_dir(archive))
       }
     }
-    walker = list.files(self$.path, pattern = "wav$", full.names = TRUE, recursive = TRUE)
+    walker = walk_files(self$.path, suffix = "wav$", prefix = TRUE)
     walker = walker[!grepl(paste(self$EXCEPT_FOLDER, collapse = "|"), walker)]
     self$.walker = walker
   },

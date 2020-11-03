@@ -35,3 +35,25 @@ extract_archive <- function(from_path, to_path = NULL, overwrite = FALSE) {
     utils::untar(tarfile = from_path, exdir = to_path)
   }
 }
+
+#' List recursively all files ending with a suffix at a given root
+#' @param root  (str): Path to directory whose folders need to be listed
+#' @param suffix  (str or tuple): Suffix of the files to match, e.g. '.png' or ('.jpg', '.png').
+#'            It uses the Python "str.endswith" method and is passed directly
+#' @param prefix  (bool, optional): If TRUE, prepends the full path to each result, otherwise
+#'            only returns the name of the files found  (Default: ``FALSE``)
+#' @param remove_suffix  (bool, optional): If TRUE, removes the suffix to each result defined in suffix,
+#'            otherwise will return the result as found  (Default: ``FALSE``).
+#'
+#' @keywords internal
+walk_files <- function(
+  root,
+  suffix,
+  prefix = FALSE,
+  remove_suffix = FALSE
+) {
+  out <- list.files(root, pattern = suffix, full.names = prefix, recursive = TRUE)
+  if(remove_suffix) out <- gsub(suffix, "", out)
+
+  out
+}
