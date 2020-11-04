@@ -78,7 +78,7 @@ speechcommand_dataset <- torch::dataset(
           checksum = self$.CHECKSUMS[[url]]
           download_url(url = url, destfile = archive, checksum = checksum)
         }
-        extract_archive(archive, fs::path_dir(archive))
+        extract_archive(archive, self$.path)
       }
     }
     walker = walk_files(self$.path, suffix = "wav$", prefix = TRUE)
