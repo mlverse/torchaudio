@@ -21,10 +21,8 @@ load_yesno_item <- function(fileid, path, ext_audio) {
 #' @param root  (str): Path to the directory where the dataset is found or downloaded.
 #' @param url  (str, optional): The URL to download the dataset from.
 #'  (default: ``"[http://www.openslr.org/resources/1/waves_yesno.tar.gz]()"``)
-#' @param folder_in_archive  (str, optional):
-#' @param The top-level directory of the dataset.  (default: ``"waves_yesno"``)
-#' @param download  (bool, optional):
-#' @param Whether to download the dataset if it is not found at root path.  (default: ``FALSE``).
+#' @param folder_in_archive  (str, optional): The top-level directory of the dataset.  (default: ``"waves_yesno"``)
+#' @param download  (bool, optional): Whether to download the dataset if it is not found at root path.  (default: ``FALSE``).
 #' @param transform  (callable, optional): Optional transform applied on waveform. (default: ``NULL``)
 #' @param target_transform  (callable, optional): Optional transform applied on utterance. (default: ``NULL``)
 #'

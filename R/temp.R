@@ -1,5 +1,6 @@
 def_pytorch_to_r_function <- function(script) {
-  library(magrittr)
+  # library(magrittr)
+  `%>%` <- torch::`%>%`
   script <- script %>%
     stringr::str_replace_all("None", "NULL") %>%
     stringr::str_replace_all("True", "TRUE") %>%

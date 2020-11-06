@@ -70,7 +70,7 @@ functional_spectrogram <- function(
 #'         meaning number of frequencies to highlight/apply to x the number of filterbanks.
 #'         Each column is a filterbank so that assuming there is a matrix A of
 #'         size (..., `n_freqs`), the applied result would be
-#'         ``A * create_fb_matrix(A.size(-1), ...)``.
+#'         ``A * functional_create_fb_matrix(A.size(-1), ...)``.
 #'
 #' @export
 functional_create_fb_matrix <- function(
@@ -247,7 +247,7 @@ functional_mel_scale <- function(
 
   if(is.null(n_stft)) n_stft = specgram$size(2)
 
-  fb = create_fb_matrix(
+  fb = functional_create_fb_matrix(
     n_freqs = n_stft,
     f_min = f_min,
     f_max = f_max,
@@ -255,7 +255,7 @@ functional_mel_scale <- function(
     sample_rate = sample_rate
   )
 
-  mel_specgram = torch_matmul(specgram$transpose(2L, 3L), fb)$transpose(2L, 3L)
+  mel_specgram = torch::torch_matmul(specgram$transpose(2L, 3L), fb)$transpose(2L, 3L)
 
   # unpack batch
   lspec = length(mel_specgram$shape)

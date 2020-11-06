@@ -32,7 +32,7 @@ mel weights by the width of the mel band (area normalization). (Default: \code{N
 meaning number of frequencies to highlight/apply to x the number of filterbanks.
 Each column is a filterbank so that assuming there is a matrix A of
 size (..., \code{n_freqs}), the applied result would be
-\code{A * create_fb_matrix(A.size(-1), ...)}.
+\code{A * functional_create_fb_matrix(A.size(-1), ...)}.
 }
 \description{
 Create a frequency bin conversion matrix.

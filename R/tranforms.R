@@ -782,7 +782,7 @@ transform_frequencymasking <- function() {
 #'            This option is applicable only when the input tensor is 4D.
 #'
 #' @export
-transform_timemasking <- function() {
+transform_timemasking <- function(time_mask_param, iid_masks) {
   not_implemented_error("Class _AxisMasking to be implemented yet.")
 }
 # torchaudio::transform_axismasking(

@@ -19,17 +19,13 @@ yesno_dataset(
 \item{url}{(str, optional): The URL to download the dataset from.
 (default: \code{"[http://www.openslr.org/resources/1/waves_yesno.tar.gz]()"})}
 
-\item{folder_in_archive}{(str, optional):}
+\item{folder_in_archive}{(str, optional): The top-level directory of the dataset.  (default: \code{"waves_yesno"})}
 
-\item{download}{(bool, optional):}
+\item{download}{(bool, optional): Whether to download the dataset if it is not found at root path.  (default: \code{FALSE}).}
 
 \item{transform}{(callable, optional): Optional transform applied on waveform. (default: \code{NULL})}
 
 \item{target_transform}{(callable, optional): Optional transform applied on utterance. (default: \code{NULL})}
-
-\item{The}{top-level directory of the dataset.  (default: \code{"waves_yesno"})}
-
-\item{Whether}{to download the dataset if it is not found at root path.  (default: \code{FALSE}).}
 }
 \value{
 tuple: \verb{(waveform, sample_rate, labels)}

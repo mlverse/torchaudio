@@ -4,7 +4,7 @@
 \alias{transform_timemasking}
 \title{Time-domain Masking}
 \usage{
-transform_timemasking()
+transform_timemasking(time_mask_param, iid_masks)
 }
 \arguments{
 \item{time_mask_param}{(int): maximum possible length of the mask.
