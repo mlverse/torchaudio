@@ -3,5 +3,5 @@ pkgdown: 1.5.1
 pkgdown_sha: ~
 articles:
   speech_command_recognition_with_torchaudio: speech_command_recognition_with_torchaudio.html
-last_built: 2020-11-10T19:23Z
+last_built: 2020-11-10T19:29Z
 

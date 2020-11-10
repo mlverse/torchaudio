@@ -2,7 +2,7 @@
 % Please edit documentation in R/dataset-speechcommands.R
 \name{speechcommand_dataset}
 \alias{speechcommand_dataset}
-\title{Create a Dataset for Speech Commands.}
+\title{Speech Commands Dataset}
 \usage{
 speechcommand_dataset(
   root,
@@ -24,5 +24,5 @@ Allowed type values are \code{"speech_commands_v0.01"} and \code{"speech_command
 \item{download}{(bool, optional): Whether to download the dataset if it is not found at root path.  (default: \code{FALSE}).}
 }
 \description{
-Create a Dataset for Speech Commands.
+Speech Commands Dataset
 }

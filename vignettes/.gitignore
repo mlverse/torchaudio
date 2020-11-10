@@ -5,3 +5,5 @@
 *_cache
 *.rds
 *.pt
+/waves_yesno
+*.wav

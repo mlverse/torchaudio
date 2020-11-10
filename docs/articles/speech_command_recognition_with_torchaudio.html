@@ -208,7 +208,7 @@
  <span class="co"># A list has the form:</span>
  <span class="co"># list of lists: (waveform, sample_rate, label, speaker_id, utterance_number)</span>
  <span class="co"># Transpose it</span>
- <span class="no">batch</span> <span class="kw">&lt;-</span> <span class="kw pkg">purrr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/purrr/man/transpose.html">transpose</a></span>(<span class="no">batch</span>)
+ <span class="no">batch</span> <span class="kw">&lt;-</span> <span class="kw pkg">purrr</span><span class="kw ns">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/transpose.html">transpose</a></span>(<span class="no">batch</span>)
  <span class="no">tensors</span> <span class="kw">&lt;-</span> <span class="no">batch</span>$<span class="no">waveform</span>
  <span class="no">targets</span> <span class="kw">&lt;-</span> <span class="no">batch</span>$<span class="no">label</span>
 
@@ -321,8 +321,8 @@
 <span class="co">#&gt;  $ fc1.weight  :Float [1:35, 1:64]</span>
 <span class="co">#&gt;  $ fc1.bias    :Float [1:35]</span></pre></body></html></div>
 <div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="no">count_parameters</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">model</span>) {
-  <span class="no">requires</span> <span class="kw">&lt;-</span> <span class="kw pkg">purrr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/purrr/man/map.html">map_lgl</a></span>(<span class="no">model</span>$<span class="no">parameters</span>, ~<span class="no">.</span>$<span class="no">requires_grad</span>)
-  <span class="no">params</span> <span class="kw">&lt;-</span> <span class="kw pkg">purrr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/purrr/man/map.html">map_int</a></span>(<span class="no">model</span>$<span class="no">parameters</span>[<span class="no">requires</span>], ~<span class="no">.</span>$<span class="fu">numel</span>())
+  <span class="no">requires</span> <span class="kw">&lt;-</span> <span class="kw pkg">purrr</span><span class="kw ns">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map_lgl</a></span>(<span class="no">model</span>$<span class="no">parameters</span>, ~<span class="no">.</span>$<span class="no">requires_grad</span>)
+  <span class="no">params</span> <span class="kw">&lt;-</span> <span class="kw pkg">purrr</span><span class="kw ns">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map_int</a></span>(<span class="no">model</span>$<span class="no">parameters</span>[<span class="no">requires</span>], ~<span class="no">.</span>$<span class="fu">numel</span>())
   <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">params</span>)
 }
 
@@ -394,7 +394,7 @@
     <span class="no">pbar</span>$<span class="fu">tick</span>()
   }
 
-  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/glue/man/glue.html">glue</a></span>(<span class="st">"
+  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"
 Test Epoch: {epoch} Accuracy: {correct}/{length(test_loader$dataset)} ({scales::percent(correct / length(test_loader$dataset))})"</span>))
 }</pre></body></html></div>
 <p>Finally, we can train and test the network. We will train the network for ten epochs then reduce the learn rate and train for ten more epochs. The network will be tested after each epoch to see how the accuracy varies during the training.</p>
@@ -432,7 +432,7 @@ Test Epoch: {epoch} Accuracy: {correct}/{length(test_loader$dataset)} ({scales::
 }
 
 <span class="no">sample</span> <span class="kw">&lt;-</span> <span class="no">train_set</span>[<span class="fl">2000</span>]
-<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/glue/man/glue.html">glue</a></span>(<span class="st">"Expected: {sample[[3]]}. Predicted: {predict(sample[[1]])}."</span>))
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw pkg">glue</span><span class="kw ns">::</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span>(<span class="st">"Expected: {sample[[3]]}. Predicted: {predict(sample[[1]])}."</span>))
 <span class="co">#&gt; Expected: bed. Predicted: tree.</span></pre></body></html></div>
 </div>
 <div id="conclusion" class="section level1">
