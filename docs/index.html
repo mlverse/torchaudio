@@ -50,9 +50,6 @@
      
   </a>
 </li>
-<li>
-  <a href="reference/index.html">Reference</a>
-</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Articles
@@ -61,12 +58,25 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="articles/audio_preprocessing_tutorial.html">Audio I/O and Pre-Processing with torchaudio</a>
+    </li>
+    <li>
       <a href="articles/speech_command_recognition_with_torchaudio.html">Speech Command Recognition With Torchaudio</a>
     </li>
   </ul>
 </li>
+<li>
+  <a href="reference/index.html">Reference</a>
+</li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/curso-r/torchaudio">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -88,7 +98,47 @@
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>Not on CRAN yet. You can install the development version from GitHub with:</p>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"curso-r/torchaudio"</span>)</pre></div>
+<div class="sourceCode" id="cb1"><pre class="r"><span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/remotes/man/install_github.html">install_github</a></span>(<span class="st">"curso-r/torchaudio"</span>)</pre></div>
+</div>
+<div id="a-waveform" class="section level2">
+<h2 class="hasAnchor">
+<a href="#a-waveform" class="anchor"></a>A Waveform</h2>
+<p><code>torchaudio</code> also supports loading sound files in the wav and mp3 format. We call waveform the resulting raw audio signal.</p>
+<div class="sourceCode" id="cb2"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">torchaudio</span>)
+
+<span class="no">url</span> <span class="kw">=</span> <span class="st">"https://pytorch.org/tutorials/_static/img/steam-train-whistle-daniel_simon-converted-from-mp3.wav"</span>
+<span class="no">filename</span> <span class="kw">=</span> <span class="st">"steam-train-whistle-daniel_simon-converted-from-mp3.wav"</span>
+<span class="no">r</span> <span class="kw">=</span> <span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span>(<span class="no">url</span>, <span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/write_disk.html">write_disk</a></span>(<span class="no">filename</span>, <span class="kw">overwrite</span> <span class="kw">=</span> <span class="fl">TRUE</span>))
+
+<span class="no">waveform_and_sample_rate</span> <span class="kw">=</span> <span class="fu"><a href="reference/torchaudio_load.html">torchaudio_load</a></span>(<span class="no">filename</span>)
+<span class="no">waveform</span> <span class="kw">=</span> <span class="no">waveform_and_sample_rate</span><span class="kw">[[</span><span class="fl">1</span>]]
+<span class="no">sample_rate</span> <span class="kw">=</span> <span class="no">waveform_and_sample_rate</span><span class="kw">[[</span><span class="fl">2</span>]]
+
+<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"Shape of waveform: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(<span class="no">waveform</span>), <span class="kw">collapse</span> <span class="kw">=</span> <span class="st">" "</span>))
+<span class="co">#&gt; [1] "Shape of waveform:  2 276858"</span>
+<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"Sample rate of waveform: "</span>, <span class="no">sample_rate</span>)
+<span class="co">#&gt; [1] "Sample rate of waveform:  44100"</span>
+
+<span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">waveform</span>[<span class="fl">1</span>], <span class="kw">col</span> <span class="kw">=</span> <span class="st">"royalblue"</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"l"</span>)
+<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span>(<span class="no">waveform</span>[<span class="fl">2</span>], <span class="kw">col</span> <span class="kw">=</span> <span class="st">"orange"</span>)</pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-3-1.png" width="100%"></p>
+</div>
+<div id="a-spectrogram" class="section level2">
+<h2 class="hasAnchor">
+<a href="#a-spectrogram" class="anchor"></a>A Spectrogram</h2>
+<div class="sourceCode" id="cb3"><pre class="r"><span class="no">specgram</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/transform_spectrogram.html">transform_spectrogram</a></span>()(<span class="no">waveform</span>)
+
+<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"Shape of spectrogram: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(<span class="no">specgram</span>), <span class="kw">collapse</span> <span class="kw">=</span> <span class="st">" "</span>))
+<span class="co">#&gt; [1] "Shape of spectrogram:  2 201 1383"</span>
+
+<span class="no">specgram_as_array</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(<span class="no">specgram</span>$<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span>()[<span class="fl">1</span>]$<span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span>())
+<span class="fu"><a href="https://rdrr.io/r/graphics/image.html">image</a></span>(<span class="no">specgram_as_array</span>[,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span>(<span class="no">specgram_as_array</span>):<span class="fl">1</span>], <span class="kw">col</span> <span class="kw">=</span> <span class="kw pkg">viridis</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/viridis/man/reexports.html">viridis</a></span>(<span class="kw">n</span> <span class="kw">=</span> <span class="fl">257</span>,  <span class="kw">option</span> <span class="kw">=</span> <span class="st">"magma"</span>))</pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-4-1.png" width="100%"></p>
+</div>
+<div id="code-of-conduct" class="section level2">
+<h2 class="hasAnchor">
+<a href="#code-of-conduct" class="anchor"></a>Code of Conduct</h2>
+<p>Please note that the torchaudio project is released with a <a href="https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 </div>
 </div>
   </div>
@@ -106,6 +156,13 @@
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
 <li><small><a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
+</ul>
+</div>
+<div class="community">
+<h2>Community</h2>
+<ul class="list-unstyled">
+<li><a href="CONTRIBUTING.html">Contributing guide</a></li>
+<li><a href="CODE_OF_CONDUCT.html">Code of conduct</a></li>
 </ul>
 </div>
 <div class="developers">

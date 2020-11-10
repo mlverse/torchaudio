@@ -41,3 +41,30 @@ reference:
       - '`linear_to_mel_frequency`'
       - '`mel_to_linear_frequency`'
 
+
+
+
+navbar:
+  structure:
+    left:
+    - home
+    - articles
+    - reference
+    right: github
+  components:
+    home:
+      icon: fas fa-home fa-lg
+      href: index.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    articles:
+      text: Articles
+      menu:
+      - text: Audio I/O and Pre-Processing with torchaudio
+        href: articles/audio_preprocessing_tutorial.html
+      - text: Speech Command Recognition With Torchaudio
+        href: articles/speech_command_recognition_with_torchaudio.html
+    github:
+      icon: fa-github
+      href: https://github.com/curso-r/torchaudio

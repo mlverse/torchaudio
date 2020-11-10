@@ -233,8 +233,8 @@ lowpass_waveform <- as.array(functional_lowpass_biquad(waveform, sample_rate, cu
 
 cat(sprintf("Min of lowpass_waveform: %f\nMax of lowpass_waveform: %f\nMean of lowpass_waveform: %f", min(lowpass_waveform), max(lowpass_waveform), mean(lowpass_waveform)))
 
-plot(lowpass_waveform[1], col = "royalblue", type = "l")
-lines(lowpass_waveform[2], col = "orange")
+plot(lowpass_waveform[1,], col = "royalblue", type = "l")
+lines(lowpass_waveform[2,], col = "orange")
 ```
 
 We can also visualize a waveform with the highpass biquad filter.
@@ -244,8 +244,8 @@ highpass_waveform <- as.array(functional_highpass_biquad(waveform, sample_rate, 
 
 cat(sprintf("Min of highpass_waveform: %f\nMax of highpass_waveform: %f\nMean of highpass_waveform: %f", min(highpass_waveform), max(highpass_waveform), mean(highpass_waveform)))
 
-plot(highpass_waveform[1], col = "royalblue", type = "l")
-lines(highpass_waveform[2], col = "orange")
+plot(highpass_waveform[1,], col = "royalblue", type = "l")
+lines(highpass_waveform[2,], col = "orange")
 ```
 
 # Migrating to torchaudio from Kaldi (Not Implemented Yet)
