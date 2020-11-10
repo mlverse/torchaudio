@@ -1802,12 +1802,17 @@ functional_dither <- function(
 #' @param freq_low (float)
 #'
 #' @export
-functional_compute_nccf <- function(
+functional__compute_nccf <- function(
   waveform,
   sample_rate,
   frame_time,
   freq_low
 ) {
+
+  waveform = torch::torch_rand(1000)
+  sample_rate = 16000
+  frame_time = 0.01
+  freq_low = 10
 
   EPSILON = 10 ** (-9)
 
@@ -1825,9 +1830,9 @@ functional_compute_nccf <- function(
 
   # Compute lags
   output_lag = list()
-  for(lag in seq.int(lags + 1)) {
-    s1 = waveform[.., 1:(waveform$size(-1) - lag)]$unfold(-1, frame_size, frame_size)[.., 1:num_of_frames, ]
-    s2 = waveform[.., (1 + lag):waveform$size(-1)]$unfold(-1, frame_size, frame_size)[.., 1:num_of_frames, ]
+  for(lag in 2:(lags + 1)) {
+    s1 = waveform[.., 1:(waveform$size()[lws] - lag)]$unfold(-1, frame_size, frame_size)[.., 1:num_of_frames, ]
+    s2 = waveform[.., (1 + lag):waveform$size()[lws]]$unfold(-1, frame_size, frame_size)[.., 1:num_of_frames, ]
 
     output_frames = (
       (s1 * s2)$sum(-1)
@@ -1838,7 +1843,7 @@ functional_compute_nccf <- function(
     output_lag[[length(output_lag) + 1]] = output_frames$unsqueeze(-1)
   }
 
-  nccf = torch::torch_cat(output_lag, -1)
+  nccf = torch::torch_cat(output_lag, 2)
 
   return(nccf)
 }

@@ -553,7 +553,7 @@ transform_resample <- torch::nn_module(
 #' @return Tensor: norm of the input tensor, shape of `(..., )`.
 #'
 #' @export
-trasnform_complex_norm <- torch::nn_module(
+transform_complex_norm <- torch::nn_module(
   "ComplexNorm",
   initialize = function(power = 1.0) {
     self$power = power
