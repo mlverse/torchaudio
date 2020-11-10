@@ -31,4 +31,40 @@ Not on CRAN yet. You can install the development version from GitHub with:
 remotes::install_github("curso-r/torchaudio")
 ```
 
+## A Waveform
 
+``torchaudio`` also supports loading sound files in the wav and mp3 format. We
+call waveform the resulting raw audio signal.
+
+```{r, fig.height=3, fig.width=8}
+library(torchaudio)
+
+url = "https://pytorch.org/tutorials/_static/img/steam-train-whistle-daniel_simon-converted-from-mp3.wav"
+filename = "steam-train-whistle-daniel_simon-converted-from-mp3.wav"
+r = httr::GET(url, httr::write_disk(filename, overwrite = TRUE))
+
+waveform_and_sample_rate = torchaudio_load(filename)
+waveform = waveform_and_sample_rate[[1]]
+sample_rate = waveform_and_sample_rate[[2]]
+
+paste("Shape of waveform: ", paste(dim(waveform), collapse = " "))
+paste("Sample rate of waveform: ", sample_rate)
+
+plot(waveform[1], col = "royalblue", type = "l")
+lines(waveform[2], col = "orange")
+```
+
+## A Spectrogram
+
+```{r, fig.height=3, fig.width=8}
+specgram <- transform_spectrogram()(waveform)
+
+paste("Shape of spectrogram: ", paste(dim(specgram), collapse = " "))
+
+specgram_as_array <- as.array(specgram$log2()[1]$t())
+image(specgram_as_array[,ncol(specgram_as_array):1], col = viridis::viridis(n = 257,  option = "magma"))
+```
+
+## Code of Conduct
+  
+Please note that the torchaudio project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.
