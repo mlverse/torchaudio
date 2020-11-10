@@ -21,7 +21,7 @@ load_speechcommands_item <- function(filepath, path, hash_divider = "_nohash_") 
               utterance_number = utterance_number))
 }
 
-#' Create a Dataset for Speech Commands.
+#' Speech Commands Dataset
 #'
 #' @param root  (str): Path to the directory where the dataset is found or downloaded.
 #' @param url  (str, optional): The URL to download the dataset from,
