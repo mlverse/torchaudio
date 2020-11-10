@@ -8,3 +8,4 @@
 ^inst/trash$
 ^README\.Rmd$
 ^vignettes/articles$
+^CODE_OF_CONDUCT\.md$
