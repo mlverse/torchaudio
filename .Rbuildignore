@@ -7,3 +7,4 @@
 ^pkgdown$
 ^inst/trash$
 ^README\.Rmd$
+^vignettes/articles$
