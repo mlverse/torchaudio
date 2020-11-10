@@ -1,0 +1,43 @@
+destination: docs
+template:
+  params:
+    bootswatch: united
+    ganalytics: G-2WGS9CPRN1
+
+home:
+  title: R interface to PyTorch's TorchAudio.
+  links:
+  - text: Ask a question about this work
+    href: https://github.com/curso-r/torchaudio/issues
+
+
+authors:
+   Athos Damiani:
+     href: https://github.com/athospd
+
+
+reference:
+  - title: Datasets
+    contents:
+    - ends_with("_dataset")
+  - title: Transforms
+    contents:
+    - starts_with("transform_")
+  - title: Functionals
+    contents:
+    - starts_with("functional_")
+  - title: Kaldi API
+    contents:
+    - starts_with("kaldi_")
+    - '`backend_utils_list_audio_backends`'
+  - title: Neural network modules
+    contents:
+      - starts_with("model_")
+  - title: Audio I/O
+    contents:
+      - '`torchaudio_load`'
+  - title: Misc
+    contents:
+      - '`linear_to_mel_frequency`'
+      - '`mel_to_linear_frequency`'
+
