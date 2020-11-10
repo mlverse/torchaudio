@@ -118,6 +118,7 @@ Let's find the list of labels available in the dataset.
 labels = sort(unique(sapply(seq.int(train_set), function(i) train_set[i]$label)))
 labels
 ```
+
 ```{r, echo = FALSE}
 labels <- readRDS("labels.rds")
 labels
