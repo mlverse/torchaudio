@@ -69,7 +69,7 @@ kaldi__get_lr_indices_and_weights <- function(
 
   max_weight_width = num_indices$max()
   # create a group of weights of size (output_samples_in_unit, max_weight_width)
-  j = torch::torch_arange(0, as.numeric(max_weight_width), device=device, dtype=dtype)$unsqueeze(1)
+  j = torch::torch_arange(0, as.numeric(max_weight_width$to(device = "cpu")), device=device, dtype=dtype)$unsqueeze(1)
   input_index = min_input_index$unsqueeze(2) + j
   delta_t = (input_index / orig_freq) - output_t$unsqueeze(2)
 
