@@ -1,24 +1,29 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
 # torchaudio
 
 <!-- badges: start -->
-[![R build status](https://github.com/athospd/torchaudio/workflows/R-CMD-check/badge.svg)](https://github.com/athospd/torchaudio/actions)
+
+[![R build
+status](https://github.com/curso-r/torchaudio/workflows/R-CMD-check/badge.svg)](https://github.com/curso-r/torchaudio/actions)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/torchaudio)](https://CRAN.R-project.org/package=torchaudio)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
 
-The goal of torchaudio is to ...
+torchaudio is an extension for [torch](https://github.com/mlverse/torch)
+providing audio loading, transformations, common architectures for
+signal processing, pre-trained weights and access to commonly used
+datasets. An almost literal translation from [PyTorch’s
+Torchaudio](https://pytorch.org/audio/stable/index.html) library to R.
 
 ## Installation
 
-You can install the released version of torchaudio from [CRAN](https://CRAN.R-project.org) with:
+Not on CRAN yet. You can install the development version from GitHub
+with:
 
 ``` r
-install.packages("torchaudio")
-```
-
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-``` r
-library(torchaudio)
-## basic example code
+remotes::install_github("curso-r/torchaudio")
 ```

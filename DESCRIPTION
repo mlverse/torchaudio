@@ -1,5 +1,5 @@
 Package: torchaudio
-Title: R interface to TorchAudio
+Title: R interface to PyTorch's TorchAudio
 Version: 0.0.0.9000
 Authors@R: c(
     person(given = "Athos",

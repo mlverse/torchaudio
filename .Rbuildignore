@@ -6,3 +6,4 @@
 ^docs$
 ^pkgdown$
 ^inst/trash$
+^README\.Rmd$
