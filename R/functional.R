@@ -1809,11 +1809,6 @@ functional__compute_nccf <- function(
   freq_low
 ) {
 
-  waveform = torch::torch_rand(1000)
-  sample_rate = 16000
-  frame_time = 0.01
-  freq_low = 10
-
   EPSILON = 10 ** (-9)
 
   # Number of lags to check
@@ -1830,9 +1825,9 @@ functional__compute_nccf <- function(
 
   # Compute lags
   output_lag = list()
-  for(lag in 2:(lags + 1)) {
+  for(lag in 1:(lags)) {
     s1 = waveform[.., 1:(waveform$size()[lws] - lag)]$unfold(-1, frame_size, frame_size)[.., 1:num_of_frames, ]
-    s2 = waveform[.., (1 + lag):waveform$size()[lws]]$unfold(-1, frame_size, frame_size)[.., 1:num_of_frames, ]
+    s2 = waveform[.., (1 + lag):(waveform$size()[lws])]$unfold(-1, frame_size, frame_size)[.., 1:num_of_frames, ]
 
     output_frames = (
       (s1 * s2)$sum(-1)
@@ -1840,10 +1835,10 @@ functional__compute_nccf <- function(
       / (EPSILON + torch::torch_norm(s2, p=2L, dim=-1))$pow(2)
     )
 
-    output_lag[[length(output_lag) + 1]] = output_frames$unsqueeze(-1)
+    output_lag[[length(output_lag) + 1]] <- output_frames$unsqueeze(-1)
   }
 
-  nccf = torch::torch_cat(output_lag, 2)
+  nccf = torch::torch_cat(output_lag, -1)
 
   return(nccf)
 }
@@ -1857,7 +1852,7 @@ functional__compute_nccf <- function(
 #' @param thresh (float) Default: 0.99
 #'
 #' @export
-functional_combine_max <- function(
+functional__combine_max <- function(
   a,
   b,
   thresh = 0.99
@@ -1878,7 +1873,7 @@ functional_combine_max <- function(
 #'  to the first half of lags, then the latter is taken.
 #'
 #' @export
-functional_find_max_per_frame <- function(
+functional__find_max_per_frame <- function(
   nccf,
   sample_rate,
   freq_high
@@ -1894,8 +1889,8 @@ functional_find_max_per_frame <- function(
   half_size = nccf$shape[lns] %/% 2
   half = torch::torch_max(nccf[.., (lag_min+1):half_size], -1)
 
-  best = functional_combine_max(half, best)
-  indices = best[1]
+  best = functional__combine_max(half, best)
+  indices = best[[2]]
 
   # Add back minimal lag
   indices = indices + lag_min
@@ -1913,7 +1908,7 @@ functional_find_max_per_frame <- function(
 #' @param win_length (int)
 #'
 #' @export
-functional_median_smoothing <- function(
+functional__median_smoothing <- function(
   indices,
   win_length
 ) {
@@ -1960,9 +1955,9 @@ functional_detect_pitch_frequency <- function(
   ls = length(shape)
   waveform = waveform$reshape(c(-1, shape[ls]))
 
-  nccf = functional_compute_nccf(waveform, sample_rate, frame_time, freq_low)
-  indices = functional_find_max_per_frame(nccf, sample_rate, freq_high)
-  indices = functional_median_smoothing(indices, win_length)
+  nccf = functional__compute_nccf(waveform, sample_rate, frame_time, freq_low)
+  indices = functional__find_max_per_frame(nccf, sample_rate, freq_high)
+  indices = functional__median_smoothing(indices, win_length)
 
   # Convert indices to frequency
   EPSILON = 10 ** (-9)

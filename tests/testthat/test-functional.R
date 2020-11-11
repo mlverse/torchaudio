@@ -309,7 +309,7 @@ test_that("dither", {
 
 test_that("compute_nccf", {
   expect_no_error(
-    compute_nccf <- functional_compute_nccf(
+    compute_nccf <- functional__compute_nccf(
       waveform  = samp,
       sample_rate = 10,
       frame_time = 0.01,
@@ -323,38 +323,46 @@ test_that("compute_nccf", {
 
 })
 
-test_that("functional_combine_max",{
+test_that("functional__combine_max",{
 
   a = list(tt(c(10,2,3)), tt(c(100,200,300)))
   b = list(tt(c(5,2,30)), tt(c(99,199,299)))
 
-  expect_no_error(cm <- functional_combine_max(a, b, 0.95))
+  expect_no_error(cm <- functional__combine_max(a, b, 0.95))
   expect_length(cm, 2)
   expect_tensor(cm[[1]])
   expect_tensor(cm[[2]])
 })
 
-test_that("functional_find_max_per_frame",{
-  # functional_combine_max
-  stop("(TO DO) waiting for functional_combine_max")
+test_that("functional__find_max_per_frame",{
+  expect_no_error(x <- functional__find_max_per_frame(
+    nccf = torch::torch_rand(2,3,4,5,30),
+    sample_rate = 16000,
+    freq_high = 8000
+  ))
+  expect_tensor(x)
+  expect_equal(dim(x), c(2,3,4,5))
 })
 
 test_that("functional_detect_pitch_frequency",{
-  # functional_detect_pitch_frequency
-  stop("(TO DO) waiting for functional_combine_max")
+  expect_no_error(x <- functional_detect_pitch_frequency(
+    waveform = torch::torch_rand(3000),
+    sample_rate = 16000,
+    frame_time = 10 ** (-2),
+    win_length = 30,
+    freq_low = 85,
+    freq_high = 3400
+  ))
+  expect_tensor(x)
+  expect_equal(dim(x), 4)
 })
 
-functional_detect_pitch_frequency
+
 test_that("median_smoothing", {
   w = 3
-  median_smoothing <- functional_median_smoothing(samp_1d, w)
+  median_smoothing <- functional__median_smoothing(samp_1d, w)
   expect_tensor(median_smoothing)
   expect_tensor_shape(median_smoothing, samp_1d$size() - (w%/%2))
-})
-
-test_that("detect_pitch_frequency",{
-  # functional_detect_pitch_frequency
-  stop("(TO DO) waiting for _compute_nccf")
 })
 
 test_that("sliding_window_cmn", {

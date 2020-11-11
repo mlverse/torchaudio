@@ -66,8 +66,8 @@ test_that("transform_resample", {
   # expect_tensor(m)
 })
 
-test_that("trasnform_complex_norm", {
-  expect_no_error(m <- trasnform_complex_norm()(spec_complex))
+test_that("transform_complex_norm", {
+  expect_no_error(m <- transform_complex_norm()(spec_complex))
   expect_tensor(m)
 })
 
