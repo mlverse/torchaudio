@@ -13,7 +13,6 @@
 #' @param power (numeric): Exponent for the magnitude spectrogram, (must be > 0) e.g.,
 #'  1 for energy, 2 for power, etc. If NULL, then the complex spectrum is returned instead.
 #' @param normalized (logical): Whether to normalize by magnitude after stft
-#' @param Arguments for window function.
 #'
 #' @return `tensor`: Dimension (..., freq, time), freq is n_fft %/% 2 + 1 and n_fft is the
 #' number of Fourier bins, and time is the number of window hops (n_frame).
@@ -172,7 +171,6 @@ functional_complex_norm <- function(complex_tensor, power = 1) {
 #' @param x (Tensor): Input tensor before being converted to decibel scale
 #' @param multiplier (float): Use 10.0 for power and 20.0 for amplitude (Default: ``10.0``)
 #' @param amin (float): Number to clamp ``x`` (Default: ``1e-10``)
-#' @param ref_value (float): Reference which the output will be scaled by.
 #' @param db_multiplier (float): Log10(max(ref_value and amin))
 #' @param top_db (float or NULL, optional): Minimum negative cut-off in decibels. A reasonable number
 #'     is 80. (Default: ``NULL``)
@@ -299,7 +297,7 @@ functional_mu_law_encoding <- function(
 #' Decode mu-law encoded signal.  For more info see the
 #'  [Wikipedia Entry](https://en.wikipedia.org/wiki/M-law_algorithm)
 #'
-#' @param x (Tensor): Input tensor
+#' @param x_mu (Tensor): Input tensor
 #' @param quantization_channels (int): Number of channels
 #'
 #' @details
@@ -469,7 +467,7 @@ functional_griffinlim <- function(
 #' @param b_coeffs (Tensor): numerator coefficients of difference equation of dimension of ``(n_order + 1)``.
 #'  Lower delays coefficients are first, e.g. ``[b0, b1, b2, ...]``.
 #'  Must be same size as a_coeffs (pad with 0's as necessary).
-#' @param clamp (bool, optional): If ``TRUE``, clamp the output signal to be in the range [-1, 1] (Default: ``TRUE``)
+#' @param clamp (bool, optional): If ``TRUE``, clamp the output signal to be in the range \[-1, 1\] (Default: ``TRUE``)
 #'
 #' @return `tensor`: Waveform with dimension of ``(..., time)``.
 #'
@@ -544,12 +542,12 @@ functional_lfilter <- function(
 #'     [https://en.wikipedia.org/wiki/Digital_biquad_filter]()
 #'
 #' @param waveform (Tensor): audio waveform of dimension of `(..., time)`
-#' @param b0 (float): numerator coefficient of current input, x[n]
-#' @param b1 (float): numerator coefficient of input one time step ago x[n-1]
-#' @param b2 (float): numerator coefficient of input two time steps ago x[n-2]
-#' @param a0 (float): denominator coefficient of current output y[n], typically 1
-#' @param a1 (float): denominator coefficient of current output y[n-1]
-#' @param a2 (float): denominator coefficient of current output y[n-2]
+#' @param b0 (float): numerator coefficient of current input, x\[n\]
+#' @param b1 (float): numerator coefficient of input one time step ago x\[n-1\]
+#' @param b2 (float): numerator coefficient of input two time steps ago x\[n-2\]
+#' @param a0 (float): denominator coefficient of current output y\[n\], typically 1
+#' @param a1 (float): denominator coefficient of current output y\[n-1\]
+#' @param a2 (float): denominator coefficient of current output y\[n-2\]
 #'
 #' @return `tensor`: Waveform with dimension of `(..., time)`
 #'
@@ -1482,7 +1480,7 @@ functional_flanger <- function(
 #' ``v`` is sampled from ``uniform (0, mask_param)``, and ``v_0`` from ``uniform(0, max_v - v)``.
 #'
 #' @param specgrams  (Tensor): Real spectrograms (batch, channel, freq, time)
-#' @param mask_param  (int): Number of columns to be masked will be uniformly sampled from [0, mask_param]
+#' @param mask_param  (int): Number of columns to be masked will be uniformly sampled from ``[0, mask_param]``
 #' @param mask_value  (float): Value to assign to the masked columns
 #' @param axis  (int): Axis to apply masking on (3 -> frequency, 4 -> time)
 #'
@@ -1525,7 +1523,7 @@ functional_mask_along_axis_iid <- function(
 #' All examples will have the same mask interval.
 #'
 #' @param specgram  (Tensor): Real spectrogram (channel, freq, time)
-#' @param mask_param  (int): Number of columns to be masked will be uniformly sampled from [0, mask_param]
+#' @param mask_param  (int): Number of columns to be masked will be uniformly sampled from ``[0, mask_param]``
 #' @param mask_value  (float): Value to assign to the masked columns
 #' @param axis  (int): Axis to apply masking on (2 -> frequency, 3 -> time)
 #'
@@ -1648,8 +1646,8 @@ functional_gain <- function(
 #' Noise Shaping (functional)
 #'
 #' Noise shaping is calculated by error:
-#'    error[n] = dithered[n] - original[n]
-#'    noise_shaped_waveform[n] = dithered[n] + error[n-1]
+#'    error\[n\] = dithered\[n\] - original\[n\]
+#'    noise_shaped_waveform\[n\] = dithered\[n\] + error\[n-1\]
 #'
 #' @param dithered_waveform (Tensor) dithered
 #' @param waveform (Tensor) original
@@ -1797,7 +1795,7 @@ functional_dither <- function(
 #' Compute Normalized Cross-Correlation Function  (NCCF).
 #'
 #' @param waveform  (Tensor): Tensor of audio of dimension (..., time)
-#' @param sample_rate (int): Sample rate of the audio waveform
+#' @param sample_rate (int): sampling rate of the waveform, e.g. 44100 (Hz)
 #' @param frame_time (float)
 #' @param freq_low (float)
 #'
@@ -1847,8 +1845,8 @@ functional__compute_nccf <- function(
 #'
 #' Take value from first if bigger than a multiplicative factor of the second, elementwise.
 #'
-#' @param a (Tuple[Tensor, Tensor])
-#' @param b (Tuple[Tensor, Tensor])
+#' @param a (list(tensor, tensor))
+#' @param b (list(tensor, tensor))
 #' @param thresh (float) Default: 0.99
 #'
 #' @export
@@ -1868,6 +1866,10 @@ functional__combine_max <- function(
 #'
 #'  For each frame, take the highest value of NCCF,
 #'  apply centered median smoothing, and convert to frequency.
+#'
+#' @param nccf (tensor): Usually a tensor returned by [torchaudio::functional__compute_nccf]
+#' @param sample_rate (int): sampling rate of the waveform, e.g. 44100 (Hz)
+#' @param freq_high  (int): Highest frequency that can be detected (Hz)
 #'
 #'  Note: If the max among all the lags is very close
 #'  to the first half of lags, then the latter is taken.
@@ -2210,7 +2212,7 @@ functional_measure <- function(
 #'  the detection algorithm  (e.g. 0, 0.5, ...). (Default: 1.35)
 #' @param measure_freq  (float, optional) Frequency of the algorithm’s
 #'  processing/measurements.  (Default: 20.0)
-#' @param measure_duration:  (float, optional) Measurement duration.
+#' @param measure_duration  (float, optional) Measurement duration.
 #'  (Default: Twice the measurement period; i.e. with overlap.)
 #' @param measure_smooth_time  (float, optional) Time constant used to smooth
 #'   spectral measurements.  (Default: 0.4)

@@ -33,8 +33,6 @@ frame/window or a function that generates the window tensor.}
 1 for energy, 2 for power, etc. If NULL, then the complex spectrum is returned instead.}
 
 \item{normalized}{(logical): Whether to normalize by magnitude after stft}
-
-\item{Arguments}{for window function.}
 }
 \value{
 \code{tensor}: Dimension (..., freq, time), freq is n_fft \%/\% 2 + 1 and n_fft is the

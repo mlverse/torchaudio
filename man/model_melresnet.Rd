@@ -13,17 +13,17 @@ model_melresnet(
 )
 }
 \arguments{
+\item{n_res_block}{the number of ResBlock in stack.  (Default: \code{10})}
+
+\item{n_freq}{the number of bins in a spectrogram.  (Default: \code{128})}
+
+\item{n_hidden}{the number of hidden dimensions of resblock.  (Default: \code{128})}
+
+\item{n_output}{the number of output dimensions of melresnet.  (Default: \code{128})}
+
+\item{kernel_size}{the number of kernel size in the first Conv1d layer.  (Default: \code{5})}
+
 \item{specgram}{(Tensor): the input sequence to the MelResNet layer (n_batch, n_freq, n_time).}
-
-\item{n_res_block:}{the number of ResBlock in stack.  (Default: \code{10})}
-
-\item{n_freq:}{the number of bins in a spectrogram.  (Default: \code{128})}
-
-\item{n_hidden:}{the number of hidden dimensions of resblock.  (Default: \code{128})}
-
-\item{n_output:}{the number of output dimensions of melresnet.  (Default: \code{128})}
-
-\item{kernel_size:}{the number of kernel size in the first Conv1d layer.  (Default: \code{5})}
 }
 \value{
 Tensor shape:  (n_batch, n_output, n_time - kernel_size + 1)

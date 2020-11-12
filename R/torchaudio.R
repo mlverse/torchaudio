@@ -28,9 +28,9 @@
 #'         An integer which is the sample rate of the audio (as listed in the metadata of the file)
 #'
 #' @examples
-#' data = torchaudio::torchaudio_load('foo.mp3')
+#' data = torchaudio_load('foo.mp3')
 #' print(data[[1]]$size())
-#' data_vol_normalized = torchaudio::torchaudio_load('foo.mp3', normalization= function(x) torch::torch_abs(x)$max())
+#' data_vol_normalized = torchaudio_load('foo.mp3', normalization= function(x) torch::torch_abs(x)$max())
 #' print(data_vol_normalized[[1]]$abs()$max())
 #'
 #' @export

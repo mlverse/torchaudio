@@ -24,6 +24,9 @@ transform_spectrogram(
 
 \item{pad}{(integer): Two sided padding of signal}
 
+\item{window_fn}{(tensor or function): Window tensor that is applied/multiplied to each
+frame/window or a function that generates the window tensor.}
+
 \item{power}{(numeric): Exponent for the magnitude spectrogram, (must be > 0) e.g.,
 1 for energy, 2 for power, etc. If NULL, then the complex spectrum is returned instead.}
 
@@ -32,9 +35,6 @@ transform_spectrogram(
 \item{...}{(optional) Arguments for window function.}
 
 \item{waveform}{(tensor): Tensor of audio of dimension (..., time)}
-
-\item{window}{(tensor or function): Window tensor that is applied/multiplied to each
-frame/window or a function that generates the window tensor.}
 }
 \value{
 tensor: Dimension (..., freq, time), freq is n_fft \%/\% 2 + 1 and n_fft is the

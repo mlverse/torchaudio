@@ -7,9 +7,9 @@
 functional__combine_max(a, b, thresh = 0.99)
 }
 \arguments{
-\item{a}{(Tuple\link{Tensor, Tensor})}
+\item{a}{(list(tensor, tensor))}
 
-\item{b}{(Tuple\link{Tensor, Tensor})}
+\item{b}{(list(tensor, tensor))}
 
 \item{thresh}{(float) Default: 0.99}
 }

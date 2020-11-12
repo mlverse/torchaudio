@@ -39,6 +39,10 @@ transform_mel_spectrogram(
 \item{window_fn}{(function, optional): A function to create a window tensor
 that is applied/multiplied to each frame/window. (Default: \code{torch_hann_window})}
 
+\item{power}{(float, optional): Power of the norm. (Default: to \code{2.0})}
+
+\item{normalized}{(logical): Whether to normalize by magnitude after stft (Default: \code{FALSE})}
+
 \item{...}{(optional): Arguments for window function.}
 
 \item{waveform}{(Tensor): Tensor of audio of dimension (..., time).}
@@ -61,7 +65,8 @@ and MelScale.
 
 \examples{
 #'   Example
-sample_mp3 <- tuneR::readMP3(system.file("sample_audio_1.mp3", package = "torchaudio"))
-mel_specgram <- transform_mel_spectrogram(sample_rate = sample_mp3@samp.rate)(sample_mp3@left)  # (channel, n_mels, time)
+sample_mp3 <- torchaudio_load(system.file("sample_audio_1.mp3", package = "torchaudio"))
+# (channel, n_mels, time)
+mel_specgram <- transform_mel_spectrogram(sample_rate = sample_mp3[[2]])(sample_mp3[[1]])
 
 }

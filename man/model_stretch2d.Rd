@@ -7,11 +7,11 @@
 model_stretch2d(time_scale, freq_scale)
 }
 \arguments{
+\item{time_scale}{the scale factor in time dimension}
+
+\item{freq_scale}{the scale factor in frequency dimension}
+
 \item{specgram}{(Tensor): the input sequence to the Stretch2d layer (..., n_freq, n_time).}
-
-\item{time_scale:}{the scale factor in time dimension}
-
-\item{freq_scale:}{the scale factor in frequency dimension}
 }
 \value{
 Tensor shape:  (..., n_freq * freq_scale, n_time * time_scale)

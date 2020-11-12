@@ -17,8 +17,6 @@ functional_amplitude_to_db(x, multiplier, amin, db_multiplier, top_db = NULL)
 
 \item{top_db}{(float or NULL, optional): Minimum negative cut-off in decibels. A reasonable number
 is 80. (Default: \code{NULL})}
-
-\item{ref_value}{(float): Reference which the output will be scaled by.}
 }
 \value{
 \code{tensor}: Output tensor in decibel scale

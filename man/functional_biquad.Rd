@@ -9,17 +9,17 @@ functional_biquad(waveform, b0, b1, b2, a0, a1, a2)
 \arguments{
 \item{waveform}{(Tensor): audio waveform of dimension of \verb{(..., time)}}
 
-\item{b0}{(float): numerator coefficient of current input, x\link{n}}
+\item{b0}{(float): numerator coefficient of current input, x[n]}
 
-\item{b1}{(float): numerator coefficient of input one time step ago x\link{n-1}}
+\item{b1}{(float): numerator coefficient of input one time step ago x[n-1]}
 
-\item{b2}{(float): numerator coefficient of input two time steps ago x\link{n-2}}
+\item{b2}{(float): numerator coefficient of input two time steps ago x[n-2]}
 
-\item{a0}{(float): denominator coefficient of current output y\link{n}, typically 1}
+\item{a0}{(float): denominator coefficient of current output y[n], typically 1}
 
-\item{a1}{(float): denominator coefficient of current output y\link{n-1}}
+\item{a1}{(float): denominator coefficient of current output y[n-1]}
 
-\item{a2}{(float): denominator coefficient of current output y\link{n-2}}
+\item{a2}{(float): denominator coefficient of current output y[n-2]}
 }
 \value{
 \code{tensor}: Waveform with dimension of \verb{(..., time)}

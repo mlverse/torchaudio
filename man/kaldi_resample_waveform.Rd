@@ -18,9 +18,8 @@ kaldi_resample_waveform(
 
 \item{new_freq}{(float): The desired frequency}
 
-\item{lowpass_filter_width}{(int, optional): Controls the sharpness of the filter, more == sharper}
-
-\item{but}{less efficient. We suggest around 4 to 10 for normal use.  (Default: \code{6})}
+\item{lowpass_filter_width}{(int, optional): Controls the sharpness of the filter, more == sharper
+but less efficient. We suggest around 4 to 10 for normal use.  (Default: \code{6})}
 }
 \value{
 Tensor: The waveform at the new frequency

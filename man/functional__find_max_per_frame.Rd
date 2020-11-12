@@ -6,11 +6,17 @@
 \usage{
 functional__find_max_per_frame(nccf, sample_rate, freq_high)
 }
+\arguments{
+\item{nccf}{(tensor): Usually a tensor returned by \link{functional__compute_nccf}}
+
+\item{sample_rate}{(int): sampling rate of the waveform, e.g. 44100 (Hz)}
+
+\item{freq_high}{(int): Highest frequency that can be detected (Hz)
+
+Note: If the max among all the lags is very close
+to the first half of lags, then the latter is taken.}
+}
 \description{
 For each frame, take the highest value of NCCF,
 apply centered median smoothing, and convert to frequency.
-}
-\details{
-Note: If the max among all the lags is very close
-to the first half of lags, then the latter is taken.
 }

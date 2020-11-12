@@ -4,7 +4,7 @@
 #' Pass the input through the ResBlock layer. The paper link is [https://arxiv.org/pdf/1512.03385.pdf]().
 #'
 #' @param specgram  (Tensor): the input sequence to the ResBlock layer (n_batch, n_freq, n_time).
-#' @param n_freq: the number of bins in a spectrogram.  (Default: ``128``)
+#' @param n_freq the number of bins in a spectrogram.  (Default: ``128``)
 #'
 #' @return
 #' Tensor shape:  (n_batch, n_freq, n_time)
@@ -38,11 +38,11 @@ model_resblock <- torch::nn_module(
 #' Pass the input through the MelResNet layer.
 #'
 #' @param specgram  (Tensor): the input sequence to the MelResNet layer (n_batch, n_freq, n_time).
-#' @param n_res_block: the number of ResBlock in stack.  (Default: ``10``)
-#' @param n_freq: the number of bins in a spectrogram.  (Default: ``128``)
-#' @param n_hidden: the number of hidden dimensions of resblock.  (Default: ``128``)
-#' @param n_output: the number of output dimensions of melresnet.  (Default: ``128``)
-#' @param kernel_size: the number of kernel size in the first Conv1d layer.  (Default: ``5``)
+#' @param n_res_block the number of ResBlock in stack.  (Default: ``10``)
+#' @param n_freq the number of bins in a spectrogram.  (Default: ``128``)
+#' @param n_hidden the number of hidden dimensions of resblock.  (Default: ``128``)
+#' @param n_output the number of output dimensions of melresnet.  (Default: ``128``)
+#' @param kernel_size the number of kernel size in the first Conv1d layer.  (Default: ``5``)
 #'
 #' @return
 #' Tensor shape:  (n_batch, n_output, n_time - kernel_size + 1)
@@ -85,8 +85,8 @@ model_melresnet <- torch::nn_module(
 #' Pass the input through the Stretch2d layer.
 #'
 #' @param specgram  (Tensor): the input sequence to the Stretch2d layer (..., n_freq, n_time).
-#' @param time_scale: the scale factor in time dimension
-#' @param freq_scale: the scale factor in frequency dimension
+#' @param time_scale the scale factor in time dimension
+#' @param freq_scale the scale factor in frequency dimension
 #'
 #' @return
 #' Tensor shape:  (..., n_freq * freq_scale, n_time * time_scale)
@@ -118,12 +118,12 @@ model_stretch2d <- torch::nn_module(
 #' Pass the input through the UpsampleNetwork layer.
 #'
 #' @param specgram  (Tensor): the input sequence to the UpsampleNetwork layer (n_batch, n_freq, n_time)
-#' @param upsample_scales: the list of upsample scales.
-#' @param n_res_block: the number of ResBlock in stack.  (Default: ``10``)
-#' @param n_freq: the number of bins in a spectrogram.  (Default: ``128``)
-#' @param n_hidden: the number of hidden dimensions of resblock.  (Default: ``128``)
-#' @param n_output: the number of output dimensions of melresnet.  (Default: ``128``)
-#' @param kernel_size: the number of kernel size in the first Conv1d layer.  (Default: ``5``)
+#' @param upsample_scales the list of upsample scales.
+#' @param n_res_block the number of ResBlock in stack.  (Default: ``10``)
+#' @param n_freq the number of bins in a spectrogram.  (Default: ``128``)
+#' @param n_hidden the number of hidden dimensions of resblock.  (Default: ``128``)
+#' @param n_output the number of output dimensions of melresnet.  (Default: ``128``)
+#' @param kernel_size the number of kernel size in the first Conv1d layer.  (Default: ``5``)
 #'
 #' @return
 #'  Tensor shape:  (n_batch, n_freq, (n_time - kernel_size + 1) * total_scale),
@@ -190,18 +190,18 @@ model_upsample_network <- torch::nn_module(
 #' The original implementation was introduced in ["Efficient Neural Audio Synthesis"](https://arxiv.org/pdf/1802.08435.pdf).
 #'#' Pass the input through the WaveRNN model.
 #'
-#' @param waveform: the input waveform to the WaveRNN layer  (n_batch, 1, (n_time - kernel_size + 1) * hop_length)
-#' @param specgram: the input spectrogram to the WaveRNN layer  (n_batch, 1, n_freq, n_time)
-#' @param upsample_scales: the list of upsample scales.
-#' @param n_classes: the number of output classes.
-#' @param hop_length: the number of samples between the starts of consecutive frames.
-#' @param n_res_block: the number of ResBlock in stack.  (Default: ``10``)
-#' @param n_rnn: the dimension of RNN layer.  (Default: ``512``)
-#' @param n_fc: the dimension of fully connected layer.  (Default: ``512``)
-#' @param kernel_size: the number of kernel size in the first Conv1d layer.  (Default: ``5``)
-#' @param n_freq: the number of bins in a spectrogram.  (Default: ``128``)
-#' @param n_hidden: the number of hidden dimensions of resblock.  (Default: ``128``)
-#' @param n_output: the number of output dimensions of melresnet.  (Default: ``128``)
+#' @param waveform the input waveform to the WaveRNN layer  (n_batch, 1, (n_time - kernel_size + 1) * hop_length)
+#' @param specgram the input spectrogram to the WaveRNN layer  (n_batch, 1, n_freq, n_time)
+#' @param upsample_scales the list of upsample scales.
+#' @param n_classes the number of output classes.
+#' @param hop_length the number of samples between the starts of consecutive frames.
+#' @param n_res_block the number of ResBlock in stack.  (Default: ``10``)
+#' @param n_rnn the dimension of RNN layer.  (Default: ``512``)
+#' @param n_fc the dimension of fully connected layer.  (Default: ``512``)
+#' @param kernel_size the number of kernel size in the first Conv1d layer.  (Default: ``5``)
+#' @param n_freq the number of bins in a spectrogram.  (Default: ``128``)
+#' @param n_hidden the number of hidden dimensions of resblock.  (Default: ``128``)
+#' @param n_output the number of output dimensions of melresnet.  (Default: ``128``)
 #'
 #' @details The input channels of waveform and spectrogram have to be 1. The product of
 #'    `upsample_scales` must equal `hop_length`.
@@ -210,12 +210,12 @@ model_upsample_network <- torch::nn_module(
 #' Tensor shape:  (n_batch, 1, (n_time - kernel_size + 1) * hop_length, n_classes)
 #'
 #' @examples
-#'  wavernn = model_wavernn(upsample_scales=c(5,5,8), n_classes=512, hop_length=200)
-#'  waveform, sample_rate = torchaudio::torchaudio_load (file)
-#'  # waveform shape:  (n_batch, n_channel, (n_time - kernel_size + 1) * hop_length)
-#'  specgram = MelSpectrogram (sample_rate)(waveform)  # shape: (n_batch, n_channel, n_freq, n_time)
-#'  output = wavernn (waveform, specgram)
-#'  # output shape:  (n_batch, n_channel, (n_time - kernel_size + 1) * hop_length, n_classes)
+#' wavernn = model_wavernn(upsample_scales=c(2,2,5), n_classes=512, hop_length=20)
+#' waveform = torch::torch_rand(3,1,20)
+#' # waveform shape:  (n_batch, n_channel, (n_time - kernel_size + 1) * hop_length)
+#' specgram = transform_mel_spectrogram(16000)(waveform)  # shape: (n_batch, n_channel, n_freq, n_time)
+#' output = wavernn(waveform, specgram)
+#' # output shape:  (n_batch, n_channel, (n_time - kernel_size + 1) * hop_length, n_classes)
 #'
 #' @export
 model_wavernn <- torch::nn_module(
@@ -253,8 +253,8 @@ model_wavernn <- torch::nn_module(
     )
     self$fc = torch::nn_linear(n_freq + self$n_aux + 1, n_rnn)
 
-    self$rnn1 = nn.GRU(n_rnn, n_rnn, batch_first=TRUE)
-    self$rnn2 = nn.GRU(n_rnn + self$n_aux, n_rnn, batch_first=TRUE)
+    self$rnn1 = torch::nn_gru(n_rnn, n_rnn, batch_first=TRUE)
+    self$rnn2 = torch::nn_gru(n_rnn + self$n_aux, n_rnn, batch_first=TRUE)
 
     self$relu1 = torch::nn_relu(inplace=TRUE)
     self$relu2 = torch::nn_relu(inplace=TRUE)
@@ -264,10 +264,7 @@ model_wavernn <- torch::nn_module(
     self$fc3 = torch::nn_linear(n_fc, self$n_classes)
   },
 
-
   forward = function(waveform, specgram) {
-    waveform = torch::torch_rand(4, 1, (100 - kernel_size + 1) * hop_length)
-    specgram = torch::torch_rand(4, 1, n_freq, 100)
 
     if(waveform$size(2) != 1) value_error('Require the input channel of waveform is 1')
     if(specgram$size(2) != 1) value_error('Require the input channel of specgram is 1')
@@ -291,25 +288,25 @@ model_wavernn <- torch::nn_module(
     a3 = aux[ ,  , (aux_idx[2+1] +1):aux_idx[3+1]]
     a4 = aux[ ,  , (aux_idx[3+1] +1):aux_idx[4+1]]
 
-    x = torch::torch_cat(list(waveform$unsqueeze(-1), specgram[ , , ], a1), dim=-1L)
+    x = torch::torch_cat(list(waveform$unsqueeze(-1), specgram, a1), dim=-1L)
     x = self$fc(x)
     res = x
-    # x, _ = self$rnn1(x, h1)
+    x = self$rnn1(x, h1)[[1]]
 
-    # x = x + res
-    # res = x
-    # x = torch::torch_cat([x, a2], dim=-1)
-    # x, _ = self$rnn2(x, h2)
-    #
-    # x = x + res
-    # x = torch::torch_cat([x, a3], dim=-1)
-    # x = self$fc1(x)
-    # x = self$relu1(x)
-    #
-    # x = torch::torch_cat([x, a4], dim=-1)
-    # x = self$fc2(x)
-    # x = self$relu2(x)
-    # x = self$fc3(x)
+    x = x + res
+    res = x
+    x = torch::torch_cat(list(x, a2), dim=-1)
+    x = self$rnn2(x, h2)[[1]]
+
+    x = x + res
+    x = torch::torch_cat(list(x, a3), dim=-1)
+    x = self$fc1(x)
+    x = self$relu1(x)
+
+    x = torch::torch_cat(list(x, a4), dim=-1)
+    x = self$fc2(x)
+    x = self$relu2(x)
+    x = self$fc3(x)
 
     # bring back channel dimension
     return(x$unsqueeze(2))

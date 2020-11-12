@@ -7,9 +7,9 @@
 functional_mu_law_decoding(x_mu, quantization_channels)
 }
 \arguments{
-\item{quantization_channels}{(int): Number of channels}
+\item{x_mu}{(Tensor): Input tensor}
 
-\item{x}{(Tensor): Input tensor}
+\item{quantization_channels}{(int): Number of channels}
 }
 \value{
 \code{tensor}: Input after mu-law decoding

@@ -5,7 +5,7 @@
 #'
 #' @param waveform (tensor): Tensor of audio of dimension (..., time)
 #' @param pad (integer): Two sided padding of signal
-#' @param window (tensor or function): Window tensor that is applied/multiplied to each
+#' @param window_fn (tensor or function): Window tensor that is applied/multiplied to each
 #' frame/window or a function that generates the window tensor.
 #' @param n_fft (integer): Size of FFT
 #' @param hop_length (integer): Length of hop between STFT windows
@@ -191,6 +191,8 @@ transform_amplitude_to_db <- torch::nn_module(
 #' @param n_mels (int, optional): Number of mel filterbanks. (Default: ``128``)
 #' @param window_fn (function, optional): A function to create a window tensor
 #'  that is applied/multiplied to each frame/window. (Default: ``torch_hann_window``)
+#' @param power  (float, optional): Power of the norm. (Default: to ``2.0``)
+#' @param normalized (logical): Whether to normalize by magnitude after stft (Default: ``FALSE``)
 #' @param ... (optional): Arguments for window function.
 #'
 #' @return `tensor`: Mel frequency spectrogram of size (..., ``n_mels``, time).
@@ -201,8 +203,9 @@ transform_amplitude_to_db <- torch::nn_module(
 #' - [http://haythamfayek.com/2016/04/21/speech-processing-for-machine-learning.html]()
 #'
 #' @examples #'   Example
-#' sample_mp3 <- tuneR::readMP3(system.file("sample_audio_1.mp3", package = "torchaudio"))
-#' mel_specgram <- transform_mel_spectrogram(sample_rate = sample_mp3@@samp.rate)(sample_mp3@@left)  # (channel, n_mels, time)
+#' sample_mp3 <- torchaudio_load(system.file("sample_audio_1.mp3", package = "torchaudio"))
+#' # (channel, n_mels, time)
+#' mel_specgram <- transform_mel_spectrogram(sample_rate = sample_mp3[[2]])(sample_mp3[[1]])
 #'
 #' @export
 transform_mel_spectrogram <- torch::nn_module(
@@ -599,7 +602,7 @@ transform_compute_deltas <- torch::nn_module(
 #' @param fixed_rate  (float or NULL, optional): rate to speed up or slow down by.
 #'        If NULL is provided, rate must be passed to the forward method.  (Default: ``NULL``)
 #' @param overriding_rate  (float or NULL, optional): speed up to apply to this batch.
-#' @param If no rate is passed, use ``self$fixed_rate``.  (Default: ``NULL``)
+#'   If no rate is passed, use ``self$fixed_rate``.  (Default: ``NULL``)
 #'
 #' @return Tensor: Stretched complex spectrogram of dimension (..., freq, ceil(time/rate), complex=2).
 #'
@@ -842,7 +845,7 @@ transform_vol <- torch::nn_module(
 #' @param waveform  (Tensor): Tensor of audio of dimension (..., time).
 #' @param cmn_window  (int, optional): Window in frames for running average CMN computation (int, default = 600)
 #' @param min_cmn_window  (int, optional):  Minimum CMN window used at start of decoding (adds latency only at start).
-#' @param Only applicable if center == ``FALSE``, ignored if center==``TRUE``  (int, default = 100)
+#'  Only applicable if center == ``FALSE``, ignored if center==``TRUE``  (int, default = 100)
 #' @param center  (bool, optional): If ``TRUE``, use a window centered on the current frame
 #'   (to the extent possible, modulo end effects). If ``FALSE``, window is to the left. (bool, default = ``FALSE``)
 #' @param norm_vars  (bool, optional): If ``TRUE``, normalize variance to one. (bool, default = ``FALSE``)
@@ -914,7 +917,7 @@ transform_sliding_window_cmn <- torch::nn_module(
 #'            the detection algorithm  (e.g. 0, 0.5, ...). (Default: 1.35)
 #' @param measure_freq  (float, optional) Frequency of the algorithm’s
 #'            processing/measurements.  (Default: 20.0)
-#' @param measure_duration:  (float, optional) Measurement duration. (Default: Twice the measurement period; i.e. with overlap.)
+#' @param measure_duration (float, optional) Measurement duration. (Default: Twice the measurement period; i.e. with overlap.)
 #' @param measure_smooth_time  (float, optional) Time constant used to smooth spectral measurements.  (Default: 0.4)
 #' @param hp_filter_freq  (float, optional) "Brick-wall" frequency of high-pass filter applied
 #'            at the input to the detector algorithm.  (Default: 50.0)

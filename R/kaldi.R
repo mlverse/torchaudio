@@ -13,7 +13,9 @@
 #' @param lowpass_cutoff  (float): The filter cutoff in Hz. The filter cutoff needs to be less
 #'            than samp_rate_in_hz/2 and less than samp_rate_out_hz/2.
 #' @param lowpass_filter_width  (int): Controls the sharpness of the filter, more == sharper but less
-#'            efficient. We suggest around 4 to 10 for normal use
+#'            efficient. We suggest around 4 to 10 for normal use.
+#' @param device (torch_device): Torch device on which output must be generated.
+#' @param dtype (torch::torch_\<dtype\>): Torch dtype such as [torch::torch_float]
 #'
 #' @return Tensor, Tensor): A tuple of ``min_input_index`` (which is the minimum indices
 #'         where the window is valid, size  (``output_samples_in_unit``)) and ``weights`` (which is the weights
@@ -35,17 +37,17 @@
 #'    32 27 22 17 12 8 2    3
 #'
 #'    As we can see from deltas, the sinc function is sampled at different points of time
-#'    assuming the center of the sinc function is at 0, 16, and 32  (the deltas [..., 6, 1, 4, ....]
-#'    for 16 vs [...., 2, 3, ....] for 32)
+#'    assuming the center of the sinc function is at 0, 16, and 32  (the deltas \[..., 6, 1, 4, ....\]
+#'    for 16 vs \[...., 2, 3, ....\] for 32)
 #'
 #'    Example, one case is when the ``orig_freq`` and ``new_freq`` are multiples of each other then
 #'    there needs to be one filter.
 #'
 #'    A windowed filter function  (i.e. Hanning * sinc) because the ideal case of sinc function
 #'    has infinite support  (non-zero for all values) so instead it is truncated and multiplied by
-#'    a window function which gives it less-than-perfect rolloff [1].
+#'    a window function which gives it less-than-perfect rolloff \[1\].
 #'
-#'    [1] Chapter 16: Windowed-Sinc Filters, https://www.dspguide.com/ch16/1.htm
+#'    \[1\] Chapter 16: Windowed-Sinc Filters, https://www.dspguide.com/ch16/1.htm
 #'
 #' @export
 kaldi__get_lr_indices_and_weights <- function(
@@ -158,7 +160,7 @@ kaldi__get_num_lr_output_samples <- function(
 #' @param orig_freq  (float): The original frequency of the signal
 #' @param new_freq  (float): The desired frequency
 #' @param lowpass_filter_width  (int, optional): Controls the sharpness of the filter, more == sharper
-#' @param but less efficient. We suggest around 4 to 10 for normal use.  (Default: ``6``)
+#'  but less efficient. We suggest around 4 to 10 for normal use.  (Default: ``6``)
 #'
 #' @details This matches Kaldi's OfflineFeatureTpl ResampleWaveform
 #' which uses a LinearResample (resample a signal at linearly spaced intervals to upsample/downsample

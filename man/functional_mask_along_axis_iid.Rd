@@ -9,7 +9,7 @@ functional_mask_along_axis_iid(specgrams, mask_param, mask_value, axis)
 \arguments{
 \item{specgrams}{(Tensor): Real spectrograms (batch, channel, freq, time)}
 
-\item{mask_param}{(int): Number of columns to be masked will be uniformly sampled from \link{0, mask_param}}
+\item{mask_param}{(int): Number of columns to be masked will be uniformly sampled from \verb{[0, mask_param]}}
 
 \item{mask_value}{(float): Value to assign to the masked columns}
 

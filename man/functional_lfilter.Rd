@@ -17,7 +17,7 @@ Must be same size as b_coeffs (pad with 0's as necessary).}
 Lower delays coefficients are first, e.g. \verb{[b0, b1, b2, ...]}.
 Must be same size as a_coeffs (pad with 0's as necessary).}
 
-\item{clamp}{(bool, optional): If \code{TRUE}, clamp the output signal to be in the range \link{-1, 1} (Default: \code{TRUE})}
+\item{clamp}{(bool, optional): If \code{TRUE}, clamp the output signal to be in the range [-1, 1] (Default: \code{TRUE})}
 }
 \value{
 \code{tensor}: Waveform with dimension of \verb{(..., time)}.

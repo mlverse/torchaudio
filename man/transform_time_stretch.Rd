@@ -16,9 +16,8 @@ If NULL is provided, rate must be passed to the forward method.  (Default: \code
 
 \item{complex_specgrams}{(Tensor): complex spectrogram (..., freq, time, complex=2).}
 
-\item{overriding_rate}{(float or NULL, optional): speed up to apply to this batch.}
-
-\item{If}{no rate is passed, use \code{self$fixed_rate}.  (Default: \code{NULL})}
+\item{overriding_rate}{(float or NULL, optional): speed up to apply to this batch.
+If no rate is passed, use \code{self$fixed_rate}.  (Default: \code{NULL})}
 }
 \value{
 Tensor: Stretched complex spectrogram of dimension (..., freq, ceil(time/rate), complex=2).

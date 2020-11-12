@@ -29,7 +29,11 @@ smallest repeating unit: num_samp_out = new_freq / Gcd (orig_freq, new_freq)}
 than samp_rate_in_hz/2 and less than samp_rate_out_hz/2.}
 
 \item{lowpass_filter_width}{(int): Controls the sharpness of the filter, more == sharper but less
-efficient. We suggest around 4 to 10 for normal use}
+efficient. We suggest around 4 to 10 for normal use.}
+
+\item{device}{(torch_device): Torch device on which output must be generated.}
+
+\item{dtype}{(torch::torch_\<dtype\>): Torch dtype such as \link[torch:torch_dtype]{torch::torch_float}}
 }
 \value{
 Tensor, Tensor): A tuple of \code{min_input_index} (which is the minimum indices
@@ -58,15 +62,15 @@ at the timestamp of 32, the delta timestamps are
 32 27 22 17 12 8 2    3
 
 As we can see from deltas, the sinc function is sampled at different points of time
-assuming the center of the sinc function is at 0, 16, and 32  (the deltas \link{..., 6, 1, 4, ....}
-for 16 vs \link{...., 2, 3, ....} for 32)
+assuming the center of the sinc function is at 0, 16, and 32  (the deltas [..., 6, 1, 4, ....]
+for 16 vs [...., 2, 3, ....] for 32)
 
 Example, one case is when the \code{orig_freq} and \code{new_freq} are multiples of each other then
 there needs to be one filter.
 
 A windowed filter function  (i.e. Hanning * sinc) because the ideal case of sinc function
 has infinite support  (non-zero for all values) so instead it is truncated and multiplied by
-a window function which gives it less-than-perfect rolloff \link{1}.
+a window function which gives it less-than-perfect rolloff [1].
 
-\link{1} Chapter 16: Windowed-Sinc Filters, https://www.dspguide.com/ch16/1.htm
+[1] Chapter 16: Windowed-Sinc Filters, https://www.dspguide.com/ch16/1.htm
 }

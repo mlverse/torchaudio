@@ -7,9 +7,9 @@
 model_resblock(n_freq = 128)
 }
 \arguments{
-\item{specgram}{(Tensor): the input sequence to the ResBlock layer (n_batch, n_freq, n_time).}
+\item{n_freq}{the number of bins in a spectrogram.  (Default: \code{128})}
 
-\item{n_freq:}{the number of bins in a spectrogram.  (Default: \code{128})}
+\item{specgram}{(Tensor): the input sequence to the ResBlock layer (n_batch, n_freq, n_time).}
 }
 \value{
 Tensor shape:  (n_batch, n_freq, n_time)

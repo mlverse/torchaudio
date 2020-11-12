@@ -13,6 +13,6 @@ functional_add_noise_shaping(dithered_waveform, waveform)
 }
 \description{
 Noise shaping is calculated by error:
-error\link{n} = dithered\link{n} - original\link{n}
-noise_shaped_waveform\link{n} = dithered\link{n} + error\link{n-1}
+error[n] = dithered[n] - original[n]
+noise_shaped_waveform[n] = dithered[n] + error[n-1]
 }

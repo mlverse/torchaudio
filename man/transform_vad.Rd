@@ -61,6 +61,8 @@ the detection algorithm  (e.g. 0, 0.5, ...). (Default: 1.35)}
 \item{measure_freq}{(float, optional) Frequency of the algorithm’s
 processing/measurements.  (Default: 20.0)}
 
+\item{measure_duration}{(float, optional) Measurement duration. (Default: Twice the measurement period; i.e. with overlap.)}
+
 \item{measure_smooth_time}{(float, optional) Time constant used to smooth spectral measurements.  (Default: 0.4)}
 
 \item{hp_filter_freq}{(float, optional) "Brick-wall" frequency of high-pass filter applied
@@ -76,8 +78,6 @@ in the detector algorithm.  (Default: 150.0)}
 in the detector algorithm.  (Default: 2000.0)}
 
 \item{waveform}{(Tensor): Tensor of audio of dimension \verb{(..., time)}}
-
-\item{measure_duration:}{(float, optional) Measurement duration. (Default: Twice the measurement period; i.e. with overlap.)}
 }
 \description{
 Voice Activity Detector. Similar to SoX implementation.

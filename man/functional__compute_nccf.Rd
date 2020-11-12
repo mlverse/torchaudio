@@ -9,7 +9,7 @@ functional__compute_nccf(waveform, sample_rate, frame_time, freq_low)
 \arguments{
 \item{waveform}{(Tensor): Tensor of audio of dimension (..., time)}
 
-\item{sample_rate}{(int): Sample rate of the audio waveform}
+\item{sample_rate}{(int): sampling rate of the waveform, e.g. 44100 (Hz)}
 
 \item{frame_time}{(float)}
 

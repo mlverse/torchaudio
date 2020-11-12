@@ -18,29 +18,29 @@ model_wavernn(
 )
 }
 \arguments{
-\item{waveform:}{the input waveform to the WaveRNN layer  (n_batch, 1, (n_time - kernel_size + 1) * hop_length)}
+\item{upsample_scales}{the list of upsample scales.}
 
-\item{specgram:}{the input spectrogram to the WaveRNN layer  (n_batch, 1, n_freq, n_time)}
+\item{n_classes}{the number of output classes.}
 
-\item{upsample_scales:}{the list of upsample scales.}
+\item{hop_length}{the number of samples between the starts of consecutive frames.}
 
-\item{n_classes:}{the number of output classes.}
+\item{n_res_block}{the number of ResBlock in stack.  (Default: \code{10})}
 
-\item{hop_length:}{the number of samples between the starts of consecutive frames.}
+\item{n_rnn}{the dimension of RNN layer.  (Default: \code{512})}
 
-\item{n_res_block:}{the number of ResBlock in stack.  (Default: \code{10})}
+\item{n_fc}{the dimension of fully connected layer.  (Default: \code{512})}
 
-\item{n_rnn:}{the dimension of RNN layer.  (Default: \code{512})}
+\item{kernel_size}{the number of kernel size in the first Conv1d layer.  (Default: \code{5})}
 
-\item{n_fc:}{the dimension of fully connected layer.  (Default: \code{512})}
+\item{n_freq}{the number of bins in a spectrogram.  (Default: \code{128})}
 
-\item{kernel_size:}{the number of kernel size in the first Conv1d layer.  (Default: \code{5})}
+\item{n_hidden}{the number of hidden dimensions of resblock.  (Default: \code{128})}
 
-\item{n_freq:}{the number of bins in a spectrogram.  (Default: \code{128})}
+\item{n_output}{the number of output dimensions of melresnet.  (Default: \code{128})}
 
-\item{n_hidden:}{the number of hidden dimensions of resblock.  (Default: \code{128})}
+\item{waveform}{the input waveform to the WaveRNN layer  (n_batch, 1, (n_time - kernel_size + 1) * hop_length)}
 
-\item{n_output:}{the number of output dimensions of melresnet.  (Default: \code{128})}
+\item{specgram}{the input spectrogram to the WaveRNN layer  (n_batch, 1, n_freq, n_time)}
 }
 \value{
 Tensor shape:  (n_batch, 1, (n_time - kernel_size + 1) * hop_length, n_classes)
@@ -55,11 +55,11 @@ The input channels of waveform and spectrogram have to be 1. The product of
 \code{upsample_scales} must equal \code{hop_length}.
 }
 \examples{
- wavernn = model_wavernn(upsample_scales=c(5,5,8), n_classes=512, hop_length=200)
- waveform, sample_rate = torchaudio::torchaudio_load (file)
- # waveform shape:  (n_batch, n_channel, (n_time - kernel_size + 1) * hop_length)
- specgram = MelSpectrogram (sample_rate)(waveform)  # shape: (n_batch, n_channel, n_freq, n_time)
- output = wavernn (waveform, specgram)
- # output shape:  (n_batch, n_channel, (n_time - kernel_size + 1) * hop_length, n_classes)
+wavernn = model_wavernn(upsample_scales=c(2,2,5), n_classes=512, hop_length=20)
+waveform = torch::torch_rand(3,1,20)
+# waveform shape:  (n_batch, n_channel, (n_time - kernel_size + 1) * hop_length)
+specgram = transform_mel_spectrogram(16000)(waveform)  # shape: (n_batch, n_channel, n_freq, n_time)
+output = wavernn(waveform, specgram)
+# output shape:  (n_batch, n_channel, (n_time - kernel_size + 1) * hop_length, n_classes)
 
 }

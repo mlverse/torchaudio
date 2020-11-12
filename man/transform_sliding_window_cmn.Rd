@@ -14,7 +14,8 @@ transform_sliding_window_cmn(
 \arguments{
 \item{cmn_window}{(int, optional): Window in frames for running average CMN computation (int, default = 600)}
 
-\item{min_cmn_window}{(int, optional):  Minimum CMN window used at start of decoding (adds latency only at start).}
+\item{min_cmn_window}{(int, optional):  Minimum CMN window used at start of decoding (adds latency only at start).
+Only applicable if center == \code{FALSE}, ignored if center==\code{TRUE}  (int, default = 100)}
 
 \item{center}{(bool, optional): If \code{TRUE}, use a window centered on the current frame
 (to the extent possible, modulo end effects). If \code{FALSE}, window is to the left. (bool, default = \code{FALSE})}
@@ -22,8 +23,6 @@ transform_sliding_window_cmn(
 \item{norm_vars}{(bool, optional): If \code{TRUE}, normalize variance to one. (bool, default = \code{FALSE})}
 
 \item{waveform}{(Tensor): Tensor of audio of dimension (..., time).}
-
-\item{Only}{applicable if center == \code{FALSE}, ignored if center==\code{TRUE}  (int, default = 100)}
 }
 \value{
 Tensor: Tensor of audio of dimension (..., time).

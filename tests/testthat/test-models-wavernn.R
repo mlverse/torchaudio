@@ -31,23 +31,21 @@ test_that("model_stretch2d", {
 
 test_that("model_upsample_network", {
    upsamplenetwork = model_upsample_network(upsample_scales=c(4, 4, 16))
-   input = torch::torch_rand (10, 128, 10)  # a random spectrogram
+   input = torch::torch_rand (3, 128, 10)  # a random spectrogram
    output = upsamplenetwork (input)  # shape: (10, 1536, 128), (10, 1536, 128)
-   expect_equal(dim(output[[1]]), c(10, 1536, 128))
-   expect_equal(dim(output[[2]]), c(10, 1536, 128))
+   expect_equal(dim(output[[1]]), c(3, 128, (10 - 5 + 1)*(4*4*16)))
+   expect_equal(dim(output[[2]]), c(3, 128, (10 - 5 + 1)*(4*4*16)))
 })
 
 test_that("model_wavernn", {
-  wavernn = model_wavernn(upsample_scales=c(5,5,8), n_classes=512, hop_length=200)
+  wavernn = model_wavernn(upsample_scales=c(2,2,3), n_classes=5, hop_length=12)
 
-  waveform_and_sample_rate = torchaudio::torchaudio_load (system.file("sample_audio_1.mp3", package = "torchaudio"))
-  waveform = waveform_and_sample_rate[[1]]
-  sample_rate = waveform_and_sample_rate[[2]]
+  waveform = torch::torch_rand(3,1,(10 - 5 + 1)*12)
+  spectrogram = torch::torch_rand(3,1,128,10)
   # waveform shape:  (n_batch, n_channel, (n_time - kernel_size + 1) * hop_length)
-  specgram = transform_mel_spectrogram(sample_rate)(waveform)  # shape: (n_batch, n_channel, n_freq, n_time)
-  expect_no_error(output <- wavernn (waveform, specgram))
+  expect_no_error(output <- wavernn (waveform, spectrogram))
   expect_tensor(output)
-  expect_equal(dim(output), c(1, 2, (length(waveform) - 200 + 1) * 128, 512))
+  expect_equal(dim(output), c(3, 1, (10 - 5 + 1) * 12, 5))
   # output shape:  (n_batch, n_channel, (n_time - kernel_size + 1) * hop_length, n_classes)
 })
 
