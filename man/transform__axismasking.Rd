@@ -13,14 +13,16 @@ transform__axismasking(mask_param, axis, iid_masks)
 
 \item{iid_masks}{(bool): Applies iid masks to each of the examples in the batch dimension.
 This option is applicable only when the input tensor is 4D.}
-
-\item{specgram}{(Tensor): Tensor of dimension (..., freq, time).}
-
-\item{mask_value}{(float): Value to assign to the masked columns.}
 }
 \value{
 Tensor: Masked spectrogram of dimensions (..., freq, time).
 }
 \description{
 Apply masking to a spectrogram.
+}
+\details{
+forward param:
+specgram  (Tensor): Tensor of dimension (..., freq, time).
+
+mask_value  (float): Value to assign to the masked columns.
 }

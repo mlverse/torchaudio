@@ -10,8 +10,6 @@ transform_compute_deltas(win_length = 5, mode = "replicate")
 \item{win_length}{(int): The window length used for computing delta. (Default: \code{5})}
 
 \item{mode}{(str): Mode parameter passed to padding. (Default: \code{'replicate'})}
-
-\item{specgram}{(Tensor): Tensor of audio of dimension (..., freq, time).}
 }
 \value{
 Tensor: Tensor of deltas of dimension (..., freq, time).
@@ -20,5 +18,8 @@ Tensor: Tensor of deltas of dimension (..., freq, time).
 Compute delta coefficients of a tensor, usually a spectrogram.
 }
 \details{
+forward param:
+specgram  (Tensor): Tensor of audio of dimension (..., freq, time).
+
 See \link{functional_compute_deltas} for more details.
 }

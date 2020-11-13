@@ -25,8 +25,6 @@ model_upsample_network(
 \item{n_output}{the number of output dimensions of melresnet.  (Default: \code{128})}
 
 \item{kernel_size}{the number of kernel size in the first Conv1d layer.  (Default: \code{5})}
-
-\item{specgram}{(Tensor): the input sequence to the UpsampleNetwork layer (n_batch, n_freq, n_time)}
 }
 \value{
 Tensor shape:  (n_batch, n_freq, (n_time - kernel_size + 1) * total_scale),
@@ -36,6 +34,10 @@ where total_scale is the product of all elements in upsample_scales.
 \description{
 Upscale the dimensions of a spectrogram.
 Pass the input through the UpsampleNetwork layer.
+}
+\details{
+forward param:
+specgram  (Tensor): the input sequence to the UpsampleNetwork layer (n_batch, n_freq, n_time)
 }
 \examples{
  upsamplenetwork = model_upsample_network(upsample_scales=c(4, 4, 16))

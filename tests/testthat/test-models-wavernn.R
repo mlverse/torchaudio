@@ -1,7 +1,8 @@
+library(purrr)
 cmuarctic_df <- torchaudio::cmuarctic_dataset(system.file("", package = "torchaudio"))
 spectrogram_spec <- torchaudio::transform_spectrogram(n_fft = 255)
 
-spectrograms = purrr::map(seq.int(cmuarctic_df), ~{
+spectrograms = map(seq.int(cmuarctic_df), ~{
   s <-spectrogram_spec(cmuarctic_df[.x][[1]])
   s <- s[..,1:100]
   s <- torch::torch_mean(s, 1)

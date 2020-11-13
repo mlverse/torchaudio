@@ -8,8 +8,6 @@ transform_mu_law_encoding(quantization_channels = 256)
 }
 \arguments{
 \item{quantization_channels}{(int, optional): Number of channels. (Default: \code{256})}
-
-\item{x}{(Tensor): A signal to be encoded.}
 }
 \value{
 x_mu (Tensor): An encoded signal.
@@ -19,6 +17,9 @@ Encode signal based on mu-law companding.  For more info see
 the \href{https://en.wikipedia.org/wiki/M-law_algorithm}{Wikipedia Entry}
 }
 \details{
+forward param:
+x  (Tensor): A signal to be encoded.
+
 This algorithm assumes the signal has been scaled to between -1 and 1 and
 returns a signal encoded with values from 0 to quantization_channels - 1.
 }

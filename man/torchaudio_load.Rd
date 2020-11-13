@@ -56,7 +56,8 @@ Loads an audio file from disk into a tensor
 \examples{
 data = torchaudio_load('foo.mp3')
 print(data[[1]]$size())
-data_vol_normalized = torchaudio_load('foo.mp3', normalization= function(x) torch::torch_abs(x)$max())
+norm_fun <- function(x) torch::torch_abs(x)$max()
+data_vol_normalized = torchaudio_load('foo.mp3', normalization= norm_fun)
 print(data_vol_normalized[[1]]$abs()$max())
 
 }

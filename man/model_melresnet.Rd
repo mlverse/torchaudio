@@ -22,8 +22,6 @@ model_melresnet(
 \item{n_output}{the number of output dimensions of melresnet.  (Default: \code{128})}
 
 \item{kernel_size}{the number of kernel size in the first Conv1d layer.  (Default: \code{5})}
-
-\item{specgram}{(Tensor): the input sequence to the MelResNet layer (n_batch, n_freq, n_time).}
 }
 \value{
 Tensor shape:  (n_batch, n_output, n_time - kernel_size + 1)
@@ -31,6 +29,10 @@ Tensor shape:  (n_batch, n_output, n_time - kernel_size + 1)
 \description{
 MelResNet layer uses a stack of ResBlocks on spectrogram.
 Pass the input through the MelResNet layer.
+}
+\details{
+forward param:
+specgram  (Tensor): the input sequence to the MelResNet layer (n_batch, n_freq, n_time).
 }
 \examples{
  melresnet = model_melresnet()

@@ -3,7 +3,6 @@
 #' Create a spectrogram or a batch of spectrograms from a raw audio signal.
 #' The spectrogram can be either magnitude-only or complex.
 #'
-#' @param waveform (tensor): Tensor of audio of dimension (..., time)
 #' @param pad (integer): Two sided padding of signal
 #' @param window_fn (tensor or function): Window tensor that is applied/multiplied to each
 #' frame/window or a function that generates the window tensor.
@@ -14,6 +13,10 @@
 #'  1 for energy, 2 for power, etc. If NULL, then the complex spectrum is returned instead.
 #' @param normalized (logical): Whether to normalize by magnitude after stft
 #' @param ... (optional) Arguments for window function.
+#'
+#'
+#' @details forward param:
+#'  waveform (tensor): Tensor of audio of dimension (..., time)
 #'
 #' @return tensor: Dimension (..., freq, time), freq is n_fft %/% 2 + 1 and n_fft is the
 #' number of Fourier bins, and time is the number of window hops (n_frame).
@@ -69,6 +72,9 @@ transform_spectrogram <- torch::nn_module(
 #' @param f_max (float or NULL, optional): Maximum frequency. (Default: ``sample_rate // 2``)
 #' @param n_stft (int, optional): Number of bins in STFT. Calculated from first input
 #' if NULL is given.  See ``n_fft`` in :class:`Spectrogram`. (Default: ``NULL``)
+#'
+#' @details forward param:
+#'  specgram  (Tensor): Tensor of audio of dimension (..., freq, time).
 #'
 #' @return `tensor`: Mel frequency spectrogram of size (..., ``n_mels``, time).
 #'
@@ -140,11 +146,13 @@ transform_mel_scale <- torch::nn_module(
 #' may return different values for an audio clip split into snippets vs. a
 #' a full clip.
 #'
-#' @param x (Tensor): Input tensor before being converted to decibel scale
 #' @param stype (str, optional): scale of input tensor ('power' or 'magnitude'). The
 #' power being the elementwise square of the magnitude. (Default: ``'power'``)
 #' @param top_db (float or NULL, optional): Minimum negative cut-off in decibels. A reasonable number
 #' is 80. (Default: ``NULL``)
+#'
+#' @details forward param:
+#'  x (Tensor): Input tensor before being converted to decibel scale
 #'
 #' @return `tensor`: Output tensor in decibel scale
 #'
@@ -180,7 +188,6 @@ transform_amplitude_to_db <- torch::nn_module(
 #' Create MelSpectrogram for a raw audio signal. This is a composition of Spectrogram
 #'   and MelScale.
 #'
-#' @param waveform (Tensor): Tensor of audio of dimension (..., time).
 #' @param sample_rate (int, optional): Sample rate of audio signal. (Default: ``16000``)
 #' @param win_length (int or NULL, optional): Window size. (Default: ``n_fft``)
 #' @param hop_length (int or NULL, optional): Length of hop between STFT windows. (Default: ``win_length // 2``)
@@ -194,6 +201,9 @@ transform_amplitude_to_db <- torch::nn_module(
 #' @param power  (float, optional): Power of the norm. (Default: to ``2.0``)
 #' @param normalized (logical): Whether to normalize by magnitude after stft (Default: ``FALSE``)
 #' @param ... (optional): Arguments for window function.
+#'
+#' @details forward param:
+#'  waveform (Tensor): Tensor of audio of dimension (..., time).
 #'
 #' @return `tensor`: Mel frequency spectrogram of size (..., ``n_mels``, time).
 #'
@@ -265,7 +275,6 @@ transform_mel_spectrogram <- torch::nn_module(
 #'
 #' Create the Mel-frequency cepstrum coefficients from an audio signal.
 #'
-#' @param waveform (tensor): Tensor of audio of dimension (..., time)
 #' @param sample_rate (int, optional): Sample rate of audio signal. (Default: ``16000``)
 #' @param n_mfcc (int, optional): Number of mfc coefficients to retain. (Default: ``40``)
 #' @param dct_type (int, optional): type of DCT (discrete cosine transform) to use. (Default: ``2``)
@@ -273,7 +282,11 @@ transform_mel_spectrogram <- torch::nn_module(
 #' @param log_mels (bool, optional): whether to use log-mel spectrograms instead of db-scaled. (Default: ``FALSE``)
 #' @param ... (optional): arguments for [torchaudio::transform_mel_spectrogram].
 #'
-#' @details By default, this calculates the MFCC on the DB-scaled Mel spectrogram.
+#'
+#' @details forward param:
+#'  waveform (tensor): Tensor of audio of dimension (..., time)
+#'
+#' By default, this calculates the MFCC on the DB-scaled Mel spectrogram.
 #' This output depends on the maximum value in the input spectrogram, and so
 #' may return different values for an audio clip split into snippets vs. a
 #' a full clip.
@@ -349,7 +362,6 @@ transform_mfcc <- torch::nn_module(
 #'  Solve for a normal STFT from a mel frequency STFT, using a conversion
 #'  matrix.  This uses triangular filter banks.
 #'
-#' @param melspec  (Tensor): A Mel frequency spectrogram of dimension (..., ``n_mels``, time)
 #' @param n_stft  (int): Number of bins in STFT. See ``n_fft`` in [torchaudio::transform_spectrogram].
 #' @param n_mels  (int, optional): Number of mel filterbanks. (Default: ``128``)
 #' @param sample_rate  (int, optional): Sample rate of audio signal. (Default: ``16000``)
@@ -360,7 +372,9 @@ transform_mfcc <- torch::nn_module(
 #' @param tolerance_change  (float, optional): Difference in losses to stop optimization at. (Default: ``1e-8``)
 #' @param ...  (optional): Arguments passed to the SGD optimizer. Argument lr will default to 0.1 if not specied.(Default: ``NULL``)
 #'
-#' @details
+#' @details forward param:
+#'  melspec  (Tensor): A Mel frequency spectrogram of dimension (..., ``n_mels``, time)
+#'
 #' It minimizes the euclidian norm between the input mel-spectrogram and the product between
 #' the estimated spectrogram and the filter banks using SGD.
 #'
@@ -454,8 +468,10 @@ transform_inverse_mel_scale <- torch::nn_module(
 #' Encode signal based on mu-law companding.  For more info see
 #' the [Wikipedia Entry](https://en.wikipedia.org/wiki/M-law_algorithm)
 #'
-#' @param x  (Tensor): A signal to be encoded.
 #' @param quantization_channels  (int, optional): Number of channels. (Default: ``256``)
+#'
+#' @details forward param:
+#'  x  (Tensor): A signal to be encoded.
 #'
 #' @return x_mu (Tensor): An encoded signal.
 #'
@@ -483,8 +499,10 @@ transform_mu_law_encoding <- torch::nn_module(
 #'    This expects an input with values between 0 and quantization_channels - 1
 #'    and returns a signal scaled between -1 and 1.
 #'
-#' @param x_mu  (Tensor): A mu-law encoded signal which needs to be decoded.
 #' @param quantization_channels  (int, optional): Number of channels. (Default: ``256``)
+#'
+#' @details forward param:
+#'  x_mu  (Tensor): A mu-law encoded signal which needs to be decoded.
 #'
 #' @return Tensor: The signal decoded.
 #'
@@ -504,10 +522,12 @@ transform_mu_law_decoding <- torch::nn_module(
 #'
 #' Resample a signal from one frequency to another. A resampling method can be given.
 #'
-#' @param waveform  (Tensor): Tensor of audio of dimension (..., time).
 #' @param orig_freq  (float, optional): The original frequency of the signal. (Default: ``16000``)
 #' @param new_freq  (float, optional): The desired frequency. (Default: ``16000``)
 #' @param resampling_method  (str, optional): The resampling method. (Default: ``'sinc_interpolation'``)
+#'
+#' @details forward param:
+#'  waveform  (Tensor): Tensor of audio of dimension (..., time).
 #'
 #' @return Tensor: Output signal of dimension (..., time).
 #'
@@ -550,8 +570,10 @@ transform_resample <- torch::nn_module(
 #'
 #' Compute the norm of complex tensor input.
 #'
-#' @param complex_tensor  (Tensor): Tensor shape of `(..., complex=2)`.
 #' @param power  (float, optional): Power of the norm. (Default: to ``1.0``)
+#'
+#' @details forward param:
+#'  complex_tensor  (Tensor): Tensor shape of `(..., complex=2)`.
 #'
 #' @return Tensor: norm of the input tensor, shape of `(..., )`.
 #'
@@ -571,11 +593,13 @@ transform_complex_norm <- torch::nn_module(
 #'
 #' Compute delta coefficients of a tensor, usually a spectrogram.
 #'
-#' @param specgram  (Tensor): Tensor of audio of dimension (..., freq, time).
 #' @param win_length  (int): The window length used for computing delta. (Default: ``5``)
 #' @param mode  (str): Mode parameter passed to padding. (Default: ``'replicate'``)
 #'
-#' @details See [torchaudio::functional_compute_deltas] for more details.
+#' @details forward param:
+#'  specgram  (Tensor): Tensor of audio of dimension (..., freq, time).
+#'
+#' See [torchaudio::functional_compute_deltas] for more details.
 #'
 #' @return Tensor: Tensor of deltas of dimension (..., freq, time).
 #'
@@ -596,12 +620,16 @@ transform_compute_deltas <- torch::nn_module(
 #'
 #' Stretch stft in time without modifying pitch for a given rate.
 #'
-#' @param complex_specgrams  (Tensor): complex spectrogram (..., freq, time, complex=2).
 #' @param hop_length  (int or NULL, optional): Length of hop between STFT windows. (Default: ``win_length // 2``)
 #' @param n_freq  (int, optional): number of filter banks from stft. (Default: ``201``)
 #' @param fixed_rate  (float or NULL, optional): rate to speed up or slow down by.
 #'        If NULL is provided, rate must be passed to the forward method.  (Default: ``NULL``)
-#' @param overriding_rate  (float or NULL, optional): speed up to apply to this batch.
+#'
+#'
+#' @details forward param:
+#' complex_specgrams  (Tensor): complex spectrogram (..., freq, time, complex=2).
+#'
+#' overriding_rate  (float or NULL, optional): speed up to apply to this batch.
 #'   If no rate is passed, use ``self$fixed_rate``.  (Default: ``NULL``)
 #'
 #' @return Tensor: Stretched complex spectrogram of dimension (..., freq, ceil(time/rate), complex=2).
@@ -646,11 +674,13 @@ transform_time_stretch <- torch::nn_module(
 #'
 #' Add a fade in and/or fade out to an waveform.
 #'
-#' @param waveform  (Tensor): Tensor of audio of dimension (..., time).
 #' @param fade_in_len  (int, optional): Length of fade-in (time frames). (Default: ``0``)
 #' @param fade_out_len  (int, optional): Length of fade-out (time frames). (Default: ``0``)
 #' @param fade_shape  (str, optional): Shape of fade. Must be one of: "quarter_sine",
 #'                     "half_sine", "linear", "logarithmic", "exponential".  (Default: ``"linear"``)
+#'
+#' @details forward param:
+#'  waveform  (Tensor): Tensor of audio of dimension (..., time).
 #'
 #' @return Tensor: Tensor of audio of dimension (..., time).
 #'
@@ -727,8 +757,11 @@ transform_fade <- torch::nn_module(
 #' @param axis  (int): What dimension the mask is applied on.
 #' @param iid_masks  (bool): Applies iid masks to each of the examples in the batch dimension.
 #'                   This option is applicable only when the input tensor is 4D.
-#' @param specgram  (Tensor): Tensor of dimension (..., freq, time).
-#' @param mask_value  (float): Value to assign to the masked columns.
+#'
+#' @details forward param:
+#' specgram  (Tensor): Tensor of dimension (..., freq, time).
+#'
+#' mask_value  (float): Value to assign to the masked columns.
 #'
 #' @return Tensor: Masked spectrogram of dimensions (..., freq, time).
 #'
@@ -800,12 +833,14 @@ transform_timemasking <- function(time_mask_param, iid_masks) {
 
 #' Add a volume to an waveform.
 #'
-#' @param waveform  (Tensor): Tensor of audio of dimension (..., time).
 #' @param gain  (float): Interpreted according to the given gain_type:
 #'            If ``gain_type`` = ``amplitude``, ``gain`` is a positive amplitude ratio.
 #'            If ``gain_type`` = ``power``, ``gain`` is a power  (voltage squared).
 #'            If ``gain_type`` = ``db``, ``gain`` is in decibels.
 #' @param gain_type  (str, optional): Type of gain. One of: ``amplitude``, ``power``, ``db`` (Default: ``amplitude``)
+#'
+#' @details forward param:
+#'  waveform  (Tensor): Tensor of audio of dimension (..., time).
 #'
 #' @return Tensor: Tensor of audio of dimension (..., time).
 #'
@@ -842,13 +877,15 @@ transform_vol <- torch::nn_module(
 #'
 #'  Apply sliding-window cepstral mean  (and optionally variance) normalization per utterance.
 #'
-#' @param waveform  (Tensor): Tensor of audio of dimension (..., time).
 #' @param cmn_window  (int, optional): Window in frames for running average CMN computation (int, default = 600)
 #' @param min_cmn_window  (int, optional):  Minimum CMN window used at start of decoding (adds latency only at start).
 #'  Only applicable if center == ``FALSE``, ignored if center==``TRUE``  (int, default = 100)
 #' @param center  (bool, optional): If ``TRUE``, use a window centered on the current frame
 #'   (to the extent possible, modulo end effects). If ``FALSE``, window is to the left. (bool, default = ``FALSE``)
 #' @param norm_vars  (bool, optional): If ``TRUE``, normalize variance to one. (bool, default = ``FALSE``)
+#'
+#' @details forward param:
+#'  waveform  (Tensor): Tensor of audio of dimension (..., time).
 #'
 #' @return Tensor: Tensor of audio of dimension (..., time).
 #'
@@ -891,7 +928,6 @@ transform_sliding_window_cmn <- torch::nn_module(
 #'    The effect can trim only from the front of the audio,
 #'    so in order to trim from the back, the reverse effect must also be used.
 #'
-#' @param waveform  (Tensor): Tensor of audio of dimension `(..., time)`
 #' @param sample_rate  (int): Sample rate of audio signal.
 #' @param trigger_level  (float, optional): The measurement level used to trigger activity detection.
 #'            This may need to be cahnged depending on the noise level, signal level,
@@ -927,6 +963,9 @@ transform_sliding_window_cmn <- torch::nn_module(
 #'            in the detector algorithm.  (Default: 150.0)
 #' @param lp_lifter_freq  (float, optional) "Brick-wall" frequency of low-pass lifter used
 #'            in the detector algorithm.  (Default: 2000.0)
+#'
+#' @details forward param:
+#'  waveform  (Tensor): Tensor of audio of dimension `(..., time)`
 #'
 #' @references
 #' - [http://sox.sourceforge.net/sox.html]()

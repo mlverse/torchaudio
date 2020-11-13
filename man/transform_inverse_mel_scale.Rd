@@ -34,8 +34,6 @@ transform_inverse_mel_scale(
 \item{tolerance_change}{(float, optional): Difference in losses to stop optimization at. (Default: \code{1e-8})}
 
 \item{...}{(optional): Arguments passed to the SGD optimizer. Argument lr will default to 0.1 if not specied.(Default: \code{NULL})}
-
-\item{melspec}{(Tensor): A Mel frequency spectrogram of dimension (..., \code{n_mels}, time)}
 }
 \value{
 Tensor: Linear scale spectrogram of size (..., freq, time)
@@ -45,6 +43,9 @@ Solve for a normal STFT from a mel frequency STFT, using a conversion
 matrix.  This uses triangular filter banks.
 }
 \details{
+forward param:
+melspec  (Tensor): A Mel frequency spectrogram of dimension (..., \code{n_mels}, time)
+
 It minimizes the euclidian norm between the input mel-spectrogram and the product between
 the estimated spectrogram and the filter banks using SGD.
 }

@@ -8,8 +8,6 @@ transform_mu_law_decoding(quantization_channels = 256)
 }
 \arguments{
 \item{quantization_channels}{(int, optional): Number of channels. (Default: \code{256})}
-
-\item{x_mu}{(Tensor): A mu-law encoded signal which needs to be decoded.}
 }
 \value{
 Tensor: The signal decoded.
@@ -21,4 +19,7 @@ Decode mu-law encoded signal.  For more info see the
 \details{
 This expects an input with values between 0 and quantization_channels - 1
 and returns a signal scaled between -1 and 1.
+
+forward param:
+x_mu  (Tensor): A mu-law encoded signal which needs to be decoded.
 }

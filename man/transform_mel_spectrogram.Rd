@@ -44,8 +44,6 @@ that is applied/multiplied to each frame/window. (Default: \code{torch_hann_wind
 \item{normalized}{(logical): Whether to normalize by magnitude after stft (Default: \code{FALSE})}
 
 \item{...}{(optional): Arguments for window function.}
-
-\item{waveform}{(Tensor): Tensor of audio of dimension (..., time).}
 }
 \value{
 \code{tensor}: Mel frequency spectrogram of size (..., \code{n_mels}, time).
@@ -53,6 +51,10 @@ that is applied/multiplied to each frame/window. (Default: \code{torch_hann_wind
 \description{
 Create MelSpectrogram for a raw audio signal. This is a composition of Spectrogram
 and MelScale.
+}
+\details{
+forward param:
+waveform (Tensor): Tensor of audio of dimension (..., time).
 }
 \section{Sources}{
 

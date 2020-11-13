@@ -12,8 +12,6 @@ power being the elementwise square of the magnitude. (Default: \code{'power'})}
 
 \item{top_db}{(float or NULL, optional): Minimum negative cut-off in decibels. A reasonable number
 is 80. (Default: \code{NULL})}
-
-\item{x}{(Tensor): Input tensor before being converted to decibel scale}
 }
 \value{
 \code{tensor}: Output tensor in decibel scale
@@ -25,4 +23,7 @@ Turn a tensor from the power/amplitude scale to the decibel scale.
 This output depends on the maximum value in the input tensor, and so
 may return different values for an audio clip split into snippets vs. a
 a full clip.
+
+forward param:
+x (Tensor): Input tensor before being converted to decibel scale
 }

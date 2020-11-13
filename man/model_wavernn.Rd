@@ -37,10 +37,6 @@ model_wavernn(
 \item{n_hidden}{the number of hidden dimensions of resblock.  (Default: \code{128})}
 
 \item{n_output}{the number of output dimensions of melresnet.  (Default: \code{128})}
-
-\item{waveform}{the input waveform to the WaveRNN layer  (n_batch, 1, (n_time - kernel_size + 1) * hop_length)}
-
-\item{specgram}{the input spectrogram to the WaveRNN layer  (n_batch, 1, n_freq, n_time)}
 }
 \value{
 Tensor shape:  (n_batch, 1, (n_time - kernel_size + 1) * hop_length, n_classes)
@@ -51,6 +47,12 @@ The original implementation was introduced in \href{https://arxiv.org/pdf/1802.0
 #' Pass the input through the WaveRNN model.
 }
 \details{
+forward param:
+
+waveform the input waveform to the WaveRNN layer  (n_batch, 1, (n_time - kernel_size + 1) * hop_length)
+
+specgram the input spectrogram to the WaveRNN layer  (n_batch, 1, n_freq, n_time)
+
 The input channels of waveform and spectrogram have to be 1. The product of
 \code{upsample_scales} must equal \code{hop_length}.
 }

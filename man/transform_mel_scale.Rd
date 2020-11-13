@@ -31,3 +31,7 @@ if NULL is given.  See \code{n_fft} in :class:\code{Spectrogram}. (Default: \cod
 Turn a normal STFT into a mel frequency STFT, using a conversion
 matrix. This uses triangular filter banks.
 }
+\details{
+forward param:
+specgram  (Tensor): Tensor of audio of dimension (..., freq, time).
+}

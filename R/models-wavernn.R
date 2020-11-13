@@ -3,8 +3,11 @@
 #' ResNet block based on "Deep Residual Learning for Image Recognition".
 #' Pass the input through the ResBlock layer. The paper link is [https://arxiv.org/pdf/1512.03385.pdf]().
 #'
-#' @param specgram  (Tensor): the input sequence to the ResBlock layer (n_batch, n_freq, n_time).
 #' @param n_freq the number of bins in a spectrogram.  (Default: ``128``)
+#'
+#'
+#' @details forward param:
+#'  specgram  (Tensor): the input sequence to the ResBlock layer (n_batch, n_freq, n_time).
 #'
 #' @return
 #' Tensor shape:  (n_batch, n_freq, n_time)
@@ -37,12 +40,14 @@ model_resblock <- torch::nn_module(
 #' MelResNet layer uses a stack of ResBlocks on spectrogram.
 #' Pass the input through the MelResNet layer.
 #'
-#' @param specgram  (Tensor): the input sequence to the MelResNet layer (n_batch, n_freq, n_time).
 #' @param n_res_block the number of ResBlock in stack.  (Default: ``10``)
 #' @param n_freq the number of bins in a spectrogram.  (Default: ``128``)
 #' @param n_hidden the number of hidden dimensions of resblock.  (Default: ``128``)
 #' @param n_output the number of output dimensions of melresnet.  (Default: ``128``)
 #' @param kernel_size the number of kernel size in the first Conv1d layer.  (Default: ``5``)
+#'
+#' @details forward param:
+#'  specgram  (Tensor): the input sequence to the MelResNet layer (n_batch, n_freq, n_time).
 #'
 #' @return
 #' Tensor shape:  (n_batch, n_output, n_time - kernel_size + 1)
@@ -84,9 +89,11 @@ model_melresnet <- torch::nn_module(
 #' Upscale the frequency and time dimensions of a spectrogram.
 #' Pass the input through the Stretch2d layer.
 #'
-#' @param specgram  (Tensor): the input sequence to the Stretch2d layer (..., n_freq, n_time).
 #' @param time_scale the scale factor in time dimension
 #' @param freq_scale the scale factor in frequency dimension
+#'
+#' @details forward param:
+#'  specgram  (Tensor): the input sequence to the Stretch2d layer (..., n_freq, n_time).
 #'
 #' @return
 #' Tensor shape:  (..., n_freq * freq_scale, n_time * time_scale)
@@ -117,13 +124,16 @@ model_stretch2d <- torch::nn_module(
 #' Upscale the dimensions of a spectrogram.
 #' Pass the input through the UpsampleNetwork layer.
 #'
-#' @param specgram  (Tensor): the input sequence to the UpsampleNetwork layer (n_batch, n_freq, n_time)
 #' @param upsample_scales the list of upsample scales.
 #' @param n_res_block the number of ResBlock in stack.  (Default: ``10``)
 #' @param n_freq the number of bins in a spectrogram.  (Default: ``128``)
 #' @param n_hidden the number of hidden dimensions of resblock.  (Default: ``128``)
 #' @param n_output the number of output dimensions of melresnet.  (Default: ``128``)
 #' @param kernel_size the number of kernel size in the first Conv1d layer.  (Default: ``5``)
+#'
+#'
+#' @details forward param:
+#'  specgram  (Tensor): the input sequence to the UpsampleNetwork layer (n_batch, n_freq, n_time)
 #'
 #' @return
 #'  Tensor shape:  (n_batch, n_freq, (n_time - kernel_size + 1) * total_scale),
@@ -190,8 +200,6 @@ model_upsample_network <- torch::nn_module(
 #' The original implementation was introduced in ["Efficient Neural Audio Synthesis"](https://arxiv.org/pdf/1802.08435.pdf).
 #'#' Pass the input through the WaveRNN model.
 #'
-#' @param waveform the input waveform to the WaveRNN layer  (n_batch, 1, (n_time - kernel_size + 1) * hop_length)
-#' @param specgram the input spectrogram to the WaveRNN layer  (n_batch, 1, n_freq, n_time)
 #' @param upsample_scales the list of upsample scales.
 #' @param n_classes the number of output classes.
 #' @param hop_length the number of samples between the starts of consecutive frames.
@@ -203,7 +211,13 @@ model_upsample_network <- torch::nn_module(
 #' @param n_hidden the number of hidden dimensions of resblock.  (Default: ``128``)
 #' @param n_output the number of output dimensions of melresnet.  (Default: ``128``)
 #'
-#' @details The input channels of waveform and spectrogram have to be 1. The product of
+#' @details forward param:
+#'
+#' waveform the input waveform to the WaveRNN layer  (n_batch, 1, (n_time - kernel_size + 1) * hop_length)
+#'
+#' specgram the input spectrogram to the WaveRNN layer  (n_batch, 1, n_freq, n_time)
+#'
+#' The input channels of waveform and spectrogram have to be 1. The product of
 #'    `upsample_scales` must equal `hop_length`.
 #'
 #' @return

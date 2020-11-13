@@ -76,8 +76,6 @@ in the detector algorithm.  (Default: 150.0)}
 
 \item{lp_lifter_freq}{(float, optional) "Brick-wall" frequency of low-pass lifter used
 in the detector algorithm.  (Default: 2000.0)}
-
-\item{waveform}{(Tensor): Tensor of audio of dimension \verb{(..., time)}}
 }
 \description{
 Voice Activity Detector. Similar to SoX implementation.
@@ -89,6 +87,9 @@ so may be fooled by other things, especially music.
 
 The effect can trim only from the front of the audio,
 so in order to trim from the back, the reverse effect must also be used.
+
+forward param:
+waveform  (Tensor): Tensor of audio of dimension \verb{(..., time)}
 }
 \references{
 \itemize{

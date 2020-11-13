@@ -8,12 +8,14 @@ transform_complex_norm(power = 1)
 }
 \arguments{
 \item{power}{(float, optional): Power of the norm. (Default: to \code{1.0})}
-
-\item{complex_tensor}{(Tensor): Tensor shape of \verb{(..., complex=2)}.}
 }
 \value{
 Tensor: norm of the input tensor, shape of \verb{(..., )}.
 }
 \description{
 Compute the norm of complex tensor input.
+}
+\details{
+forward param:
+complex_tensor  (Tensor): Tensor shape of \verb{(..., complex=2)}.
 }

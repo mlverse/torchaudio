@@ -21,12 +21,14 @@ Only applicable if center == \code{FALSE}, ignored if center==\code{TRUE}  (int,
 (to the extent possible, modulo end effects). If \code{FALSE}, window is to the left. (bool, default = \code{FALSE})}
 
 \item{norm_vars}{(bool, optional): If \code{TRUE}, normalize variance to one. (bool, default = \code{FALSE})}
-
-\item{waveform}{(Tensor): Tensor of audio of dimension (..., time).}
 }
 \value{
 Tensor: Tensor of audio of dimension (..., time).
 }
 \description{
 Apply sliding-window cepstral mean  (and optionally variance) normalization per utterance.
+}
+\details{
+forward param:
+waveform  (Tensor): Tensor of audio of dimension (..., time).
 }

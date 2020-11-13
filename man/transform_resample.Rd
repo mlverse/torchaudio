@@ -16,12 +16,14 @@ transform_resample(
 \item{new_freq}{(float, optional): The desired frequency. (Default: \code{16000})}
 
 \item{resampling_method}{(str, optional): The resampling method. (Default: \code{'sinc_interpolation'})}
-
-\item{waveform}{(Tensor): Tensor of audio of dimension (..., time).}
 }
 \value{
 Tensor: Output signal of dimension (..., time).
 }
 \description{
 Resample a signal from one frequency to another. A resampling method can be given.
+}
+\details{
+forward param:
+waveform  (Tensor): Tensor of audio of dimension (..., time).
 }

@@ -25,8 +25,6 @@ transform_mfcc(
 \item{log_mels}{(bool, optional): whether to use log-mel spectrograms instead of db-scaled. (Default: \code{FALSE})}
 
 \item{...}{(optional): arguments for \link{transform_mel_spectrogram}.}
-
-\item{waveform}{(tensor): Tensor of audio of dimension (..., time)}
 }
 \value{
 \code{tensor}: specgram_mel_db of size (..., \code{n_mfcc}, time).
@@ -35,6 +33,9 @@ transform_mfcc(
 Create the Mel-frequency cepstrum coefficients from an audio signal.
 }
 \details{
+forward param:
+waveform (tensor): Tensor of audio of dimension (..., time)
+
 By default, this calculates the MFCC on the DB-scaled Mel spectrogram.
 This output depends on the maximum value in the input spectrogram, and so
 may return different values for an audio clip split into snippets vs. a

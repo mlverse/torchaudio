@@ -13,12 +13,14 @@ transform_fade(fade_in_len = 0, fade_out_len = 0, fade_shape = "linear")
 
 \item{fade_shape}{(str, optional): Shape of fade. Must be one of: "quarter_sine",
 "half_sine", "linear", "logarithmic", "exponential".  (Default: \code{"linear"})}
-
-\item{waveform}{(Tensor): Tensor of audio of dimension (..., time).}
 }
 \value{
 Tensor: Tensor of audio of dimension (..., time).
 }
 \description{
 Add a fade in and/or fade out to an waveform.
+}
+\details{
+forward param:
+waveform  (Tensor): Tensor of audio of dimension (..., time).
 }

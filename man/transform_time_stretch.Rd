@@ -13,15 +13,17 @@ transform_time_stretch(hop_length = NULL, n_freq = 201, fixed_rate = NULL)
 
 \item{fixed_rate}{(float or NULL, optional): rate to speed up or slow down by.
 If NULL is provided, rate must be passed to the forward method.  (Default: \code{NULL})}
-
-\item{complex_specgrams}{(Tensor): complex spectrogram (..., freq, time, complex=2).}
-
-\item{overriding_rate}{(float or NULL, optional): speed up to apply to this batch.
-If no rate is passed, use \code{self$fixed_rate}.  (Default: \code{NULL})}
 }
 \value{
 Tensor: Stretched complex spectrogram of dimension (..., freq, ceil(time/rate), complex=2).
 }
 \description{
 Stretch stft in time without modifying pitch for a given rate.
+}
+\details{
+forward param:
+complex_specgrams  (Tensor): complex spectrogram (..., freq, time, complex=2).
+
+overriding_rate  (float or NULL, optional): speed up to apply to this batch.
+If no rate is passed, use \code{self$fixed_rate}.  (Default: \code{NULL})
 }

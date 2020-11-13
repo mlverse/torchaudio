@@ -8,8 +8,6 @@ model_resblock(n_freq = 128)
 }
 \arguments{
 \item{n_freq}{the number of bins in a spectrogram.  (Default: \code{128})}
-
-\item{specgram}{(Tensor): the input sequence to the ResBlock layer (n_batch, n_freq, n_time).}
 }
 \value{
 Tensor shape:  (n_batch, n_freq, n_time)
@@ -17,6 +15,10 @@ Tensor shape:  (n_batch, n_freq, n_time)
 \description{
 ResNet block based on "Deep Residual Learning for Image Recognition".
 Pass the input through the ResBlock layer. The paper link is \url{https://arxiv.org/pdf/1512.03385.pdf}.
+}
+\details{
+forward param:
+specgram  (Tensor): the input sequence to the ResBlock layer (n_batch, n_freq, n_time).
 }
 \examples{
  resblock = ResBlock ()

@@ -13,12 +13,14 @@ If \code{gain_type} = \code{power}, \code{gain} is a power  (voltage squared).
 If \code{gain_type} = \code{db}, \code{gain} is in decibels.}
 
 \item{gain_type}{(str, optional): Type of gain. One of: \code{amplitude}, \code{power}, \code{db} (Default: \code{amplitude})}
-
-\item{waveform}{(Tensor): Tensor of audio of dimension (..., time).}
 }
 \value{
 Tensor: Tensor of audio of dimension (..., time).
 }
 \description{
 Add a volume to an waveform.
+}
+\details{
+forward param:
+waveform  (Tensor): Tensor of audio of dimension (..., time).
 }
