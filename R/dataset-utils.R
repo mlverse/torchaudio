@@ -26,7 +26,7 @@ download_url <- function(url, destfile, checksum) {
 #' utils::download.file(url = url, destfile = from_path)
 #' torchaudio:::extract_archive (from_path, to_path)
 #'
-#' @keywords internal
+#' @export
 extract_archive <- function(from_path, to_path = NULL, overwrite = FALSE) {
   ext_file <- fs::path_ext(from_path)
   if(ext_file %in% "zip") {

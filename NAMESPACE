@@ -2,6 +2,7 @@
 
 export(backend_utils_list_audio_backends)
 export(cmuarctic_dataset)
+export(extract_archive)
 export(functional__combine_max)
 export(functional__compute_nccf)
 export(functional__find_max_per_frame)

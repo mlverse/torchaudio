@@ -40,6 +40,7 @@ reference:
     contents:
       - '`linear_to_mel_frequency`'
       - '`mel_to_linear_frequency`'
+      - '`extract_archive`'
 
 
 
