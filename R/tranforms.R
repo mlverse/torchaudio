@@ -35,7 +35,6 @@ transform_spectrogram <- torch::nn_module(
     ...
   ) {
     self$n_fft = n_fft
-
     # number of FFT bins. the returned STFT result will have n_fft // 2 + 1
     # number of frequecies due to onesided=True in torch.stft
     self$win_length = win_length %||% n_fft
@@ -113,7 +112,6 @@ transform_mel_scale <- torch::nn_module(
     shape = specgram$size()
     ls = length(shape)
     specgram = specgram$reshape(list(-1, shape[ls-1], shape[ls]))
-
     if(self$fb$numel() == 0) {
       tmp_fb = functional_create_fb_matrix(
         n_freqs = specgram$size(2),
@@ -128,7 +126,7 @@ transform_mel_scale <- torch::nn_module(
 
     # (channel, frequency, time).transpose(...) dot (frequency, n_mels)
     # -> (channel, time, n_mels).transpose(...)
-    mel_specgram = torch::torch_matmul(specgram$transpose(2L, 3L), self$fb)$transpose(2L, 3L)
+    mel_specgram = torch::torch_matmul(specgram$transpose(2L, 3L), self$fb$to(device = specgram$device))$transpose(2L, 3L)
 
     # unpack batch
     lspec = length(mel_specgram$shape)
@@ -254,7 +252,6 @@ transform_mel_spectrogram <- torch::nn_module(
       normalized = self$normalized,
       ...
     )
-
     self$mel_scale = transform_mel_scale(
       n_mels = self$n_mels,
       sample_rate = self$sample_rate,
@@ -426,7 +423,6 @@ transform_inverse_mel_scale <- torch::nn_module(
 
     n_mels = shape[ls-1]
     time = shape[ls]
-
     freq = self$fb$size(1) # (freq, n_mels)
     melspec = melspec$transpose(-1, -2)
     if(self$n_mels != n_mels) runtime_error("self$n_mels != n_mels")
@@ -439,7 +435,7 @@ transform_inverse_mel_scale <- torch::nn_module(
     loss = Inf
     for(i in seq.int(self$max_iter)){
       optim$zero_grad()
-      diff = melspec - specgram$matmul(self$fb)
+      diff = melspec - specgram$matmul(self$fb$to(device = melspec$device))
       new_loss = diff$pow(2)$sum(dim=-1)$mean()
       # take sum over mel-frequency then average over other dimensions
       # so that loss threshold is applied par unit timeframe
