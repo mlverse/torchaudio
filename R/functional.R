@@ -33,6 +33,7 @@ functional_spectrogram <- function(
   shape = waveform$size()
   ls = length(shape)
   waveform = waveform$reshape(list(-1, shape[ls]))
+  ls = length(shape)
 
   # default values are consistent with librosa.core.spectrum._spectrogram
   spec_f <- torch::torch_stft(
@@ -242,6 +243,7 @@ functional_mel_scale <- function(
   shape = specgram$size()
   ls = length(shape)
   specgram = specgram$reshape(list(-1, shape[ls-1], shape[ls]))
+  ls = length(shape)
 
   if(is.null(n_stft)) n_stft = specgram$size(2)
 
@@ -354,7 +356,86 @@ functional_magphase <- function(
   return(list(mag, phase))
 }
 
+#' Phase Vocoder
+#'
+#' Given a STFT tensor, speed up in time without modifying pitch by a factor of ``rate``.
+#'
+#' @param complex_specgrams  (Tensor): Dimension of `(..., freq, time, complex=2)`
+#' @param rate  (float): Speed-up factor
+#' @param phase_advance  (Tensor): Expected phase advance in each bin. Dimension of (freq, 1)
+#'
+#' @return `tensor`: Complex Specgrams Stretch with dimension of `(..., freq, ceiling(time/rate), complex=2)`
+#'
+#' @examples
+#' freq = 1025
+#' hop_length = 512
+#'
+#' #  (channel, freq, time, complex=2)
+#' complex_specgrams = torch::torch_randn(2, freq, 300, 2)
+#' rate = 1.3 # Speed up by 30%
+#' phase_advance = torch::torch_linspace(0, pi * hop_length, freq)[.., NULL]
+#' x = functional_phase_vocoder(complex_specgrams, rate, phase_advance)
+#' x$shape() # with 231 == ceil (300 / 1.3)
+#' # torch.Size ([2, 1025, 231, 2])
+#'
+#' @export
+functional_phase_vocoder <- function(
+  complex_specgrams,
+  rate,
+  phase_advance
+) {
+  # pack batch
+  shape = complex_specgrams$size()
+  ls = length(shape)
+  complex_specgrams = complex_specgrams$reshape(c(-1, shape[(ls-2):ls]))
+  shape = complex_specgrams$size()
+  ls = length(shape)
 
+  time_steps = torch::torch_arange(
+    0,
+    complex_specgrams$size(ls-1),
+    rate,
+    device = complex_specgrams$device,
+    dtype = complex_specgrams$dtype
+  )
+
+  alphas = time_steps %% 1.0
+  phase_0 = functional_angle(complex_specgrams[.., 1:1, 1:N])
+
+  # Time Padding
+  complex_specgrams = torch::nnf_pad(complex_specgrams, c(0, 0, 0, 2))
+
+  # (new_bins, freq, 2)
+  complex_specgrams_0 = complex_specgrams$index_select(ls-1, (time_steps + 1)$to(dtype = torch::torch_long()))
+  complex_specgrams_1 = complex_specgrams$index_select(ls-1, (time_steps + 2)$to(dtype = torch::torch_long()))
+
+  angle_0 = functional_angle(complex_specgrams_0)
+  angle_1 = functional_angle(complex_specgrams_1)
+
+  norm_0 = torch::torch_norm(complex_specgrams_0, p=2, dim=-1)
+  norm_1 = torch::torch_norm(complex_specgrams_1, p=2, dim=-1)
+
+  phase = angle_1 - angle_0 - phase_advance
+  phase = phase - 2 * pi * torch::torch_round(phase / (2 * pi))
+
+  # Compute Phase Accum
+  phase = phase + phase_advance
+  phase = torch::torch_cat(list(phase_0, phase[.., 1:-2]), dim=-1)
+  phase_acc = torch::torch_cumsum(phase, -1)
+
+  mag = alphas * norm_1 + (1 - alphas) * norm_0
+
+  real_stretch = mag * torch::torch_cos(phase_acc)
+  imag_stretch = mag * torch::torch_sin(phase_acc)
+
+  complex_specgrams_stretch = torch::torch_stack(list(real_stretch, imag_stretch), dim=-1)
+
+  # unpack batch
+  lcss <- length(complex_specgrams_stretch$shape)
+  complex_specgrams_stretch = complex_specgrams_stretch$reshape(c(shape[1:(ls-3)], complex_specgrams_stretch$shape[2:lcss]))
+
+  return(complex_specgrams_stretch)
+}
 
 #' Griffin-Lim Transformation (functional)
 #'
@@ -483,6 +564,7 @@ functional_lfilter <- function(
   shape = waveform$size()
   ls = length(shape)
   waveform = waveform$reshape(c(-1, shape[ls]))
+  ls = length(shape)
 
   if(a_coeffs$size(1) != b_coeffs$size(1)) value_error(glue::glue("Size of a_coeffs: {a_coeffs$size(1)} differs from size of b_coeffs: {b_coeffs$size(1)}"))
   if(length(waveform$size()) != 2) value_error(glue::glue("waveform size should be 1, got {length(waveform$size()) - 1}."))
@@ -1540,6 +1622,7 @@ functional_mask_along_axis <- function(
   shape = specgram$size()
   ls = length(shape)
   specgram = specgram$reshape(c(-1, shape[(ls-1):ls]))
+  ls = length(shape)
 
   value = torch::torch_rand(1) * mask_param
   min_value = torch::torch_rand(1) * (specgram$size(axis) - value)
@@ -1602,6 +1685,7 @@ functional_compute_deltas <- function(
   shape = specgram$size()
   ls = length(shape)
   specgram = specgram$reshape(c(1, -1, shape[ls]))
+  ls = length(shape)
   if(win_length < 3) value_error("win_length must be >= 3.")
 
   n = (win_length - 1) %/% 2
@@ -1715,6 +1799,7 @@ functional_apply_probability_distribution <- function(
   shape = waveform$size()
   ls = length(shape)
   waveform = waveform$reshape(c(-1, shape[ls]))
+  ls = length(shape)
 
   channel_size = waveform$size()[1]
   time_size = waveform$size()[ls]
@@ -1956,6 +2041,7 @@ functional_detect_pitch_frequency <- function(
   shape = waveform$size()
   ls = length(shape)
   waveform = waveform$reshape(c(-1, shape[ls]))
+  ls = length(shape)
 
   nccf = functional__compute_nccf(waveform, sample_rate, frame_time, freq_low)
   indices = functional__find_max_per_frame(nccf, sample_rate, freq_high)
@@ -2300,6 +2386,7 @@ functional_vad <- function(
   shape = waveform$size()
   ls = length(shape)
   waveform = waveform$view(c(-1, shape[ls]))
+  ls = length(shape)
 
   n_channels = waveform$size(1)
   ilen = waveform$size(2)

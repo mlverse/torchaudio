@@ -2,10 +2,11 @@ sample_mp3 <- tuneR::readMP3(system.file("sample_audio_1.mp3", package = "torcha
 sample_rate = sample_mp3@samp.rate
 samples = length(sample_mp3@left)
 tt <- torch::torch_tensor
+random_waveform = torch_rand(1000)
 
 test_that("functional_spectrogram", {
   expect_no_error(spec <- functional_spectrogram(
-    waveform = tt(sample_mp3@left, dtype = torch::torch_float()),
+    waveform = random_waveform,
     n_fft = 400,
     pad = 0,
     window = torch::torch_hann_window(window_length = 200L, dtype = torch::torch_float()),
@@ -90,6 +91,20 @@ test_that("functional_magphase", {
   expect_tensor(m[[2]])
   expect_error(m[[3]])
 })
+
+test_that("functional_phase_vocoder", {
+  freq = 1025
+  hop_length = 512
+
+  #  (channel, freq, time, complex=2)
+  complex_specgrams = torch::torch_randn(2, freq, 300, 2)
+  rate = 1.3 # Speed up by 30%
+  phase_advance = torch::torch_linspace(0, pi * hop_length, freq)[.., NULL]
+  x = functional_phase_vocoder(complex_specgrams, rate, phase_advance)
+  expect_tensor(x)
+  expect_tensor_shape(x, c(2, 1025, 231, 2)) # torch.Size ([2, 1025, 231, 2]), with 231 == ceil (300 / 1.3)
+})
+
 
 context("filters")
 a_coeffs = tt(c(1.0, 2.1, 3.3))
