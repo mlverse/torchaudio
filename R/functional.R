@@ -1622,6 +1622,7 @@ functional_mask_along_axis <- function(
   shape = specgram$size()
   ls = length(shape)
   specgram = specgram$reshape(c(-1, shape[(ls-1):ls]))
+  shape = specgram$size()
   ls = length(shape)
 
   value = torch::torch_rand(1) * mask_param
@@ -1799,6 +1800,7 @@ functional_apply_probability_distribution <- function(
   shape = waveform$size()
   ls = length(shape)
   waveform = waveform$reshape(c(-1, shape[ls]))
+  shape = waveform$size()
   ls = length(shape)
 
   channel_size = waveform$size()[1]
@@ -2041,7 +2043,6 @@ functional_detect_pitch_frequency <- function(
   shape = waveform$size()
   ls = length(shape)
   waveform = waveform$reshape(c(-1, shape[ls]))
-  ls = length(shape)
 
   nccf = functional__compute_nccf(waveform, sample_rate, frame_time, freq_low)
   indices = functional__find_max_per_frame(nccf, sample_rate, freq_high)
@@ -2386,6 +2387,7 @@ functional_vad <- function(
   shape = waveform$size()
   ls = length(shape)
   waveform = waveform$view(c(-1, shape[ls]))
+  shape = waveform$size()
   ls = length(shape)
 
   n_channels = waveform$size(1)
