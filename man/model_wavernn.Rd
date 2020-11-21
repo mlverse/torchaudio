@@ -57,11 +57,11 @@ The input channels of waveform and spectrogram have to be 1. The product of
 \code{upsample_scales} must equal \code{hop_length}.
 }
 \examples{
-wavernn = model_wavernn(upsample_scales=c(2,2,5), n_classes=512, hop_length=20)
-waveform = torch::torch_rand(3,1,20)
+wavernn <- model_wavernn(upsample_scales=c(2,2,3), n_classes=5, hop_length=12)
+
+waveform <- torch::torch_rand(3,1,(10 - 5 + 1)*12)
+spectrogram <- torch::torch_rand(3,1,128,10)
 # waveform shape:  (n_batch, n_channel, (n_time - kernel_size + 1) * hop_length)
-specgram = transform_mel_spectrogram(16000)(waveform)  # shape: (n_batch, n_channel, n_freq, n_time)
-output = wavernn(waveform, specgram)
-# output shape:  (n_batch, n_channel, (n_time - kernel_size + 1) * hop_length, n_classes)
+output <- wavernn(waveform, spectrogram)
 
 }

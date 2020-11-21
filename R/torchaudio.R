@@ -28,10 +28,11 @@
 #'         An integer which is the sample rate of the audio (as listed in the metadata of the file)
 #'
 #' @examples
-#' data = torchaudio_load('foo.mp3')
+#' mp3_filename <- system.file("sample_audio_2.mp3", package = "torchaudio")
+#' data = torchaudio_load(mp3_filename)
 #' print(data[[1]]$size())
 #' norm_fun <- function(x) torch::torch_abs(x)$max()
-#' data_vol_normalized = torchaudio_load('foo.mp3', normalization= norm_fun)
+#' data_vol_normalized = torchaudio_load(mp3_filename, normalization= norm_fun)
 #' print(data_vol_normalized[[1]]$abs()$max())
 #'
 #' @export
