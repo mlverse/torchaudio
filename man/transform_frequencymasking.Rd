@@ -4,7 +4,7 @@
 \alias{transform_frequencymasking}
 \title{Frequency-domain Masking}
 \usage{
-transform_frequencymasking()
+transform_frequencymasking(freq_mask_param, iid_masks)
 }
 \arguments{
 \item{freq_mask_param}{(int): maximum possible length of the mask.

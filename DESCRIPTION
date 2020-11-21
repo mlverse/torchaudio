@@ -22,7 +22,8 @@ Suggests:
     knitr,
     rmarkdown,
     stringr,
-    numbers
+    numbers,
+    purrr
 Imports: 
     torch,
     fs,

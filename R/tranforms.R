@@ -791,7 +791,7 @@ transform__axismasking <- torch::nn_module(
 #'            This option is applicable only when the input tensor is 4D.
 #'
 #' @export
-transform_frequencymasking <- function() {
+transform_frequencymasking <- function(freq_mask_param, iid_masks) {
   not_implemented_error("Class _AxisMasking to be implemented yet.")
 }
 #   R6::R6Class(

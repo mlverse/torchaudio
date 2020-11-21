@@ -13,9 +13,9 @@
 #' Tensor shape:  (n_batch, n_freq, n_time)
 #'
 #' @examples
-#'  resblock = ResBlock ()
-#'  input = torch$rand (10, 128, 512)  # a random spectrogram
-#'  output = resblock (input)  # shape: (10, 128, 512)
+#' resblock = model_resblock()
+#' input = torch::torch_rand(10, 128, 512)  # a random spectrogram
+#' output = resblock(input)  # shape: (10, 128, 512)
 #'
 #' @export
 model_resblock <- torch::nn_module(

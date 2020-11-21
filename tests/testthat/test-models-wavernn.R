@@ -1,3 +1,5 @@
+if(!requireNamespace("purrr", quietly = TRUE)) stop("purrr package required.")
+
 library(purrr)
 cmuarctic_df <- torchaudio::cmuarctic_dataset(system.file("", package = "torchaudio"))
 spectrogram_spec <- torchaudio::transform_spectrogram(n_fft = 255)
