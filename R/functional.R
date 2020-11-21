@@ -38,7 +38,7 @@ functional_spectrogram <- function(
   spec_f <- torch::torch_stft(
     input = waveform, n_fft = n_fft,
     hop_length = hop_length, win_length = win_length,
-    window = window, center = FALSE,
+    window = window, center = TRUE,
     pad_mode = "reflect", normalized = FALSE,
     onesided = TRUE
   )

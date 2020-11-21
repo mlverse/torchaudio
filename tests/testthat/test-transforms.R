@@ -8,11 +8,11 @@ sample_torch2 <- torch::torch_stack(list(sample_torch, sample_torch))
 test_that("transform_spectrogram", {
   expect_no_error(spec <- transform_spectrogram()(sample_torch))
   expect_tensor(spec)
-  expect_equal(dim(spec), c(400 %/% 2 + 1, 49))
+  expect_equal(dim(spec), c(400 %/% 2 + 1, 51))
 
   expect_no_error(spec <- transform_spectrogram()(sample_torch2))
   expect_tensor(spec)
-  expect_equal(dim(spec), c(2, 400 %/% 2 + 1, 49))
+  expect_equal(dim(spec), c(2, 400 %/% 2 + 1, 51))
 })
 
 spec = transform_spectrogram()(sample_torch)
@@ -31,7 +31,7 @@ test_that("transform_mel_scale and functional_inverse_mel_scale", {
 test_that("transform_mel_spectrogram", {
   expect_no_error(m <- transform_mel_spectrogram(hop_length = 200)(sample_torch))
   expect_tensor(m)
-  expect_equal(dim(m), c(128, 49))
+  expect_equal(dim(m), c(128, 51))
 })
 
 test_that("transform_amplitude_to_db", {
@@ -49,8 +49,10 @@ test_that("transform_amplitude_to_db", {
 })
 
 test_that("transform_mfcc", {
+  sample_torch = torch::torch_tensor(sin(1:1000))
   expect_no_error(m <- transform_mfcc()(sample_torch))
   expect_tensor(m)
+  expect_equal(dim(m), c(40, 5))
 })
 
 test_that("transform_mu_law_encoding and transform_mu_law_decoding", {
