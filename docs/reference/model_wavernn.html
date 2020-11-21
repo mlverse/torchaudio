@@ -84,7 +84,7 @@ The original implementation was introduced in &quot;Efficient Neural Audio Synth
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">torchaudio</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
 
@@ -216,77 +216,12 @@ The original implementation was introduced in <a href='https://arxiv.org/pdf/180
 <code>upsample_scales</code> must equal <code>hop_length</code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>wavernn</span> <span class='kw'>=</span> <span class='fu'>model_wavernn</span>(<span class='kw'>upsample_scales</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>2</span>,<span class='fl'>5</span>), <span class='kw'>n_classes</span><span class='kw'>=</span><span class='fl'>512</span>, <span class='kw'>hop_length</span><span class='kw'>=</span><span class='fl'>20</span>)
-<span class='no'>waveform</span> <span class='kw'>=</span> <span class='kw pkg'>torch</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/torch/man/torch_rand.html'>torch_rand</a></span>(<span class='fl'>3</span>,<span class='fl'>1</span>,<span class='fl'>20</span>)
-<span class='co'># waveform shape:  (n_batch, n_channel, (n_time - kernel_size + 1) * hop_length)</span>
-<span class='no'>specgram</span> <span class='kw'>=</span> <span class='fu'><a href='transform_mel_spectrogram.html'>transform_mel_spectrogram</a></span>(<span class='fl'>16000</span>)(<span class='no'>waveform</span>)  <span class='co'># shape: (n_batch, n_channel, n_freq, n_time)</span></div><div class='output co'>#&gt; <span class='error'>Error in (function (self, padding) {    .Call("_torch_cpp_torch_namespace_reflection_pad1d_self_Tensor_padding_IntArrayRef",         PACKAGE = "torchpkg", self, padding)})(self = &lt;pointer: 0x55d1cface170&gt;, padding = c(200L, 200L)): Argument #4: Padding size should be less than the corresponding input dimension, but got: padding (200, 200) at dimension 2 of input [1, 3, 20]</span>
-#&gt; <span class='error'>Exception raised from reflection_pad1d_out_template at ../aten/src/ATen/native/ReflectionPad.cpp:85 (most recent call first):</span>
-#&gt; <span class='error'>frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;) + 0x69 (0x7f904de51b89 in /home/athos/R/x86_64-pc-linux-gnu-library/4.0/torch/deps/./libc10.so)</span>
-#&gt; <span class='error'>frame #1: &lt;unknown function&gt; + 0xf684d9 (0x7f90385af4d9 in /home/athos/R/x86_64-pc-linux-gnu-library/4.0/torch/deps/./libtorch_cpu.so)</span>
-#&gt; <span class='error'>frame #2: at::native::reflection_pad1d_cpu(at::Tensor const&amp;, c10::ArrayRef&lt;long&gt;) + 0x12e (0x7f90385b06de in /home/athos/R/x86_64-pc-linux-gnu-library/4.0/torch/deps/./libtorch_cpu.so)</span>
-#&gt; <span class='error'>frame #3: &lt;unknown function&gt; + 0x13368ed (0x7f903897d8ed in /home/athos/R/x86_64-pc-linux-gnu-library/4.0/torch/deps/./libtorch_cpu.so)</span>
-#&gt; <span class='error'>frame #4: &lt;unknown function&gt; + 0xaf0fe7 (0x7f9038137fe7 in /home/athos/R/x86_64-pc-linux-gnu-library/4.0/torch/deps/./libtorch_cpu.so)</span>
-#&gt; <span class='error'>frame #5: &lt;unknown function&gt; + 0x14db322 (0x7f9038b22322 in /home/athos/R/x86_64-pc-linux-gnu-library/4.0/torch/deps/./libtorch_cpu.so)</span>
-#&gt; <span class='error'>frame #6: at::reflection_pad1d(at::Tensor const&amp;, c10::ArrayRef&lt;long&gt;) + 0xbe (0x7f9038a18d2e in /home/athos/R/x86_64-pc-linux-gnu-library/4.0/torch/deps/./libtorch_cpu.so)</span>
-#&gt; <span class='error'>frame #7: &lt;unknown function&gt; + 0x298af4b (0x7f9039fd1f4b in /home/athos/R/x86_64-pc-linux-gnu-library/4.0/torch/deps/./libtorch_cpu.so)</span>
-#&gt; <span class='error'>frame #8: &lt;unknown function&gt; + 0xaf0fe7 (0x7f9038137fe7 in /home/athos/R/x86_64-pc-linux-gnu-library/4.0/torch/deps/./libtorch_cpu.so)</span>
-#&gt; <span class='error'>frame #9: &lt;unknown function&gt; + 0x14db322 (0x7f9038b22322 in /home/athos/R/x86_64-pc-linux-gnu-library/4.0/torch/deps/./libtorch_cpu.so)</span>
-#&gt; <span class='error'>frame #10: at::reflection_pad1d(at::Tensor const&amp;, c10::ArrayRef&lt;long&gt;) + 0xbe (0x7f9038a18d2e in /home/athos/R/x86_64-pc-linux-gnu-library/4.0/torch/deps/./libtorch_cpu.so)</span>
-#&gt; <span class='error'>frame #11: _lantern_reflection_pad1d_tensor_intarrayref + 0x58 (0x7f904e213198 in /home/athos/R/x86_64-pc-linux-gnu-library/4.0/torch/deps/liblantern.so)</span>
-#&gt; <span class='error'>frame #12: cpp_torch_namespace_reflection_pad1d_self_Tensor_padding_IntArrayRef(Rcpp::XPtr&lt;XPtrTorchTensor, Rcpp::PreserveStorage, &amp;(void Rcpp::standard_delete_finalizer&lt;XPtrTorchTensor&gt;(XPtrTorchTensor*)), false&gt;, std::vector&lt;long, std::allocator&lt;long&gt; &gt;) + 0x6a (0x7f904eb973aa in /home/athos/R/x86_64-pc-linux-gnu-library/4.0/torch/libs/torchpkg.so)</span>
-#&gt; <span class='error'>frame #13: _torch_cpp_torch_namespace_reflection_pad1d_self_Tensor_padding_IntArrayRef + 0x9c (0x7f904ea6361c in /home/athos/R/x86_64-pc-linux-gnu-library/4.0/torch/libs/torchpkg.so)</span>
-#&gt; <span class='error'>frame #14: &lt;unknown function&gt; + 0xf5b3c (0x7f90591c7b3c in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #15: &lt;unknown function&gt; + 0xf6086 (0x7f90591c8086 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #16: &lt;unknown function&gt; + 0x130181 (0x7f9059202181 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #17: Rf_eval + 0x88 (0x7f905921cd88 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #18: &lt;unknown function&gt; + 0x14cc4f (0x7f905921ec4f in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #19: Rf_applyClosure + 0x1a2 (0x7f905921fb42 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #20: Rf_eval + 0x2af (0x7f905921cfaf in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #21: &lt;unknown function&gt; + 0xc15ad (0x7f90591935ad in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #22: &lt;unknown function&gt; + 0x130181 (0x7f9059202181 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #23: Rf_eval + 0x88 (0x7f905921cd88 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #24: &lt;unknown function&gt; + 0x14cc4f (0x7f905921ec4f in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #25: Rf_applyClosure + 0x1a2 (0x7f905921fb42 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #26: &lt;unknown function&gt; + 0x13a4be (0x7f905920c4be in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #27: Rf_eval + 0x88 (0x7f905921cd88 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #28: &lt;unknown function&gt; + 0x14cc4f (0x7f905921ec4f in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #29: Rf_applyClosure + 0x1a2 (0x7f905921fb42 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #30: &lt;unknown function&gt; + 0x13a4be (0x7f905920c4be in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #31: Rf_eval + 0x88 (0x7f905921cd88 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #32: &lt;unknown function&gt; + 0x14cc4f (0x7f905921ec4f in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #33: Rf_applyClosure + 0x1a2 (0x7f905921fb42 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #34: &lt;unknown function&gt; + 0x13a4be (0x7f905920c4be in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #35: Rf_eval + 0x88 (0x7f905921cd88 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #36: &lt;unknown function&gt; + 0x14cc4f (0x7f905921ec4f in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #37: Rf_applyClosure + 0x1a2 (0x7f905921fb42 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #38: &lt;unknown function&gt; + 0x13a4be (0x7f905920c4be in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #39: Rf_eval + 0x88 (0x7f905921cd88 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #40: &lt;unknown function&gt; + 0x14cc4f (0x7f905921ec4f in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #41: Rf_applyClosure + 0x1a2 (0x7f905921fb42 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #42: &lt;unknown function&gt; + 0x13a4be (0x7f905920c4be in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #43: Rf_eval + 0x88 (0x7f905921cd88 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #44: &lt;unknown function&gt; + 0x14cc4f (0x7f905921ec4f in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #45: Rf_applyClosure + 0x1a2 (0x7f905921fb42 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #46: &lt;unknown function&gt; + 0x13a4be (0x7f905920c4be in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #47: Rf_eval + 0x88 (0x7f905921cd88 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #48: &lt;unknown function&gt; + 0x14cc4f (0x7f905921ec4f in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #49: Rf_applyClosure + 0x1a2 (0x7f905921fb42 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #50: Rf_eval + 0x2af (0x7f905921cfaf in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #51: &lt;unknown function&gt; + 0x14e953 (0x7f9059220953 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #52: Rf_eval + 0x57b (0x7f905921d27b in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #53: &lt;unknown function&gt; + 0x14cc4f (0x7f905921ec4f in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #54: Rf_applyClosure + 0x1a2 (0x7f905921fb42 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #55: Rf_eval + 0x2af (0x7f905921cfaf in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #56: &lt;unknown function&gt; + 0x14fef2 (0x7f9059221ef2 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #57: Rf_eval + 0x57b (0x7f905921d27b in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #58: &lt;unknown function&gt; + 0x14e953 (0x7f9059220953 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #59: Rf_eval + 0x57b (0x7f905921d27b in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #60: &lt;unknown function&gt; + 0x14cc4f (0x7f905921ec4f in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #61: Rf_applyClosure + 0x1a2 (0x7f905921fb42 in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #62: Rf_eval + 0x2af (0x7f905921cfaf in /usr/lib/R/lib/libR.so)</span>
-#&gt; <span class='error'>frame #63: &lt;unknown function&gt; + 0x14fef2 (0x7f9059221ef2 in /usr/lib/R/lib/libR.so)</span></div><div class='input'><span class='no'>output</span> <span class='kw'>=</span> <span class='fu'>wavernn</span>(<span class='no'>waveform</span>, <span class='no'>specgram</span>)</div><div class='output co'>#&gt; <span class='error'>Error in wavernn(waveform, specgram): object 'specgram' not found</span></div><div class='input'># output shape:  (n_batch, n_channel, (n_time - kernel_size + 1) * hop_length, n_classes)
+    <pre class="examples"><div class='input'><span class='no'>wavernn</span> <span class='kw'>&lt;-</span> <span class='fu'>model_wavernn</span>(<span class='kw'>upsample_scales</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>2</span>,<span class='fl'>3</span>), <span class='kw'>n_classes</span><span class='kw'>=</span><span class='fl'>5</span>, <span class='kw'>hop_length</span><span class='kw'>=</span><span class='fl'>12</span>)
 
-</div></pre>
+<span class='no'>waveform</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>torch</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/torch/man/torch_rand.html'>torch_rand</a></span>(<span class='fl'>3</span>,<span class='fl'>1</span>,(<span class='fl'>10</span> - <span class='fl'>5</span> + <span class='fl'>1</span>)*<span class='fl'>12</span>)
+<span class='no'>spectrogram</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>torch</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/torch/man/torch_rand.html'>torch_rand</a></span>(<span class='fl'>3</span>,<span class='fl'>1</span>,<span class='fl'>128</span>,<span class='fl'>10</span>)
+<span class='co'># waveform shape:  (n_batch, n_channel, (n_time - kernel_size + 1) * hop_length)</span>
+<span class='no'>output</span> <span class='kw'>&lt;-</span> <span class='fu'>wavernn</span>(<span class='no'>waveform</span>, <span class='no'>spectrogram</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
