@@ -52,7 +52,7 @@ test_that("transform_mfcc", {
   sample_torch = torch::torch_tensor(sin(1:1000))
   expect_no_error(m <- transform_mfcc()(sample_torch))
   expect_tensor(m)
-  expect_equal(dim(m), c(40, 5))
+  expect_equal(dim(m), c(40, 6))
 })
 
 test_that("transform_mu_law_encoding and transform_mu_law_decoding", {
@@ -81,7 +81,7 @@ test_that("transform_compute_deltas", {
 
 test_that("transform_time_stretch", {
   expect_error(m <- transform_time_stretch()(sample_torch), class = "value_error")
-  expect_no_error(m <- transform_time_stretch(fixed_rate = 2.0)(spec_complex), class = "value_error")
+  expect_no_error(m <- transform_time_stretch(fixed_rate = 2.0)(spec_complex))
   # expect_tensor(m)
 })
 
