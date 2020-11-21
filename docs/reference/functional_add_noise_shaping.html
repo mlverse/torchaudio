@@ -41,8 +41,8 @@
 
 <meta property="og:title" content="Noise Shaping (functional) — functional_add_noise_shaping" />
 <meta property="og:description" content="Noise shaping is calculated by error:
-errorn = ditheredn - originaln
-noise_shaped_waveformn = ditheredn + errorn-1" />
+error[n] = dithered[n] - original[n]
+noise_shaped_waveform[n] = dithered[n] + error[n-1]" />
 
 
 
@@ -142,8 +142,8 @@ noise_shaped_waveformn = ditheredn + errorn-1" />
 
     <div class="ref-description">
     <p>Noise shaping is calculated by error:
-errorn = ditheredn - originaln
-noise_shaped_waveformn = ditheredn + errorn-1</p>
+error[n] = dithered[n] - original[n]
+noise_shaped_waveform[n] = dithered[n] + error[n-1]</p>
     </div>
 
     <pre class="usage"><span class='fu'>functional_add_noise_shaping</span>(<span class='no'>dithered_waveform</span>, <span class='no'>waveform</span>)</pre>

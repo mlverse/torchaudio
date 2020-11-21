@@ -153,10 +153,6 @@ Wikipedia Entry" />
       <th>quantization_channels</th>
       <td><p>(int, optional): Number of channels. (Default: <code>256</code>)</p></td>
     </tr>
-    <tr>
-      <th>x_mu</th>
-      <td><p>(Tensor): A mu-law encoded signal which needs to be decoded.</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -166,6 +162,8 @@ Wikipedia Entry" />
 
     <p>This expects an input with values between 0 and quantization_channels - 1
 and returns a signal scaled between -1 and 1.</p>
+<p>forward param:
+x_mu  (Tensor): A mu-law encoded signal which needs to be decoded.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

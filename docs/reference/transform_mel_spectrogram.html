@@ -200,18 +200,26 @@ and MelScale.</p>
 that is applied/multiplied to each frame/window. (Default: <code>torch_hann_window</code>)</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>(optional): Arguments for window function.</p></td>
+      <th>power</th>
+      <td><p>(float, optional): Power of the norm. (Default: to <code>2.0</code>)</p></td>
     </tr>
     <tr>
-      <th>waveform</th>
-      <td><p>(Tensor): Tensor of audio of dimension (..., time).</p></td>
+      <th>normalized</th>
+      <td><p>(logical): Whether to normalize by magnitude after stft (Default: <code>FALSE</code>)</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>(optional): Arguments for window function.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p><code>tensor</code>: Mel frequency spectrogram of size (..., <code>n_mels</code>, time).</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>forward param:
+waveform (Tensor): Tensor of audio of dimension (..., time).</p>
     <h2 class="hasAnchor" id="sources"><a class="anchor" href="#sources"></a>Sources</h2>
 
     
@@ -225,9 +233,9 @@ that is applied/multiplied to each frame/window. (Default: <code>torch_hann_wind
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>#'   Example</span>
-<span class='no'>sample_mp3</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>tuneR</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/tuneR/man/readMP3.html'>readMP3</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"sample_audio_1.mp3"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"torchaudio"</span>))
-<span class='no'>mel_specgram</span> <span class='kw'>&lt;-</span> <span class='fu'>transform_mel_spectrogram</span>(<span class='kw'>sample_rate</span> <span class='kw'>=</span> <span class='no'>sample_mp3</span>@<span class='kw'>samp.rate</span>)(<span class='no'>sample_mp3</span>@<span class='kw'>left</span>)  <span class='co'># (channel, n_mels, time)</span></div><div class='output co'>#&gt; <span class='error'>Error: $ operator is invalid for atomic vectors</span></div><div class='input'>
-</div></pre>
+<span class='no'>sample_mp3</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='torchaudio_load.html'>torchaudio_load</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"sample_audio_1.mp3"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"torchaudio"</span>))
+<span class='co'># (channel, n_mels, time)</span>
+<span class='no'>mel_specgram</span> <span class='kw'>&lt;-</span> <span class='fu'>transform_mel_spectrogram</span>(<span class='kw'>sample_rate</span> <span class='kw'>=</span> <span class='no'>sample_mp3</span><span class='kw'>[[</span><span class='fl'>2</span>]])(<span class='no'>sample_mp3</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

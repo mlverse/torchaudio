@@ -157,10 +157,6 @@ power being the elementwise square of the magnitude. (Default: <code>'power'</co
       <td><p>(float or NULL, optional): Minimum negative cut-off in decibels. A reasonable number
 is 80. (Default: <code>NULL</code>)</p></td>
     </tr>
-    <tr>
-      <th>x</th>
-      <td><p>(Tensor): Input tensor before being converted to decibel scale</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -171,6 +167,8 @@ is 80. (Default: <code>NULL</code>)</p></td>
     <p>This output depends on the maximum value in the input tensor, and so
 may return different values for an audio clip split into snippets vs. a
 a full clip.</p>
+<p>forward param:
+x (Tensor): Input tensor before being converted to decibel scale</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

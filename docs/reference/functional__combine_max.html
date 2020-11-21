@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Mu Law Decoding (functional) — functional_mu_law_decoding • torchaudio</title>
+<title>Combine Max (functional) — functional__combine_max • torchaudio</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,8 @@
 
 
 
-<meta property="og:title" content="Mu Law Decoding (functional) — functional_mu_law_decoding" />
-<meta property="og:description" content="Decode mu-law encoded signal.  For more info see the
-Wikipedia Entry" />
+<meta property="og:title" content="Combine Max (functional) — functional__combine_max" />
+<meta property="og:description" content="Take value from first if bigger than a multiplicative factor of the second, elementwise." />
 
 
 
@@ -134,38 +133,34 @@ Wikipedia Entry" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Mu Law Decoding (functional)</h1>
+    <h1>Combine Max (functional)</h1>
     
-    <div class="hidden name"><code>functional_mu_law_decoding.Rd</code></div>
+    <div class="hidden name"><code>functional__combine_max.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Decode mu-law encoded signal.  For more info see the
-<a href='https://en.wikipedia.org/wiki/M-law_algorithm'>Wikipedia Entry</a></p>
+    <p>Take value from first if bigger than a multiplicative factor of the second, elementwise.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>functional_mu_law_decoding</span>(<span class='no'>x_mu</span>, <span class='no'>quantization_channels</span>)</pre>
+    <pre class="usage"><span class='fu'>functional__combine_max</span>(<span class='no'>a</span>, <span class='no'>b</span>, <span class='kw'>thresh</span> <span class='kw'>=</span> <span class='fl'>0.99</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x_mu</th>
-      <td><p>(Tensor): Input tensor</p></td>
+      <th>a</th>
+      <td><p>(list(tensor, tensor))</p></td>
     </tr>
     <tr>
-      <th>quantization_channels</th>
-      <td><p>(int): Number of channels</p></td>
+      <th>b</th>
+      <td><p>(list(tensor, tensor))</p></td>
+    </tr>
+    <tr>
+      <th>thresh</th>
+      <td><p>(float) Default: 0.99</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p><code>tensor</code>: Input after mu-law decoding</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>This expects an input with values between 0 and quantization_channels - 1
-and returns a signal scaled between -1 and 1.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

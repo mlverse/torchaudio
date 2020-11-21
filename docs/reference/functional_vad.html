@@ -235,6 +235,11 @@ the detection algorithm  (e.g. 0, 0.5, ...). (Default: 1.35)</p></td>
 processing/measurements.  (Default: 20.0)</p></td>
     </tr>
     <tr>
+      <th>measure_duration</th>
+      <td><p>(float, optional) Measurement duration.
+(Default: Twice the measurement period; i.e. with overlap.)</p></td>
+    </tr>
+    <tr>
       <th>measure_smooth_time</th>
       <td><p>(float, optional) Time constant used to smooth
 spectral measurements.  (Default: 0.4)</p></td>
@@ -258,11 +263,6 @@ in the detector algorithm.  (Default: 150.0)</p></td>
       <th>lp_lifter_freq</th>
       <td><p>(float, optional) "Brick-wall" frequency of low-pass lifter used
 in the detector algorithm.  (Default: 2000.0)</p></td>
-    </tr>
-    <tr>
-      <th>measure_duration:</th>
-      <td><p>(float, optional) Measurement duration.
-(Default: Twice the measurement period; i.e. with overlap.)</p></td>
     </tr>
     </table>
 

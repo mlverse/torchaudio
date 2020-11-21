@@ -160,23 +160,17 @@
       <td><p>(float or NULL, optional): rate to speed up or slow down by.
 If NULL is provided, rate must be passed to the forward method.  (Default: <code>NULL</code>)</p></td>
     </tr>
-    <tr>
-      <th>complex_specgrams</th>
-      <td><p>(Tensor): complex spectrogram (..., freq, time, complex=2).</p></td>
-    </tr>
-    <tr>
-      <th>overriding_rate</th>
-      <td><p>(float or NULL, optional): speed up to apply to this batch.</p></td>
-    </tr>
-    <tr>
-      <th>If</th>
-      <td><p>no rate is passed, use <code>self$fixed_rate</code>.  (Default: <code>NULL</code>)</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Tensor: Stretched complex spectrogram of dimension (..., freq, ceil(time/rate), complex=2).</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>forward param:
+complex_specgrams  (Tensor): complex spectrogram (..., freq, time, complex=2).</p>
+<p>overriding_rate  (float or NULL, optional): speed up to apply to this batch.
+If no rate is passed, use <code>self$fixed_rate</code>.  (Default: <code>NULL</code>)</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

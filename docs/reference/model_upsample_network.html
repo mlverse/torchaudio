@@ -157,31 +157,27 @@ Pass the input through the UpsampleNetwork layer.</p>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>specgram</th>
-      <td><p>(Tensor): the input sequence to the UpsampleNetwork layer (n_batch, n_freq, n_time)</p></td>
-    </tr>
-    <tr>
-      <th>upsample_scales:</th>
+      <th>upsample_scales</th>
       <td><p>the list of upsample scales.</p></td>
     </tr>
     <tr>
-      <th>n_res_block:</th>
+      <th>n_res_block</th>
       <td><p>the number of ResBlock in stack.  (Default: <code>10</code>)</p></td>
     </tr>
     <tr>
-      <th>n_freq:</th>
+      <th>n_freq</th>
       <td><p>the number of bins in a spectrogram.  (Default: <code>128</code>)</p></td>
     </tr>
     <tr>
-      <th>n_hidden:</th>
+      <th>n_hidden</th>
       <td><p>the number of hidden dimensions of resblock.  (Default: <code>128</code>)</p></td>
     </tr>
     <tr>
-      <th>n_output:</th>
+      <th>n_output</th>
       <td><p>the number of output dimensions of melresnet.  (Default: <code>128</code>)</p></td>
     </tr>
     <tr>
-      <th>kernel_size:</th>
+      <th>kernel_size</th>
       <td><p>the number of kernel size in the first Conv1d layer.  (Default: <code>5</code>)</p></td>
     </tr>
     </table>
@@ -191,6 +187,10 @@ Pass the input through the UpsampleNetwork layer.</p>
     <p>Tensor shape:  (n_batch, n_freq, (n_time - kernel_size + 1) * total_scale),
 (n_batch, n_output, (n_time - kernel_size + 1) * total_scale)
 where total_scale is the product of all elements in upsample_scales.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>forward param:
+specgram  (Tensor): the input sequence to the UpsampleNetwork layer (n_batch, n_freq, n_time)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'> <span class='no'>upsamplenetwork</span> <span class='kw'>=</span> <span class='fu'>model_upsample_network</span>(<span class='kw'>upsample_scales</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>4</span>, <span class='fl'>4</span>, <span class='fl'>16</span>))

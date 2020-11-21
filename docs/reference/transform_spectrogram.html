@@ -175,6 +175,11 @@ The spectrogram can be either magnitude-only or complex.</p>
       <td><p>(integer): Two sided padding of signal</p></td>
     </tr>
     <tr>
+      <th>window_fn</th>
+      <td><p>(tensor or function): Window tensor that is applied/multiplied to each
+frame/window or a function that generates the window tensor.</p></td>
+    </tr>
+    <tr>
       <th>power</th>
       <td><p>(numeric): Exponent for the magnitude spectrogram, (must be &gt; 0) e.g.,
 1 for energy, 2 for power, etc. If NULL, then the complex spectrum is returned instead.</p></td>
@@ -187,21 +192,16 @@ The spectrogram can be either magnitude-only or complex.</p>
       <th>...</th>
       <td><p>(optional) Arguments for window function.</p></td>
     </tr>
-    <tr>
-      <th>waveform</th>
-      <td><p>(tensor): Tensor of audio of dimension (..., time)</p></td>
-    </tr>
-    <tr>
-      <th>window</th>
-      <td><p>(tensor or function): Window tensor that is applied/multiplied to each
-frame/window or a function that generates the window tensor.</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>tensor: Dimension (..., freq, time), freq is n_fft %/% 2 + 1 and n_fft is the
 number of Fourier bins, and time is the number of window hops (n_frame).</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>forward param:
+waveform (tensor): Tensor of audio of dimension (..., time)</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

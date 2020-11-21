@@ -169,8 +169,8 @@
     <pre class="examples"><div class='input'><span class='no'>url</span> <span class='kw'>=</span> <span class='st'>'http://www.quest.dcs.shef.ac.uk/wmt16_files_mmt/validation.tar.gz'</span>
 <span class='no'>from_path</span> <span class='kw'>=</span> <span class='st'>'./validation.tar.gz'</span>
 <span class='no'>to_path</span> <span class='kw'>=</span> <span class='st'>'./'</span>
-<span class='fu'>torchaudio.datasets.utils.download_from_url</span> (<span class='no'>url</span>, <span class='no'>from_path</span>)</div><div class='output co'>#&gt; <span class='error'>Error in torchaudio.datasets.utils.download_from_url(url, from_path): could not find function "torchaudio.datasets.utils.download_from_url"</span></div><div class='input'><span class='fu'>torchaudio.datasets.utils.extract_archive</span> (<span class='no'>from_path</span>, <span class='no'>to_path</span>)</div><div class='output co'>#&gt; <span class='error'>Error in torchaudio.datasets.utils.extract_archive(from_path, to_path): could not find function "torchaudio.datasets.utils.extract_archive"</span></div><div class='input'>
-</div></pre>
+<span class='kw pkg'>utils</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/utils/download.file.html'>download.file</a></span>(<span class='kw'>url</span> <span class='kw'>=</span> <span class='no'>url</span>, <span class='kw'>destfile</span> <span class='kw'>=</span> <span class='no'>from_path</span>)
+<span class='kw pkg'>torchaudio</span><span class='kw ns'>:::</span><span class='fu'>extract_archive</span> (<span class='no'>from_path</span>, <span class='no'>to_path</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -150,15 +150,11 @@ Pass the input through the Stretch2d layer.</p>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>specgram</th>
-      <td><p>(Tensor): the input sequence to the Stretch2d layer (..., n_freq, n_time).</p></td>
-    </tr>
-    <tr>
-      <th>time_scale:</th>
+      <th>time_scale</th>
       <td><p>the scale factor in time dimension</p></td>
     </tr>
     <tr>
-      <th>freq_scale:</th>
+      <th>freq_scale</th>
       <td><p>the scale factor in frequency dimension</p></td>
     </tr>
     </table>
@@ -166,6 +162,10 @@ Pass the input through the Stretch2d layer.</p>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Tensor shape:  (..., n_freq * freq_scale, n_time * time_scale)</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>forward param:
+specgram  (Tensor): the input sequence to the Stretch2d layer (..., n_freq, n_time).</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'> <span class='no'>stretch2d</span> <span class='kw'>=</span> <span class='fu'>model_stretch2d</span>(<span class='kw'>time_scale</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>freq_scale</span><span class='kw'>=</span><span class='fl'>5</span>)

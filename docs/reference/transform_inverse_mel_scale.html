@@ -195,10 +195,6 @@ matrix.  This uses triangular filter banks.</p>
       <th>...</th>
       <td><p>(optional): Arguments passed to the SGD optimizer. Argument lr will default to 0.1 if not specied.(Default: <code>NULL</code>)</p></td>
     </tr>
-    <tr>
-      <th>melspec</th>
-      <td><p>(Tensor): A Mel frequency spectrogram of dimension (..., <code>n_mels</code>, time)</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -206,7 +202,9 @@ matrix.  This uses triangular filter banks.</p>
     <p>Tensor: Linear scale spectrogram of size (..., freq, time)</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>It minimizes the euclidian norm between the input mel-spectrogram and the product between
+    <p>forward param:
+melspec  (Tensor): A Mel frequency spectrogram of dimension (..., <code>n_mels</code>, time)</p>
+<p>It minimizes the euclidian norm between the input mel-spectrogram and the product between
 the estimated spectrogram and the filter banks using SGD.</p>
 
   </div>

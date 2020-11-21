@@ -158,7 +158,8 @@
     </tr>
     <tr>
       <th>min_cmn_window</th>
-      <td><p>(int, optional):  Minimum CMN window used at start of decoding (adds latency only at start).</p></td>
+      <td><p>(int, optional):  Minimum CMN window used at start of decoding (adds latency only at start).
+Only applicable if center == <code>FALSE</code>, ignored if center==<code>TRUE</code>  (int, default = 100)</p></td>
     </tr>
     <tr>
       <th>center</th>
@@ -169,19 +170,15 @@
       <th>norm_vars</th>
       <td><p>(bool, optional): If <code>TRUE</code>, normalize variance to one. (bool, default = <code>FALSE</code>)</p></td>
     </tr>
-    <tr>
-      <th>waveform</th>
-      <td><p>(Tensor): Tensor of audio of dimension (..., time).</p></td>
-    </tr>
-    <tr>
-      <th>Only</th>
-      <td><p>applicable if center == <code>FALSE</code>, ignored if center==<code>TRUE</code>  (int, default = 100)</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Tensor: Tensor of audio of dimension (..., time).</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>forward param:
+waveform  (Tensor): Tensor of audio of dimension (..., time).</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Mu Law Decoding (functional) — functional_mu_law_decoding • torchaudio</title>
+<title>Find Max Per Frame (functional) — functional__find_max_per_frame • torchaudio</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,9 @@
 
 
 
-<meta property="og:title" content="Mu Law Decoding (functional) — functional_mu_law_decoding" />
-<meta property="og:description" content="Decode mu-law encoded signal.  For more info see the
-Wikipedia Entry" />
+<meta property="og:title" content="Find Max Per Frame (functional) — functional__find_max_per_frame" />
+<meta property="og:description" content="For each frame, take the highest value of NCCF,
+apply centered median smoothing, and convert to frequency." />
 
 
 
@@ -134,38 +134,37 @@ Wikipedia Entry" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Mu Law Decoding (functional)</h1>
+    <h1>Find Max Per Frame (functional)</h1>
     
-    <div class="hidden name"><code>functional_mu_law_decoding.Rd</code></div>
+    <div class="hidden name"><code>functional__find_max_per_frame.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Decode mu-law encoded signal.  For more info see the
-<a href='https://en.wikipedia.org/wiki/M-law_algorithm'>Wikipedia Entry</a></p>
+    <p>For each frame, take the highest value of NCCF,
+apply centered median smoothing, and convert to frequency.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>functional_mu_law_decoding</span>(<span class='no'>x_mu</span>, <span class='no'>quantization_channels</span>)</pre>
+    <pre class="usage"><span class='fu'>functional__find_max_per_frame</span>(<span class='no'>nccf</span>, <span class='no'>sample_rate</span>, <span class='no'>freq_high</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x_mu</th>
-      <td><p>(Tensor): Input tensor</p></td>
+      <th>nccf</th>
+      <td><p>(tensor): Usually a tensor returned by <a href='functional__compute_nccf.html'>functional__compute_nccf</a></p></td>
     </tr>
     <tr>
-      <th>quantization_channels</th>
-      <td><p>(int): Number of channels</p></td>
+      <th>sample_rate</th>
+      <td><p>(int): sampling rate of the waveform, e.g. 44100 (Hz)</p></td>
+    </tr>
+    <tr>
+      <th>freq_high</th>
+      <td><p>(int): Highest frequency that can be detected (Hz)</p>
+<p>Note: If the max among all the lags is very close
+to the first half of lags, then the latter is taken.</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p><code>tensor</code>: Input after mu-law decoding</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>This expects an input with values between 0 and quantization_channels - 1
-and returns a signal scaled between -1 and 1.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -224,6 +224,10 @@ the detection algorithm  (e.g. 0, 0.5, ...). (Default: 1.35)</p></td>
 processing/measurements.  (Default: 20.0)</p></td>
     </tr>
     <tr>
+      <th>measure_duration</th>
+      <td><p>(float, optional) Measurement duration. (Default: Twice the measurement period; i.e. with overlap.)</p></td>
+    </tr>
+    <tr>
       <th>measure_smooth_time</th>
       <td><p>(float, optional) Time constant used to smooth spectral measurements.  (Default: 0.4)</p></td>
     </tr>
@@ -247,14 +251,6 @@ in the detector algorithm.  (Default: 150.0)</p></td>
       <td><p>(float, optional) "Brick-wall" frequency of low-pass lifter used
 in the detector algorithm.  (Default: 2000.0)</p></td>
     </tr>
-    <tr>
-      <th>waveform</th>
-      <td><p>(Tensor): Tensor of audio of dimension <code>(..., time)</code></p></td>
-    </tr>
-    <tr>
-      <th>measure_duration:</th>
-      <td><p>(float, optional) Measurement duration. (Default: Twice the measurement period; i.e. with overlap.)</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
@@ -264,6 +260,8 @@ The algorithm currently uses a simple cepstral power measurement to detect voice
 so may be fooled by other things, especially music.</p>
 <p>The effect can trim only from the front of the audio,
 so in order to trim from the back, the reverse effect must also be used.</p>
+<p>forward param:
+waveform  (Tensor): Tensor of audio of dimension <code>(..., time)</code></p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     

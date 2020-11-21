@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Mu Law Decoding (functional) — functional_mu_law_decoding • torchaudio</title>
+<title>Median Smoothing (functional) — functional__median_smoothing • torchaudio</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,8 @@
 
 
 
-<meta property="og:title" content="Mu Law Decoding (functional) — functional_mu_law_decoding" />
-<meta property="og:description" content="Decode mu-law encoded signal.  For more info see the
-Wikipedia Entry" />
+<meta property="og:title" content="Median Smoothing (functional) — functional__median_smoothing" />
+<meta property="og:description" content="Apply median smoothing to the 1D tensor over the given window." />
 
 
 
@@ -134,38 +133,30 @@ Wikipedia Entry" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Mu Law Decoding (functional)</h1>
+    <h1>Median Smoothing (functional)</h1>
     
-    <div class="hidden name"><code>functional_mu_law_decoding.Rd</code></div>
+    <div class="hidden name"><code>functional__median_smoothing.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Decode mu-law encoded signal.  For more info see the
-<a href='https://en.wikipedia.org/wiki/M-law_algorithm'>Wikipedia Entry</a></p>
+    <p>Apply median smoothing to the 1D tensor over the given window.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>functional_mu_law_decoding</span>(<span class='no'>x_mu</span>, <span class='no'>quantization_channels</span>)</pre>
+    <pre class="usage"><span class='fu'>functional__median_smoothing</span>(<span class='no'>indices</span>, <span class='no'>win_length</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x_mu</th>
-      <td><p>(Tensor): Input tensor</p></td>
+      <th>indices</th>
+      <td><p>(Tensor)</p></td>
     </tr>
     <tr>
-      <th>quantization_channels</th>
-      <td><p>(int): Number of channels</p></td>
+      <th>win_length</th>
+      <td><p>(int)</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p><code>tensor</code>: Input after mu-law decoding</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>This expects an input with values between 0 and quantization_channels - 1
-and returns a signal scaled between -1 and 1.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

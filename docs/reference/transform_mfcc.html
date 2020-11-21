@@ -178,10 +178,6 @@
       <th>...</th>
       <td><p>(optional): arguments for <a href='transform_mel_spectrogram.html'>transform_mel_spectrogram</a>.</p></td>
     </tr>
-    <tr>
-      <th>waveform</th>
-      <td><p>(tensor): Tensor of audio of dimension (..., time)</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -189,7 +185,9 @@
     <p><code>tensor</code>: specgram_mel_db of size (..., <code>n_mfcc</code>, time).</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>By default, this calculates the MFCC on the DB-scaled Mel spectrogram.
+    <p>forward param:
+waveform (tensor): Tensor of audio of dimension (..., time)</p>
+<p>By default, this calculates the MFCC on the DB-scaled Mel spectrogram.
 This output depends on the maximum value in the input spectrogram, and so
 may return different values for an audio clip split into snippets vs. a
 a full clip.</p>

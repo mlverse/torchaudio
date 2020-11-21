@@ -155,10 +155,6 @@
       <th>mode</th>
       <td><p>(str): Mode parameter passed to padding. (Default: <code>'replicate'</code>)</p></td>
     </tr>
-    <tr>
-      <th>specgram</th>
-      <td><p>(Tensor): Tensor of audio of dimension (..., freq, time).</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -166,7 +162,9 @@
     <p>Tensor: Tensor of deltas of dimension (..., freq, time).</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>See <a href='functional_compute_deltas.html'>functional_compute_deltas</a> for more details.</p>
+    <p>forward param:
+specgram  (Tensor): Tensor of audio of dimension (..., freq, time).</p>
+<p>See <a href='functional_compute_deltas.html'>functional_compute_deltas</a> for more details.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

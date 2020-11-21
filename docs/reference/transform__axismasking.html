@@ -160,19 +160,16 @@
       <td><p>(bool): Applies iid masks to each of the examples in the batch dimension.
 This option is applicable only when the input tensor is 4D.</p></td>
     </tr>
-    <tr>
-      <th>specgram</th>
-      <td><p>(Tensor): Tensor of dimension (..., freq, time).</p></td>
-    </tr>
-    <tr>
-      <th>mask_value</th>
-      <td><p>(float): Value to assign to the masked columns.</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Tensor: Masked spectrogram of dimensions (..., freq, time).</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>forward param:
+specgram  (Tensor): Tensor of dimension (..., freq, time).</p>
+<p>mask_value  (float): Value to assign to the masked columns.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

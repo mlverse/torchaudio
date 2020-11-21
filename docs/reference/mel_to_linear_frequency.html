@@ -144,7 +144,7 @@
 
     <pre class="usage"><span class='fu'>mel_to_linear_frequency</span>(
   <span class='no'>frequency_in_mel</span>,
-  <span class='kw'>mel_break_frequency_linear</span> <span class='kw'>=</span> <span class='fl'>2595</span>,
+  <span class='kw'>mel_break_frequency_hertz</span> <span class='kw'>=</span> <span class='fl'>2595</span>,
   <span class='kw'>mel_high_frequency_q</span> <span class='kw'>=</span> <span class='fl'>700</span>
 )</pre>
 
@@ -156,12 +156,12 @@
       <td><p>(numeric) tensor of frequencies in mel to be converted to linear scale.</p></td>
     </tr>
     <tr>
-      <th>mel_high_frequency_q</th>
-      <td><p>(numeric) scalar. (Default to 700.0)</p></td>
-    </tr>
-    <tr>
       <th>mel_break_frequency_hertz</th>
       <td><p>(numeric) scalar. (Default to 2595.0)</p></td>
+    </tr>
+    <tr>
+      <th>mel_high_frequency_q</th>
+      <td><p>(numeric) scalar. (Default to 700.0)</p></td>
     </tr>
     </table>
 

@@ -153,10 +153,6 @@ the <a href='https://en.wikipedia.org/wiki/M-law_algorithm'>Wikipedia Entry</a><
       <th>quantization_channels</th>
       <td><p>(int, optional): Number of channels. (Default: <code>256</code>)</p></td>
     </tr>
-    <tr>
-      <th>x</th>
-      <td><p>(Tensor): A signal to be encoded.</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -164,7 +160,9 @@ the <a href='https://en.wikipedia.org/wiki/M-law_algorithm'>Wikipedia Entry</a><
     <p>x_mu (Tensor): An encoded signal.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This algorithm assumes the signal has been scaled to between -1 and 1 and
+    <p>forward param:
+x  (Tensor): A signal to be encoded.</p>
+<p>This algorithm assumes the signal has been scaled to between -1 and 1 and
 returns a signal encoded with values from 0 to quantization_channels - 1.</p>
 
   </div>
