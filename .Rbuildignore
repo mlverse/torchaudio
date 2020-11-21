@@ -1,11 +1,11 @@
 ^torchaudio\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
-^\.github$
+^README\.Rmd$
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
-^inst/trash$
-^README\.Rmd$
+^\.github$
 ^vignettes/articles$
 ^CODE_OF_CONDUCT\.md$
+^inst/trash$
