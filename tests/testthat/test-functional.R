@@ -20,18 +20,15 @@ test_that("functional_spectrogram", {
 })
 
 test_that("functional_griffinlim", {
-  expect_no_error(spec <- functional_griffinlim(
-    waveform = random_waveform,
-    n_fft = 400,
-    pad = 0,
-    window = torch::torch_hann_window(window_length = 200L, dtype = torch::torch_float()),
-    hop_length = 200,
-    win_length = 200,
-    power = 2,
-    normalized = TRUE
+  spec = torch_rand(2, 1, 120, 400)
+  expect_no_error(grf <- functional_griffinlim(
+    specgram = spec,
+    n_iter = 4,
+    momentum = 0.5,
+    length = 10,
+    rand_init = 1
   ))
-  expect_tensor(spec)
-  expect_equal(dim(spec)[1], 400 %/% 2 + 1)
+  expect_tensor(grf)
 })
 
 test_that("create_fb_matrix", {
