@@ -19,6 +19,21 @@ test_that("functional_spectrogram", {
   expect_equal(dim(spec)[1], 400 %/% 2 + 1)
 })
 
+test_that("functional_griffinlim", {
+  expect_no_error(spec <- functional_griffinlim(
+    waveform = random_waveform,
+    n_fft = 400,
+    pad = 0,
+    window = torch::torch_hann_window(window_length = 200L, dtype = torch::torch_float()),
+    hop_length = 200,
+    win_length = 200,
+    power = 2,
+    normalized = TRUE
+  ))
+  expect_tensor(spec)
+  expect_equal(dim(spec)[1], 400 %/% 2 + 1)
+})
+
 test_that("create_fb_matrix", {
   x <- functional_create_fb_matrix(
     n_freqs = 10,
