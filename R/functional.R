@@ -474,67 +474,72 @@ functional_griffinlim <- function(
   length,
   rand_init
 ) {
-  # if(momentum > 1) value_warning('momentum > 1 can be unstable')
-  # if(momentum < 0) value_error('momentum < 0')
-  #
-  # # pack batch
-  # shape = specgram$size()
-  # specgram = specgram$reshape([-1] + list(shape[-2:]))
-  #
-  # specgram = specgram$pow(1 / power)
-  #
-  # # randomly initialize the phase
-  # ss = specgram$size()
-  # batch = ss[1]
-  # freq = ss[2]
-  # frames = ss[3]
-  # if(rand_init) {
-  #   angles = 2 * pi * torch::torch_rand(batch, freq, frames)
-  # } else {
-  #   angles = torch::Torch_zeros(batch, freq, frames)
-  # }
-  #
-  # angles = torch::torch_stack([angles.cos(), angles.sin()], dim=-1).to(dtype=specgram.dtype, device=specgram.device)
-  # specgram = specgram.unsqueeze(-1).expand_as(angles)
-  #
-  # # And initialize the previous iterate to 0
-  # rebuilt = torch::torch_tensor(0.)
-  #
-  # for . in range(n_iter):
-  #   # Store the previous iterate
-  #   tprev = rebuilt
-  #
-  # # Invert with our current estimate of the phases
-  # inverse = torch::torch_istft(specgram * angles,
-  #                       n_fft=n_fft,
-  #                       hop_length=hop_length,
-  #                       win_length=win_length,
-  #                       window=window,
-  #                       length=length)$float()
-  #
-  # # Rebuild the spectrogram
-  # rebuilt = torch.stft(inverse, n_fft, hop_length, win_length, window,
-  #                      TRUE, 'reflect', FALSE, TRUE)
-  #
-  # # Update our phase estimates
-  # angles = rebuilt
-  # if momentum:
-  #   angles = angles - tprev.mul_(momentum / (1 + momentum))
-  # angles = angles.div(complex_norm(angles).add(1e-16).unsqueeze(-1).expand_as(angles))
-  #
-  # # Return the final phase estimates
-  # waveform = torch.istft(specgram * angles,
-  #                        n_fft=n_fft,
-  #                        hop_length=hop_length,
-  #                        win_length=win_length,
-  #                        window=window,
-  #                        length=length)
-  #
-  # # unpack batch
-  # waveform = waveform$reshape(shape[:-2] + waveform.shape[-1:])
-  #
-  # return(waveform)
-  not_implemented_error("TO DO (waiting for torch_istft() implementation)")
+  if(momentum > 1) value_warning('momentum > 1 can be unstable')
+  if(momentum < 0) value_error('momentum < 0')
+
+  # pack batch
+  shape = specgram$size()
+  ls = length(shape)
+  specgram = specgram$reshape(c(-1, shape[(ls-1):ls]))
+  shape = specgram$size()
+  ls = length(shape)
+
+  specgram = specgram$pow(1 / power)
+
+  # randomly initialize the phase
+  ss = specgram$size()
+  batch = ss[1]
+  freq = ss[2]
+  frames = ss[3]
+  if(rand_init) {
+    angles = 2 * pi * torch::torch_rand(batch, freq, frames)
+  } else {
+    angles = torch::Torch_zeros(batch, freq, frames)
+  }
+
+  angles = torch::torch_stack(list(angles$cos(), angles$sin()), dim=-1)$to(dtype = specgram$dtype, device = specgram$device)
+  specgram = specgram$unsqueeze(-1)$expand_as(angles)
+
+  # And initialize the previous iterate to 0
+  rebuilt = torch::torch_tensor(0.)
+
+  for(i in seq.int(n_iter)) {
+    # Store the previous iterate
+    tprev = rebuilt
+
+    # Invert with our current estimate of the phases
+    inverse = torch::torch_istft(specgram * angles,
+                                 n_fft=n_fft,
+                                 hop_length=hop_length,
+                                 win_length=win_length,
+                                 window=window,
+                                 length=length)$float()
+
+    # Rebuild the spectrogram
+    rebuilt = torch::torch_stft(inverse, n_fft, hop_length, win_length, window,
+                                TRUE, 'reflect', FALSE, TRUE)
+
+    # Update our phase estimates
+    angles = rebuilt
+    if(momentum) {
+      angles = angles - tprev$mul_(momentum / (1 + momentum))
+    }
+    angles = angles$div(complex_norm(angles)$add(1e-16)$unsqueeze(-1)$expand_as(angles))
+  }
+
+  # Return the final phase estimates
+  waveform = torch::torch_istft(specgram * angles,
+                                n_fft=n_fft,
+                                hop_length=hop_length,
+                                win_length=win_length,
+                                window=window,
+                                length=length)
+
+  # unpack batch
+  lws = length(waveform$shape)
+  waveform = waveform$reshape(c(shape[1:(ls-2)], waveform$shape[lws]))
+
+  return(waveform)
 }
 
 #' An IIR Filter (functional)
