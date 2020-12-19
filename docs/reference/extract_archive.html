@@ -90,7 +90,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -112,11 +112,14 @@
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/curso-r/torchaudio">
-    <span class="fa fa-github"></span>
+    <span class="fas fa-github"></span>
      
   </a>
 </li>
@@ -166,11 +169,13 @@
     <p>list: List of paths to extracted files even if not overwritten.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>url</span> <span class='kw'>=</span> <span class='st'>'http://www.quest.dcs.shef.ac.uk/wmt16_files_mmt/validation.tar.gz'</span>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='no'>url</span> <span class='kw'>=</span> <span class='st'>'http://www.quest.dcs.shef.ac.uk/wmt16_files_mmt/validation.tar.gz'</span>
 <span class='no'>from_path</span> <span class='kw'>=</span> <span class='st'>'./validation.tar.gz'</span>
 <span class='no'>to_path</span> <span class='kw'>=</span> <span class='st'>'./'</span>
 <span class='kw pkg'>utils</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/r/utils/download.file.html'>download.file</a></span>(<span class='kw'>url</span> <span class='kw'>=</span> <span class='no'>url</span>, <span class='kw'>destfile</span> <span class='kw'>=</span> <span class='no'>from_path</span>)
-<span class='kw pkg'>torchaudio</span><span class='kw ns'>:::</span><span class='fu'>extract_archive</span> (<span class='no'>from_path</span>, <span class='no'>to_path</span>)</div></pre>
+<span class='kw pkg'>torchaudio</span><span class='kw ns'>:::</span><span class='fu'>extract_archive</span> (<span class='no'>from_path</span>, <span class='no'>to_path</span>)
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
