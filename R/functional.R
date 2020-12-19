@@ -446,8 +446,8 @@ functional_phase_vocoder <- function(
 #'      where freq is ``n_fft %/% 2 + 1``.
 #' @param window (Tensor): Window tensor that is applied/multiplied to each frame/window
 #' @param n_fft (int): Size of FFT, creates ``n_fft %/% 2 + 1`` bins
-#' @param hop_length (int): Length of hop between STFT windows. (Default: ``win_length %/% 2``)
-#' @param win_length (int): Window size. (Default: ``n_fft``)
+#' @param hop_length (int): Length of hop between STFT windows.
+#' @param win_length (int): Window size.
 #' @param power (float): Exponent for the magnitude spectrogram,
 #'      (must be > 0) e.g., 1 for energy, 2 for power, etc.
 #' @param normalized (bool): Whether to normalize by magnitude after stft.
@@ -474,6 +474,9 @@ functional_griffinlim <- function(
   length,
   rand_init
 ) {
+
+  not_implemented_error("functional_griffinlim is not implemented yet.")
+
   if(momentum > 1) value_warning('momentum > 1 can be unstable')
   if(momentum < 0) value_error('momentum < 0')
 
@@ -494,7 +497,7 @@ functional_griffinlim <- function(
   if(rand_init) {
     angles = 2 * pi * torch::torch_rand(batch, freq, frames)
   } else {
-    angles = torch::Torch_zeros(batch, freq, frames)
+    angles = torch::torch_zeros(batch, freq, frames)
   }
 
   angles = torch::torch_stack(list(angles$cos(), angles$sin()), dim=-1)$to(dtype = specgram$dtype, device = specgram$device)
@@ -506,7 +509,6 @@ functional_griffinlim <- function(
   for(i in seq.int(n_iter)) {
     # Store the previous iterate
     tprev = rebuilt
-
     # Invert with our current estimate of the phases
     inverse = torch::torch_istft(specgram * angles,
                                  n_fft=n_fft,
@@ -524,7 +526,7 @@ functional_griffinlim <- function(
     if(momentum) {
       angles = angles - tprev$mul_(momentum / (1 + momentum))
     }
-    angles = angles$div(complex_norm(angles)$add(1e-16)$unsqueeze(-1)$expand_as(angles))
+    angles = angles$div(functional_complex_norm(angles)$add(1e-16)$unsqueeze(-1)$expand_as(angles))
   }
 
   # Return the final phase estimates
@@ -1519,7 +1521,7 @@ functional_flanger <- function(
     delay_buf_pos = (delay_buf_pos + delay_buf_length - 1L) %% delay_buf_length
 
     cur_channel_phase = (channel_idxs * lfo_length * channel_phase + .5)$to(torch::torch_long())
-    delay_tensor = lfo[((lfo_pos + cur_channel_phase) %% lfo_length)$to(torch::torch_long())]
+    delay_tensor = lfo[((lfo_pos + cur_channel_phase) %% lfo_length)$to(torch::torch_long()) + 1L]
     frac_delay = torch::torch_frac(delay_tensor)
     delay_tensor = torch::torch_floor(delay_tensor)
 
@@ -1529,20 +1531,20 @@ functional_flanger <- function(
 
     delay_bufs[ ,  , delay_buf_pos+1] = temp + delay_last * feedback_gain
 
-    delayed_0 = delay_bufs[ , channel_idxs, (delay_buf_pos + int_delay) %% delay_buf_length]
+    delayed_0 = delay_bufs[ , channel_idxs + 1L, (delay_buf_pos + int_delay) %% delay_buf_length + 1L]
 
     int_delay = int_delay + 1L
 
-    delayed_1 = delay_bufs[ , channel_idxs, (delay_buf_pos + int_delay) %% delay_buf_length]
+    delayed_1 = delay_bufs[ , channel_idxs + 1L, (delay_buf_pos + int_delay) %% delay_buf_length + 1L]
 
-    int_delay = int_delay + 1
+    int_delay = int_delay + 1L
 
     if(interpolation == "linear") {
       delayed = delayed_0 + (delayed_1 - delayed_0) * frac_delay
     } else {
-      delayed_2 = delay_bufs[ , channel_idxs, (delay_buf_pos + int_delay) %% delay_buf_length]
+      delayed_2 = delay_bufs[ , channel_idxs + 1L, (delay_buf_pos + int_delay) %% delay_buf_length + 1L]
 
-      int_delay = int_delay + 1
+      int_delay = int_delay + 1L
 
       delayed_2 = delayed_2 - delayed_0
       delayed_1 = delayed_1 - delayed_0
@@ -2210,7 +2212,7 @@ functional_measure <- function(
   dftBuf = torch::torch_zeros(dft_len_ws)
 
   .index_ns = torch::torch_tensor(c(index_ns, (index_ns + seq(1, measure_len_ws-1)) %% samplesLen_ns ))$to(torch::torch_long())
-  dftBuf[1:measure_len_ws] = samples[.index_ns] * spectrum_window[1:measure_len_ws]
+  dftBuf[1:measure_len_ws] = samples[.index_ns + 1L] * spectrum_window[1:measure_len_ws]
 
   # memset(c->dftBuf + i, 0, (p->dft_len_ws - i) * sizeof(*c->dftBuf));
   dftBuf[measure_len_ws:(dft_len_ws-1)]$zero_()
@@ -2408,6 +2410,7 @@ functional_vad <- function(
   num_measures_to_flush = 0
   pos = 0
 
+
   while(pos < ilen & !has_triggered) {
     measure_timer_ns = measure_timer_ns - 1
     for(i in seq.int(n_channels)) {
@@ -2458,6 +2461,7 @@ functional_vad <- function(
         } # end if(has_triggered)
       } # end if (measure_timer_ns == 0))
     } # end for
+
     samplesIndex_ns = samplesIndex_ns + 1
     pos = pos + 1
     if(samplesIndex_ns == samplesLen_ns) {
