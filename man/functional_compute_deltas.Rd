@@ -29,6 +29,7 @@ where \code{d_t} is the deltas at time \code{t}, \code{c_t} is the spectrogram c
 \code{N} is \code{ (win_length-1) \%/\% 2}.
 }
 \examples{
+library(torchaudio)
 specgram = torch::torch_randn(1, 40, 1000)
 delta = functional_compute_deltas(specgram)
 delta2 = functional_compute_deltas(delta)
