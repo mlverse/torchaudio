@@ -26,9 +26,9 @@ where freq is \code{n_fft \%/\% 2 + 1}.}
 
 \item{n_fft}{(int): Size of FFT, creates \code{n_fft \%/\% 2 + 1} bins}
 
-\item{hop_length}{(int): Length of hop between STFT windows. (Default: \code{win_length \%/\% 2})}
+\item{hop_length}{(int): Length of hop between STFT windows.}
 
-\item{win_length}{(int): Window size. (Default: \code{n_fft})}
+\item{win_length}{(int): Window size.}
 
 \item{power}{(float): Exponent for the magnitude spectrogram,
 (must be > 0) e.g., 1 for energy, 2 for power, etc.}
