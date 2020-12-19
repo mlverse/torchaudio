@@ -25,7 +25,7 @@ Suggests:
     numbers,
     purrr
 Imports: 
-    torch,
+    torch (>= 0.2.0),
     fs,
     rlang,
     rappdirs,
