@@ -34,8 +34,7 @@ remotes::install_github("curso-r/torchaudio")
 
 ## A Waveform
 
-``torchaudio`` also supports loading sound files in the wav and mp3 format. We
-call waveform the resulting raw audio signal.
+``torchaudio`` also supports loading sound files in the wav and mp3 format. We call waveform the resulting raw audio signal.
 
 ```{r, fig.height=3, fig.width=8}
 library(torchaudio)
