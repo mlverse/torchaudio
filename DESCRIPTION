@@ -32,6 +32,4 @@ Imports:
     utils,
     tools,
     glue
-Remotes:
-    mlverse/torch
 VignetteBuilder: knitr
