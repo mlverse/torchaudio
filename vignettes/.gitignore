@@ -1,0 +1,9 @@
+*.html
+*.R
+*.tar.gz
+/SpeechCommands
+*_cache
+*.rds
+*.pt
+/waves_yesno
+*.wav

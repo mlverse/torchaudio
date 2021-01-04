@@ -1676,6 +1676,7 @@ functional_mask_along_axis <- function(
 #' @return `tensor`: Tensor of deltas of dimension (..., freq, time)
 #'
 #' @examples
+#'
 #' library(torchaudio)
 #' specgram = torch::torch_randn(1, 40, 1000)
 #' delta = functional_compute_deltas(specgram)
