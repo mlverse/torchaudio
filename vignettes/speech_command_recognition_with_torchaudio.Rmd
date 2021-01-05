@@ -49,6 +49,7 @@ The actual loading and formatting steps happen when a data point is being access
 Going back to the dataset, here we create a subclass that splits it into standard training, validation, testing subsets.
 
 ```{r, eval = TRUE}
+if(!fs::dir_exists("~/datasets")) fs::dir_create("~/datasets")
 subset_sc <- torch::dataset(
   "SubsetSC",
   inherit = speechcommand_dataset,
