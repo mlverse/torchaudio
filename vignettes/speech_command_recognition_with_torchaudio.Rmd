@@ -403,16 +403,16 @@ for(epoch in seq.int(n_epoch)) {
 ```
 
 ```{r, echo=FALSE}
-torch::torch_save(model, "../inst/cache/model.pt")
-model <- torch::torch_load("../inst/cache/model.pt")
+# torch::torch_save(model, "cache/model.pt")
+model <- torch::torch_load("model.pt")
 ```
 
 
 Let's plot the training loss versus the number of iteration.
 
 ```{r, echo = FALSE}
-# saveRDS(losses, "../inst/cache/losses.rds")
-losses <- readRDS("../inst/cache/losses.rds")
+# saveRDS(losses, "cache/losses.rds", version = 2)
+losses <- readRDS("losses.rds")
 ```
 
 ```{r}

@@ -4,6 +4,7 @@
 ^README\.Rmd$
 ^_pkgdown\.yml$
 ^docs$
+^doc$
 ^pkgdown$
 ^\.github$
 ^vignettes/articles$
@@ -12,5 +13,4 @@
 ^inst/cache$
 ^cran-comments\.md$
 ^_vignettes/*
-^steam-train-whistle-daniel_simon-converted-from-mp3\.wav$
 ^Meta$
