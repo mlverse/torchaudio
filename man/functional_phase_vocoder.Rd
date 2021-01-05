@@ -20,15 +20,20 @@ functional_phase_vocoder(complex_specgrams, rate, phase_advance)
 Given a STFT tensor, speed up in time without modifying pitch by a factor of \code{rate}.
 }
 \examples{
+\dontrun{
+library(torch)
+library(torchaudio)
+
 freq = 1025
 hop_length = 512
 
 #  (channel, freq, time, complex=2)
-complex_specgrams = torch::torch_randn(2, freq, 300, 2)
+complex_specgrams = torch_randn(2, freq, 300, 2)
 rate = 1.3 # Speed up by 30\%
-phase_advance = torch::torch_linspace(0, pi * hop_length, freq)[.., NULL]
+phase_advance = torch_linspace(0, pi * hop_length, freq)[.., NULL]
 x = functional_phase_vocoder(complex_specgrams, rate, phase_advance)
 x$shape # with 231 == ceil (300 / 1.3)
 # torch.Size ([2, 1025, 231, 2])
+}
 
 }

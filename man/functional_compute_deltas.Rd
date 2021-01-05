@@ -21,17 +21,18 @@ Compute delta coefficients of a tensor, usually a spectrogram.
 }
 \details{
 math:
-\deqn{
- d_t = \frac{\sum_{n=1}^{N} n  (c_{t+n} - c_{t-n})}{2 \sum_{n=1}^{N} n^2}
- }
+\deqn{d_t = \frac{\sum_{n=1}^{N} n  (c_{t+n} - c_{t-n})}{2 \sum_{n=1}^{N} n^2}}
 
 where \code{d_t} is the deltas at time \code{t}, \code{c_t} is the spectrogram coeffcients at time \code{t},
 \code{N} is \code{ (win_length-1) \%/\% 2}.
 }
 \examples{
+\dontrun{
+library(torch)
 library(torchaudio)
-specgram = torch::torch_randn(1, 40, 1000)
+specgram = torch_randn(1, 40, 1000)
 delta = functional_compute_deltas(specgram)
 delta2 = functional_compute_deltas(delta)
+}
 
 }

@@ -35,8 +35,11 @@ forward param:
 specgram  (Tensor): the input sequence to the MelResNet layer (n_batch, n_freq, n_time).
 }
 \examples{
+\dontrun{
+
  melresnet = model_melresnet()
  input = torch::torch_rand(10, 128, 512)  # a random spectrogram
  output = melresnet(input)  # shape: (10, 128, 508)
+}
 
 }

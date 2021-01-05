@@ -23,9 +23,11 @@ forward param:
 specgram  (Tensor): the input sequence to the Stretch2d layer (..., n_freq, n_time).
 }
 \examples{
+\dontrun{
  stretch2d = model_stretch2d(time_scale=10, freq_scale=5)
 
  input = torch::torch_rand(10, 100, 512)  # a random spectrogram
  output = stretch2d(input)  # shape: (10, 500, 5120)
+}
 
 }

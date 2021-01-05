@@ -21,8 +21,9 @@ forward param:
 specgram  (Tensor): the input sequence to the ResBlock layer (n_batch, n_freq, n_time).
 }
 \examples{
+\dontrun{
 resblock = model_resblock()
 input = torch::torch_rand(10, 128, 512)  # a random spectrogram
 output = resblock(input)  # shape: (10, 128, 512)
-
+}
 }
