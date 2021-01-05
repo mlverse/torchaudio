@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">torchaudio</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -67,11 +67,14 @@
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/curso-r/torchaudio">
-    <span class="fa fa-github"></span>
+    <span class="fas fa-github"></span>
      
   </a>
 </li>
@@ -166,7 +169,7 @@
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">specgram</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/transform_spectrogram.html">transform_spectrogram</a></span>()(<span class="no">waveform</span>)
 
 <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"Shape of spectrogram: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(<span class="no">specgram</span>), <span class="kw">collapse</span> <span class="kw">=</span> <span class="st">" "</span>))
-<span class="co">#&gt; [1] "Shape of spectrogram:  2 201 1383"</span>
+<span class="co">#&gt; [1] "Shape of spectrogram:  2 201 1385"</span>
 
 <span class="no">specgram_as_array</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(<span class="no">specgram</span>$<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span>()[<span class="fl">1</span>]$<span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span>())
 <span class="fu"><a href="https://rdrr.io/r/graphics/image.html">image</a></span>(<span class="no">specgram_as_array</span>[,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span>(<span class="no">specgram_as_array</span>):<span class="fl">1</span>], <span class="kw">col</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/pkg/viridis/man/reexports.html">viridis</a></span>(<span class="kw">n</span> <span class="kw">=</span> <span class="fl">257</span>,  <span class="kw">option</span> <span class="kw">=</span> <span class="st">"magma"</span>))</pre></body></html></div>
@@ -175,7 +178,7 @@
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">specgram</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/transform_mel_spectrogram.html">transform_mel_spectrogram</a></span>()(<span class="no">waveform</span>)
 
 <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"Shape of spectrogram: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(<span class="no">specgram</span>), <span class="kw">collapse</span> <span class="kw">=</span> <span class="st">" "</span>))
-<span class="co">#&gt; [1] "Shape of spectrogram:  2 128 1383"</span>
+<span class="co">#&gt; [1] "Shape of spectrogram:  2 128 1385"</span>
 
 <span class="no">specgram_as_array</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(<span class="no">specgram</span>$<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span>()[<span class="fl">1</span>]$<span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span>())
 <span class="fu"><a href="https://rdrr.io/r/graphics/image.html">image</a></span>(<span class="no">specgram_as_array</span>[,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span>(<span class="no">specgram_as_array</span>):<span class="fl">1</span>], <span class="kw">col</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/pkg/viridis/man/reexports.html">viridis</a></span>(<span class="kw">n</span> <span class="kw">=</span> <span class="fl">257</span>,  <span class="kw">option</span> <span class="kw">=</span> <span class="st">"magma"</span>))</pre></body></html></div>
@@ -264,7 +267,7 @@
 <div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">computed</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/functional_compute_deltas.html">functional_compute_deltas</a></span>(<span class="no">specgram</span>$<span class="fu">contiguous</span>(), <span class="kw">win_length</span><span class="kw">=</span><span class="fl">3</span>)
 
 <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="st">"Shape of computed deltas: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(<span class="no">computed</span>), <span class="kw">collapse</span> <span class="kw">=</span> <span class="st">" "</span>))
-<span class="co">#&gt; [1] "Shape of computed deltas:  2 128 1383"</span>
+<span class="co">#&gt; [1] "Shape of computed deltas:  2 128 1385"</span>
 
 <span class="no">computed_as_array</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html">as.array</a></span>(<span class="no">computed</span>[<span class="fl">1</span>]$<span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span>())
 <span class="fu"><a href="https://rdrr.io/r/graphics/image.html">image</a></span>(<span class="no">computed_as_array</span>[,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span>(<span class="no">computed_as_array</span>):<span class="fl">1</span>], <span class="kw">col</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/pkg/viridis/man/reexports.html">viridis</a></span>(<span class="kw">n</span> <span class="kw">=</span> <span class="fl">257</span>,  <span class="kw">option</span> <span class="kw">=</span> <span class="st">"magma"</span>))</pre></body></html></div>
