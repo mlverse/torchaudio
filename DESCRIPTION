@@ -23,7 +23,10 @@ Suggests:
     rmarkdown,
     stringr,
     numbers,
-    purrr
+    purrr,
+    scales,
+    httr,
+    viridis
 Imports: 
     torch (>= 0.2.0),
     fs,
