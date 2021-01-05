@@ -85,18 +85,6 @@ speaker_id <- sample[[4]]
 utterance_number <- sample[[5]]
 ```
 
-
-```{r, echo = FALSE}
-sample <- torchaudio:::load_speechcommands_item("SpeechCommands/speech_commands_v0.02/backward/0165e0e8_nohash_0.wav", "./SpeechCommands/speech_commands_v0.02/")
-
-waveform <- sample[[1]]
-sample_rate <- sample[[2]]
-label <- sample[[3]]
-speaker_id <- sample[[4]]
-utterance_number <- sample[[5]]
-```
-
-
 A data point in the SPEECHCOMMANDS dataset is a list made of a waveform (the audio signal), the sample rate, the utterance (label), the ID of the speaker, the number of the utterance.
 
 ```{r}
