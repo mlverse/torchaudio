@@ -9,7 +9,7 @@
 ^vignettes/articles$
 ^CODE_OF_CONDUCT\.md$
 ^inst/trash$
-^inst/cashe$
+^inst/cache$
 ^cran-comments\.md$
 ^_vignettes/*
 ^steam-train-whistle-daniel_simon-converted-from-mp3\.wav$

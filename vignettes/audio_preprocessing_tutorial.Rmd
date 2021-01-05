@@ -41,7 +41,7 @@ call waveform the resulting raw audio signal.
 
 ```{r, fig.height=4, fig.width=6}
 url = "https://pytorch.org/tutorials/_static/img/steam-train-whistle-daniel_simon-converted-from-mp3.wav"
-filename = "steam-train-whistle-daniel_simon-converted-from-mp3.wav"
+filename = "../inst/cache/steam-train-whistle-daniel_simon-converted-from-mp3.wav"
 r = httr::GET(url, httr::write_disk(filename, overwrite = TRUE))
 
 waveform_and_sample_rate = torchaudio_load(filename)
@@ -233,7 +233,7 @@ Another example of the capabilities in ``torchaudio::functional_`` are applying 
 waveform. Applying the lowpass biquad filter to our waveform will output a new waveform with 
 the signal of the frequency modified.
 
-```{r lowpass, cache=TRUE}
+```{r lowpass, cache=FALSE}
 lowpass_waveform <- as.array(functional_lowpass_biquad(waveform, sample_rate, cutoff_freq=3000))
 
 cat(sprintf("Min of lowpass_waveform: %f\nMax of lowpass_waveform: %f\nMean of lowpass_waveform: %f", min(lowpass_waveform), max(lowpass_waveform), mean(lowpass_waveform)))
@@ -244,7 +244,7 @@ lines(lowpass_waveform[2,], col = "orange")
 
 We can also visualize a waveform with the highpass biquad filter.
 
-```{r highpass, cache=TRUE}
+```{r highpass, cache=FALSE}
 highpass_waveform <- as.array(functional_highpass_biquad(waveform, sample_rate, cutoff_freq=3000))
 
 cat(sprintf("Min of highpass_waveform: %f\nMax of highpass_waveform: %f\nMean of highpass_waveform: %f", min(highpass_waveform), max(highpass_waveform), mean(highpass_waveform)))
@@ -275,7 +275,7 @@ The datasets ``torchaudio`` currently supports are:
 -  **CMUArctics**
 
 ```{r, fig.height=4, fig.width=6}
-yesno_data <- yesno_dataset('./', download=TRUE)
+yesno_data <- yesno_dataset('~/datasets', download=TRUE)
 
 # A data point in Yesno is a list (waveform, sample_rate, labels) where labels is a list of integers with 1 for yes and 0 for no.
 

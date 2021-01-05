@@ -108,7 +108,7 @@ plot(waveform[1], type = "l", col = "royalblue")
 
 Let's find the list of labels available in the dataset.
 
-```{r labels, cache=TRUE, eval = FALSE}
+```{r labels, cache=FALSE, eval = FALSE}
 labels <- sort(unique(sapply(seq.int(train_set), function(i) train_set[i]$label)))
 labels
 ```
