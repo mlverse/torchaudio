@@ -49,7 +49,6 @@ The actual loading and formatting steps happen when a data point is being access
 Going back to the dataset, here we create a subclass that splits it into standard training, validation, testing subsets.
 
 ```{r, eval = TRUE}
-if(!fs::dir_exists("~/datasets")) fs::dir_create("~/datasets")
 subset_sc <- torch::dataset(
   "SubsetSC",
   inherit = speechcommand_dataset,
@@ -73,8 +72,8 @@ subset_sc <- torch::dataset(
 )
 
 # Create training and testing split of the data. We do not use validation in this tutorial.
-train_set <- subset_sc("~/datasets", "training")
-test_set <- subset_sc("~/datasets", "testing")
+train_set <- subset_sc("training")
+test_set <- subset_sc("testing")
 
 # sample <- list(waveform, sample_rate, label, speaker_id, utterance_number)
 sample <- train_set[1]
@@ -88,7 +87,7 @@ utterance_number <- sample[[5]]
 
 
 ```{r, echo = FALSE}
-sample <- torchaudio:::load_speechcommands_item("~/datasets/SpeechCommands/speech_commands_v0.02/backward/0165e0e8_nohash_0.wav", "./SpeechCommands/speech_commands_v0.02/")
+sample <- torchaudio:::load_speechcommands_item("SpeechCommands/speech_commands_v0.02/backward/0165e0e8_nohash_0.wav", "./SpeechCommands/speech_commands_v0.02/")
 
 waveform <- sample[[1]]
 sample_rate <- sample[[2]]
