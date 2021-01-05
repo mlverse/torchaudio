@@ -48,12 +48,12 @@ The actual loading and formatting steps happen when a data point is being access
 
 Going back to the dataset, here we create a subclass that splits it into standard training, validation, testing subsets.
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 subset_sc <- torch::dataset(
   "SubsetSC",
   inherit = speechcommand_dataset,
-  initialize = function(subset = NULL) {
-    super$initialize(".", download = TRUE)
+  initialize = function(root = ".", subset = NULL) {
+    super$initialize(root, download = TRUE)
     
     load_list <- function(filename) {
       filepath <- file.path(self$.path, filename)
@@ -72,8 +72,8 @@ subset_sc <- torch::dataset(
 )
 
 # Create training and testing split of the data. We do not use validation in this tutorial.
-train_set <- subset_sc("training")
-test_set <- subset_sc("testing")
+train_set <- subset_sc("~/datasets", "training")
+test_set <- subset_sc("~/datasets", "testing")
 
 # sample <- list(waveform, sample_rate, label, speaker_id, utterance_number)
 sample <- train_set[1]
@@ -85,15 +85,9 @@ speaker_id <- sample[[4]]
 utterance_number <- sample[[5]]
 ```
 
-```{r, echo = FALSE}
-# saveRDS(train_set, "train_set.rds")
-# saveRDS(test_set, "test_set.rds")
-train_set <- readRDS("train_set.rds")
-test_set <- readRDS("test_set.rds")
-```
 
 ```{r, echo = FALSE}
-sample <- torchaudio:::load_speechcommands_item("./SpeechCommands/speech_commands_v0.02/backward/0165e0e8_nohash_0.wav", "./SpeechCommands/speech_commands_v0.02/")
+sample <- torchaudio:::load_speechcommands_item("~/datasets/SpeechCommands/speech_commands_v0.02/backward/0165e0e8_nohash_0.wav", "./SpeechCommands/speech_commands_v0.02/")
 
 waveform <- sample[[1]]
 sample_rate <- sample[[2]]
@@ -120,7 +114,12 @@ labels
 ```
 
 ```{r, echo = FALSE}
-labels <- readRDS("labels.rds")
+labels <- c(
+  "backward", "bed",      "bird",     "cat",      "dog",      "down",     "eight",    "five",     "follow",   "forward",
+  "four",     "go",       "happy",    "house",    "learn",    "left",     "marvin",   "nine",     "no",       "off",    
+  "on",       "one",      "right",    "seven",    "sheila",   "six",      "stop",     "three",    "tree",     "two",    
+  "up",       "visual",   "wow",      "yes",      "zero"
+)
 labels
 ```
 
@@ -404,19 +403,19 @@ for(epoch in seq.int(n_epoch)) {
 ```
 
 ```{r, echo=FALSE}
-# torch::torch_save(model, "model.pt")
-model <- torch::torch_load("model.pt")
+torch::torch_save(model, "../inst/cache/model.pt")
+model <- torch::torch_load("../inst/cache/model.pt")
 ```
 
 
 Let's plot the training loss versus the number of iteration.
 
 ```{r, echo = FALSE}
-# saveRDS(losses, "losses.rds")
-losses <- readRDS("losses.rds")
+# saveRDS(losses, "../inst/cache/losses.rds")
+losses <- readRDS("../inst/cache/losses.rds")
 ```
 
-```{r, cache=TRUE}
+```{r}
 plot(losses, main = "training loss", type = "l", col = "royalblue")
 ```
 

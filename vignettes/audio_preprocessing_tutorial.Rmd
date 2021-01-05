@@ -1,5 +1,10 @@
 ---
 title: "Audio I/O and Pre-Processing with torchaudio"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Audio I/O and Pre-Processing with torchaudio}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
