@@ -1,5 +1,4 @@
 
-library(purrr)
 library(testthat)
 library(torchaudio)
 
