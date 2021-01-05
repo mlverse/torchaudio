@@ -1,4 +1,4 @@
- 
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # torchaudio
@@ -38,7 +38,7 @@ format. We call waveform the resulting raw audio signal.
 library(torchaudio)
 
 url = "https://pytorch.org/tutorials/_static/img/steam-train-whistle-daniel_simon-converted-from-mp3.wav"
-filename = "steam-train-whistle-daniel_simon-converted-from-mp3.wav"
+filename = tempfile(fileext = ".wav")
 r = httr::GET(url, httr::write_disk(filename, overwrite = TRUE))
 
 waveform_and_sample_rate = torchaudio_load(filename)
