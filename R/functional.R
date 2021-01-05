@@ -367,16 +367,21 @@ functional_magphase <- function(
 #' @return `tensor`: Complex Specgrams Stretch with dimension of `(..., freq, ceiling(time/rate), complex=2)`
 #'
 #' @examples
+#' \dontrun{
+#' library(torch)
+#' library(torchaudio)
+#'
 #' freq = 1025
 #' hop_length = 512
 #'
 #' #  (channel, freq, time, complex=2)
-#' complex_specgrams = torch::torch_randn(2, freq, 300, 2)
+#' complex_specgrams = torch_randn(2, freq, 300, 2)
 #' rate = 1.3 # Speed up by 30%
-#' phase_advance = torch::torch_linspace(0, pi * hop_length, freq)[.., NULL]
+#' phase_advance = torch_linspace(0, pi * hop_length, freq)[.., NULL]
 #' x = functional_phase_vocoder(complex_specgrams, rate, phase_advance)
 #' x$shape # with 231 == ceil (300 / 1.3)
 #' # torch.Size ([2, 1025, 231, 2])
+#' }
 #'
 #' @export
 functional_phase_vocoder <- function(
@@ -1662,9 +1667,7 @@ functional_mask_along_axis <- function(
 #' Compute delta coefficients of a tensor, usually a spectrogram.
 #'
 #' math:
-#'  \deqn{
-#'  d_t = \frac{\sum_{n=1}^{N} n  (c_{t+n} - c_{t-n})}{2 \sum_{n=1}^{N} n^2}
-#'  }
+#'  \deqn{d_t = \frac{\sum_{n=1}^{N} n  (c_{t+n} - c_{t-n})}{2 \sum_{n=1}^{N} n^2}}
 #'
 #'  where `d_t` is the deltas at time `t`, `c_t` is the spectrogram coeffcients at time `t`,
 #'  `N` is `` (win_length-1) %/% 2``.
@@ -1676,11 +1679,13 @@ functional_mask_along_axis <- function(
 #' @return `tensor`: Tensor of deltas of dimension (..., freq, time)
 #'
 #' @examples
-#'
+#' \dontrun{
+#' library(torch)
 #' library(torchaudio)
-#' specgram = torch::torch_randn(1, 40, 1000)
+#' specgram = torch_randn(1, 40, 1000)
 #' delta = functional_compute_deltas(specgram)
 #' delta2 = functional_compute_deltas(delta)
+#' }
 #'
 #' @export
 functional_compute_deltas <- function(

@@ -13,10 +13,11 @@
 #' Tensor shape:  (n_batch, n_freq, n_time)
 #'
 #' @examples
+#' \dontrun{
 #' resblock = model_resblock()
 #' input = torch::torch_rand(10, 128, 512)  # a random spectrogram
 #' output = resblock(input)  # shape: (10, 128, 512)
-#'
+#'}
 #' @export
 model_resblock <- torch::nn_module(
   "ResBlock",
@@ -53,9 +54,12 @@ model_resblock <- torch::nn_module(
 #' Tensor shape:  (n_batch, n_output, n_time - kernel_size + 1)
 #'
 #' @examples
+#' \dontrun{
+#'
 #'  melresnet = model_melresnet()
 #'  input = torch::torch_rand(10, 128, 512)  # a random spectrogram
 #'  output = melresnet(input)  # shape: (10, 128, 508)
+#' }
 #'
 #' @export
 model_melresnet <- torch::nn_module(
@@ -99,10 +103,12 @@ model_melresnet <- torch::nn_module(
 #' Tensor shape:  (..., n_freq * freq_scale, n_time * time_scale)
 #'
 #' @examples
+#' \dontrun{
 #'  stretch2d = model_stretch2d(time_scale=10, freq_scale=5)
 #'
 #'  input = torch::torch_rand(10, 100, 512)  # a random spectrogram
 #'  output = stretch2d(input)  # shape: (10, 500, 5120)
+#'}
 #'
 #' @export
 model_stretch2d <- torch::nn_module(
@@ -141,9 +147,11 @@ model_stretch2d <- torch::nn_module(
 #'  where total_scale is the product of all elements in upsample_scales.
 #'
 #' @examples
+#' \dontrun{
 #'  upsamplenetwork = model_upsample_network(upsample_scales=c(4, 4, 16))
 #'  input = torch::torch_rand (10, 128, 10)  # a random spectrogram
 #'  output = upsamplenetwork (input)  # shape: (10, 1536, 128), (10, 1536, 128)
+#'}
 #'
 #' @export
 model_upsample_network <- torch::nn_module(
@@ -224,13 +232,14 @@ model_upsample_network <- torch::nn_module(
 #' Tensor shape:  (n_batch, 1, (n_time - kernel_size + 1) * hop_length, n_classes)
 #'
 #' @examples
+#' \dontrun{
 #' wavernn <- model_wavernn(upsample_scales=c(2,2,3), n_classes=5, hop_length=12)
 #'
 #' waveform <- torch::torch_rand(3,1,(10 - 5 + 1)*12)
 #' spectrogram <- torch::torch_rand(3,1,128,10)
 #' # waveform shape:  (n_batch, n_channel, (n_time - kernel_size + 1) * hop_length)
 #' output <- wavernn(waveform, spectrogram)
-#'
+#'}
 #' @export
 model_wavernn <- torch::nn_module(
   "WaveRNN",
