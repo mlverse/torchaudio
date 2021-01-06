@@ -367,7 +367,7 @@ functional_magphase <- function(
 #' @return `tensor`: Complex Specgrams Stretch with dimension of `(..., freq, ceiling(time/rate), complex=2)`
 #'
 #' @examples
-#' \dontrun{
+#' if(torch::torch_is_installed()) {
 #' library(torch)
 #' library(torchaudio)
 #'
@@ -1679,7 +1679,7 @@ functional_mask_along_axis <- function(
 #' @return `tensor`: Tensor of deltas of dimension (..., freq, time)
 #'
 #' @examples
-#' \dontrun{
+#' if(torch::torch_is_installed()) {
 #' library(torch)
 #' library(torchaudio)
 #' specgram = torch_randn(1, 40, 1000)

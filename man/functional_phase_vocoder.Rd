@@ -20,7 +20,7 @@ functional_phase_vocoder(complex_specgrams, rate, phase_advance)
 Given a STFT tensor, speed up in time without modifying pitch by a factor of \code{rate}.
 }
 \examples{
-\dontrun{
+if(torch::torch_is_installed()) {
 library(torch)
 library(torchaudio)
 
