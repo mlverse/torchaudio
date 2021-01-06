@@ -21,6 +21,9 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v1
 
+      - name: External dependencies
+        run: sudo apt install libcurl4-openssl-dev libharfbuzz-dev libfribidi-dev
+        
       - name: Query dependencies
         run: |
           install.packages('remotes')
@@ -38,7 +41,7 @@ jobs:
       - name: Install dependencies
         run: |
           remotes::install_deps(dependencies = TRUE)
-          install.packages("pkgdown", type = "binary")
+          install.packages("pkgdown")
         shell: Rscript {0}
 
       - name: Install package
