@@ -26,7 +26,13 @@ torchaudio is an extension for [torch](https://github.com/mlverse/torch) providi
 
 ## Installation
 
-Not on CRAN yet. You can install the development version from GitHub with:
+The CRAN release can be installed with:
+
+```{r, eval = FALSE}
+install.packages("torchaudio")
+```
+
+You can install the development version from GitHub with:
 
 ```{r, eval = FALSE}
 remotes::install_github("curso-r/torchaudio")

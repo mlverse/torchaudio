@@ -22,8 +22,13 @@ Torchaudio](https://pytorch.org/audio/stable/index.html) library to R.
 
 ## Installation
 
-Not on CRAN yet. You can install the development version from GitHub
-with:
+The CRAN release can be installed with:
+
+``` r
+install.packages("torchaudio")
+```
+
+You can install the development version from GitHub with:
 
 ``` r
 remotes::install_github("curso-r/torchaudio")
@@ -54,7 +59,7 @@ plot(waveform[1], col = "royalblue", type = "l")
 lines(waveform[2], col = "orange")
 ```
 
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
 
 ## A Spectrogram
 
@@ -68,7 +73,7 @@ specgram_as_array <- as.array(specgram$log2()[1]$t())
 image(specgram_as_array[,ncol(specgram_as_array):1], col = viridis::viridis(n = 257,  option = "magma"))
 ```
 
-<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
 
 ## Datasets ([go to issue](https://github.com/curso-r/torchaudio/issues/17))
 
