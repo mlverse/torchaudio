@@ -22,7 +22,7 @@ jobs:
       - uses: r-lib/actions/setup-pandoc@v1
 
       - name: External dependencies
-        run: apt install libcurl4-openssl-dev
+        run: sudo apt install libcurl4-openssl-dev
         
       - name: Query dependencies
         run: |
