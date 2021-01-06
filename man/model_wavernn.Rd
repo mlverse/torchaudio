@@ -57,7 +57,7 @@ The input channels of waveform and spectrogram have to be 1. The product of
 \code{upsample_scales} must equal \code{hop_length}.
 }
 \examples{
-\dontrun{
+if(torch::torch_is_installed()) {
 wavernn <- model_wavernn(upsample_scales=c(2,2,3), n_classes=5, hop_length=12)
 
 waveform <- torch::torch_rand(3,1,(10 - 5 + 1)*12)
