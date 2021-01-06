@@ -15,3 +15,7 @@
 ^_vignettes/*
 ^Meta$
 ^CRAN-RELEASE$
+torchaudio-manual\.tex$
+val\.de$
+val\.en$
+validation\.tar\.gz$

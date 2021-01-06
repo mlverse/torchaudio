@@ -211,9 +211,14 @@ transform_amplitude_to_db <- torch::nn_module(
 #' - [http://haythamfayek.com/2016/04/21/speech-processing-for-machine-learning.html]()
 #'
 #' @examples #'   Example
+#' \dontrun{
+#'
+#' if(torch::torch_is_installed()) {
 #' sample_mp3 <- torchaudio_load(system.file("sample_audio_1.mp3", package = "torchaudio"))
 #' # (channel, n_mels, time)
 #' mel_specgram <- transform_mel_spectrogram(sample_rate = sample_mp3[[2]])(sample_mp3[[1]])
+#' }
+#' }
 #'
 #' @export
 transform_mel_spectrogram <- torch::nn_module(

@@ -54,11 +54,16 @@ automatically. (Default: \code{NULL})}
 Loads an audio file from disk into a tensor
 }
 \examples{
+\dontrun{
+if(torch::torch_is_installed()) {
 mp3_filename <- system.file("sample_audio_2.mp3", package = "torchaudio")
 data = torchaudio_load(mp3_filename)
 print(data[[1]]$size())
 norm_fun <- function(x) torch::torch_abs(x)$max()
 data_vol_normalized = torchaudio_load(mp3_filename, normalization= norm_fun)
 print(data_vol_normalized[[1]]$abs()$max())
+}
+
+}
 
 }

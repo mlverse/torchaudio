@@ -257,7 +257,7 @@ lines(highpass_waveform[2,], col = "orange")
 # Migrating to torchaudio from Kaldi (Not Implemented Yet)
 
 Users may be familiar with
-[Kaldi](http://github.com/kaldi-asr/kaldi), a toolkit for speech
+[Kaldi](https://github.com/kaldi-asr/kaldi), a toolkit for speech
 recognition. ``torchaudio`` will offer compatibility with it in
 ``torchaudio::kaldi_*`` in the future.
 
