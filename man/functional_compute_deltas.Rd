@@ -27,7 +27,7 @@ where \code{d_t} is the deltas at time \code{t}, \code{c_t} is the spectrogram c
 \code{N} is \code{ (win_length-1) \%/\% 2}.
 }
 \examples{
-\dontrun{
+if(torch::torch_is_installed()) {
 library(torch)
 library(torchaudio)
 specgram = torch_randn(1, 40, 1000)

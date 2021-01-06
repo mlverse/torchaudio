@@ -20,7 +20,7 @@ download_url <- function(url, destfile, checksum) {
 #' @return list: List of paths to extracted files even if not overwritten.
 #'
 #' @examples
-#'\dontrun{
+#'if(torch::torch_is_installed()) {
 #' url = 'http://www.quest.dcs.shef.ac.uk/wmt16_files_mmt/validation.tar.gz'
 #' from_path = './validation.tar.gz'
 #' to_path = './'
