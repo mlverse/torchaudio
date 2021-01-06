@@ -47,6 +47,5 @@ Apply a phasing effect to the audio. Similar to SoX implementation.
 \references{
 \itemize{
 \item \url{http://sox.sourceforge.net/sox.html}
-\item Scott Lehman, Effects Explained, \url{http://harmony-central.com/Effects/effects-explained.html}
 }
 }

@@ -208,7 +208,7 @@ transform_amplitude_to_db <- torch::nn_module(
 #' @section  Sources:
 #' - [https://gist.github.com/kastnerkyle/179d6e9a88202ab0a2fe]()
 #' - [https://timsainb.github.io/spectrograms-mfccs-and-inversion-in-python.html]()
-#' - [http://haythamfayek.com/2016/04/21/speech-processing-for-machine-learning.html]()
+#' - [https://haythamfayek.com/2016/04/21/speech-processing-for-machine-learning.html]()
 #'
 #' @examples #'   Example
 #' \dontrun{

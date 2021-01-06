@@ -61,7 +61,7 @@ waveform (Tensor): Tensor of audio of dimension (..., time).
 \itemize{
 \item \url{https://gist.github.com/kastnerkyle/179d6e9a88202ab0a2fe}
 \item \url{https://timsainb.github.io/spectrograms-mfccs-and-inversion-in-python.html}
-\item \url{http://haythamfayek.com/2016/04/21/speech-processing-for-machine-learning.html}
+\item \url{https://haythamfayek.com/2016/04/21/speech-processing-for-machine-learning.html}
 }
 }
 

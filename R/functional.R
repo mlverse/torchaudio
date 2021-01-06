@@ -118,7 +118,7 @@ functional_create_fb_matrix <- function(
 #'
 #' Create a DCT transformation matrix with shape (``n_mels``, ``n_mfcc``),
 #' normalized depending on norm.
-#' [http://en.wikipedia.org/wiki/Discrete_cosine_transform#DCT-II]()
+#' [https://en.wikipedia.org/wiki/Discrete_cosine_transform]()
 #'
 #' @param n_mfcc (int): Number of mfc coefficients to retain
 #' @param n_mels (int): Number of mel filterbanks
@@ -745,7 +745,7 @@ functional_lowpass_biquad <- function(
 #'
 #' @references
 #' - [http://sox.sourceforge.net/sox.html]()
-#' - [https://www.w3.org/2011/audio/audio-eq-cookbook.html#APF]()
+#' - [https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html]()
 #'
 #' @export
 functional_allpass_biquad <- function(
@@ -782,7 +782,7 @@ functional_allpass_biquad <- function(
 #'
 #' @references
 #' - [http://sox.sourceforge.net/sox.html]()
-#' - [https://www.w3.org/2011/audio/audio-eq-cookbook.html#APF]()
+#' - [https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html]()
 #'
 #' @export
 functional_bandpass_biquad <- function(
@@ -819,7 +819,7 @@ functional_bandpass_biquad <- function(
 #'
 #' @references
 #' - [http://sox.sourceforge.net/sox.html]()
-#' - [https://www.w3.org/2011/audio/audio-eq-cookbook.html#APF]()
+#' - [https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html]()
 #'
 #' @export
 functional_bandreject_biquad <- function(
@@ -891,7 +891,7 @@ functional_equalizer_biquad <- function(
 #'
 #' @references
 #' - [http://sox.sourceforge.net/sox.html]()
-#' - [https://www.w3.org/2011/audio/audio-eq-cookbook.html#APF]()
+#' - [https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html]()
 #'
 #' @export
 functional_band_biquad <- function(
@@ -936,7 +936,7 @@ functional_band_biquad <- function(
 #'
 #' @references
 #' - [http://sox.sourceforge.net/sox.html]()
-#' - [https://www.w3.org/2011/audio/audio-eq-cookbook.html#APF]()
+#' - [https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html]()
 #'
 #' @export
 functional_treble_biquad <- function(
@@ -979,7 +979,7 @@ functional_treble_biquad <- function(
 #'
 #' @references
 #' - [http://sox.sourceforge.net/sox.html]()
-#' - [https://www.w3.org/2011/audio/audio-eq-cookbook.html#APF]()
+#' - [https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html]()
 #'
 #' @export
 functional_bass_biquad <- function(
@@ -1020,7 +1020,7 @@ functional_bass_biquad <- function(
 #'
 #' @references
 #' - [http://sox.sourceforge.net/sox.html]()
-#' - [https://www.w3.org/2011/audio/audio-eq-cookbook.html#APF]()
+#' - [https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html]()
 #'
 #' @export
 functional_deemph_biquad <- function(
@@ -1069,7 +1069,7 @@ functional_deemph_biquad <- function(
 #'
 #' @references
 #' - [http://sox.sourceforge.net/sox.html]()
-#' - [https://www.w3.org/2011/audio/audio-eq-cookbook.html#APF]()
+#' - [https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html]()
 #'
 #' @export
 functional_riaa_biquad <- function(
@@ -1287,7 +1287,6 @@ functional_overdrive <- function(
 #'
 #' @references
 #' - [http://sox.sourceforge.net/sox.html]()
-#' - Scott Lehman, Effects Explained, [http://harmony-central.com/Effects/effects-explained.html]()
 #'
 #' @export
 functional_phaser <- function(

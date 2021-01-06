@@ -20,5 +20,5 @@ row-wise data of size (\code{n_mels}, \code{n_mfcc}).
 \description{
 Create a DCT transformation matrix with shape (\code{n_mels}, \code{n_mfcc}),
 normalized depending on norm.
-\url{http://en.wikipedia.org/wiki/Discrete_cosine_transform#DCT-II}
+\url{https://en.wikipedia.org/wiki/Discrete_cosine_transform}
 }
