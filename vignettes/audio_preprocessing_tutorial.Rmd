@@ -61,7 +61,7 @@ Transformations
 ---------------
 
 ``torchaudio`` supports a growing list of
-[`transformations`](https://pytorch.org/audio/transforms.html).
+[`transformations`](https://pytorch.org/audio/stable/transforms.html).
 
 -  **Resample**: Resample waveform to a different sample rate.
 -  **Spectrogram**: Create a spectrogram from a waveform.
