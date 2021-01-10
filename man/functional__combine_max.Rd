@@ -13,6 +13,9 @@ functional__combine_max(a, b, thresh = 0.99)
 
 \item{thresh}{(float) Default: 0.99}
 }
+\value{
+\code{list(tensor, tensor)}: a list with values tensor and indices tensor.
+}
 \description{
 Take value from first if bigger than a multiplicative factor of the second, elementwise.
 }

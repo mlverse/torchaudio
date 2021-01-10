@@ -1750,6 +1750,8 @@ functional_gain <- function(
 #' @param dithered_waveform (Tensor) dithered
 #' @param waveform (Tensor) original
 #'
+#' @return `tensor` of the noise shaped waveform
+#'
 #' @export
 functional_add_noise_shaping <- function(
   dithered_waveform,
@@ -1899,6 +1901,8 @@ functional_dither <- function(
 #' @param frame_time (float)
 #' @param freq_low (float)
 #'
+#' @return `tensor` of nccf``
+#'
 #' @export
 functional__compute_nccf <- function(
   waveform,
@@ -1949,6 +1953,8 @@ functional__compute_nccf <- function(
 #' @param b (list(tensor, tensor))
 #' @param thresh (float) Default: 0.99
 #'
+#' @return `list(tensor, tensor)`: a list with values tensor and indices tensor.
+#'
 #' @export
 functional__combine_max <- function(
   a,
@@ -1973,6 +1979,8 @@ functional__combine_max <- function(
 #'
 #'  Note: If the max among all the lags is very close
 #'  to the first half of lags, then the latter is taken.
+#'
+#'  @return `tensor` with indices
 #'
 #' @export
 functional__find_max_per_frame <- function(
@@ -2008,6 +2016,8 @@ functional__find_max_per_frame <- function(
 #'
 #' @param indices (Tensor)
 #' @param win_length (int)
+#'
+#' @return `tensor`
 #'
 #' @export
 functional__median_smoothing <- function(

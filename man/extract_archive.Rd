@@ -25,7 +25,7 @@ url = 'http://www.quest.dcs.shef.ac.uk/wmt16_files_mmt/validation.tar.gz'
 from_path = './validation.tar.gz'
 to_path = './'
 utils::download.file(url = url, destfile = from_path)
-torchaudio:::extract_archive (from_path, to_path)
+torchaudio::extract_archive (from_path, to_path)
 }
 
 }

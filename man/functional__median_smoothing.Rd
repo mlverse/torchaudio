@@ -11,6 +11,9 @@ functional__median_smoothing(indices, win_length)
 
 \item{win_length}{(int)}
 }
+\value{
+\code{tensor}
+}
 \description{
 Apply median smoothing to the 1D tensor over the given window.
 }

@@ -11,6 +11,9 @@ functional_add_noise_shaping(dithered_waveform, waveform)
 
 \item{waveform}{(Tensor) original}
 }
+\value{
+\code{tensor} of the noise shaped waveform
+}
 \description{
 Noise shaping is calculated by error:
 error[n] = dithered[n] - original[n]

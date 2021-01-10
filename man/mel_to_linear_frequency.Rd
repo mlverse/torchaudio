@@ -17,6 +17,9 @@ mel_to_linear_frequency(
 
 \item{mel_high_frequency_q}{(numeric) scalar. (Default to 700.0)}
 }
+\value{
+\code{tensor}
+}
 \description{
 Converts frequencies from the mel scale to linear scale.
 }

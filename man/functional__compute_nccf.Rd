@@ -15,6 +15,9 @@ functional__compute_nccf(waveform, sample_rate, frame_time, freq_low)
 
 \item{freq_low}{(float)}
 }
+\value{
+\code{tensor} of nccf``
+}
 \description{
 Compute Normalized Cross-Correlation Function  (NCCF).
 }
