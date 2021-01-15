@@ -14,9 +14,10 @@ functional__find_max_per_frame(nccf, sample_rate, freq_high)
 \item{freq_high}{(int): Highest frequency that can be detected (Hz)
 
 Note: If the max among all the lags is very close
-to the first half of lags, then the latter is taken.
-
-@return \code{tensor} with indices}
+to the first half of lags, then the latter is taken.}
+}
+\value{
+\code{tensor} with indices
 }
 \description{
 For each frame, take the highest value of NCCF,

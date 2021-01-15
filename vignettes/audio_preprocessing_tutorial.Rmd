@@ -276,7 +276,8 @@ The datasets ``torchaudio`` currently supports are:
 -  **CMUArctics**
 
 ```{r, fig.height=4, fig.width=6}
-yesno_data <- yesno_dataset('.', download=TRUE)
+temp <- tempdir()
+yesno_data <- yesno_dataset(temp, download=TRUE)
 
 # A data point in Yesno is a list (waveform, sample_rate, labels) where labels is a list of integers with 1 for yes and 0 for no.
 
@@ -286,6 +287,10 @@ sample <- yesno_data[n]
 sample
 
 plot(sample[[1]][1], col = "royalblue", type = "l")
+```
+
+```{r, echo = FALSE}
+fs::dir_delete(temp)
 ```
 
 Now, whenever you ask for a sound file from the dataset, it is loaded in memory only when you ask for it.

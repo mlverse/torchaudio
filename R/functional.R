@@ -1980,7 +1980,7 @@ functional__combine_max <- function(
 #'  Note: If the max among all the lags is very close
 #'  to the first half of lags, then the latter is taken.
 #'
-#'  @return `tensor` with indices
+#' @return `tensor` with indices
 #'
 #' @export
 functional__find_max_per_frame <- function(

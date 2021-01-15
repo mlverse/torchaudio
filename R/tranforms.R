@@ -795,6 +795,8 @@ transform__axismasking <- torch::nn_module(
 #'            example/channel in the batch.  (Default: ``FALSE``)
 #'            This option is applicable only when the input tensor is 4D.
 #'
+#' @return not implemented yet.
+#'
 #' @export
 transform_frequencymasking <- function(freq_mask_param, iid_masks) {
   not_implemented_error("Class _AxisMasking to be implemented yet.")
@@ -817,6 +819,8 @@ transform_frequencymasking <- function(freq_mask_param, iid_masks) {
 #' @param iid_masks  (bool, optional): whether to apply different masks to each
 #'            example/channel in the batch.  (Default: ``FALSE``)
 #'            This option is applicable only when the input tensor is 4D.
+#'
+#' @return not implemented yet.
 #'
 #' @export
 transform_timemasking <- function(time_mask_param, iid_masks) {
@@ -970,6 +974,8 @@ transform_sliding_window_cmn <- torch::nn_module(
 #'
 #' @references
 #' - [http://sox.sourceforge.net/sox.html]()
+#'
+#' @return torch::nn_module()
 #'
 #' @export
 transform_vad <- torch::nn_module(

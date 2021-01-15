@@ -24,6 +24,9 @@ Allowed type values are \code{"aew"}, \code{"ahw"}, \code{"aup"}, \code{"awb"}, 
 
 \item{download}{(bool, optional): Whether to download the dataset if it is not found at root path.  (default: \code{FALSE}).}
 }
+\value{
+a torch::dataset()
+}
 \description{
 Create a Dataset for CMU_ARCTIC.
 }

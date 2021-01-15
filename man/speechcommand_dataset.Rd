@@ -23,6 +23,9 @@ Allowed type values are \code{"speech_commands_v0.01"} and \code{"speech_command
 
 \item{download}{(bool, optional): Whether to download the dataset if it is not found at root path.  (default: \code{FALSE}).}
 }
+\value{
+a torch::dataset()
+}
 \description{
 Speech Commands Dataset
 }

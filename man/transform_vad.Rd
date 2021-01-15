@@ -77,6 +77,9 @@ in the detector algorithm.  (Default: 150.0)}
 \item{lp_lifter_freq}{(float, optional) "Brick-wall" frequency of low-pass lifter used
 in the detector algorithm.  (Default: 2000.0)}
 }
+\value{
+torch::nn_module()
+}
 \description{
 Voice Activity Detector. Similar to SoX implementation.
 }

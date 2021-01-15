@@ -1,5 +1,5 @@
 Package: torchaudio
-Title: R Interface to `pytorch`'s `torchaudio`
+Title: R Interface to 'pytorch''s 'torchaudio'
 Version: 0.1.1.0
 Authors@R: c(
     person(given = "Athos",
@@ -8,7 +8,7 @@ Authors@R: c(
            email = "athos.damiani@gmail.com"
            )
     )
-Description: Provides access to torch datasets, models and preprocessing
+Description: Provides access to datasets, models and preprocessing
     facilities for deep learning in audio.
 License: MIT + file LICENSE
 Encoding: UTF-8

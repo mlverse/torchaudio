@@ -31,6 +31,8 @@ load_speechcommands_item <- function(filepath, path, hash_divider = "_nohash_") 
 #' @param folder_in_archive  (str, optional): The top-level directory of the dataset.  (default: ``"SpeechCommands"``)
 #' @param download  (bool, optional): Whether to download the dataset if it is not found at root path.  (default: ``FALSE``).
 #'
+#' @return a torch::dataset()
+#'
 #' @export
 speechcommand_dataset <- torch::dataset(
   "SpeechCommands",

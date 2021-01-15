@@ -42,6 +42,8 @@ load_cmuarctic_item <- function(
 #' @param folder_in_archive  (str, optional): The top-level directory of the dataset.  (default: ``"ARCTIC"``)
 #' @param download  (bool, optional): Whether to download the dataset if it is not found at root path.  (default: ``FALSE``).
 #'
+#' @return a torch::dataset()
+#'
 #' @export
 cmuarctic_dataset <- torch::dataset(
   "CMUArctic",

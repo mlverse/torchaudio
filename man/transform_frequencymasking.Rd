@@ -14,6 +14,9 @@ Indices uniformly sampled from [0, freq_mask_param).}
 example/channel in the batch.  (Default: \code{FALSE})
 This option is applicable only when the input tensor is 4D.}
 }
+\value{
+not implemented yet.
+}
 \description{
 Apply masking to a spectrogram in the frequency domain.
 }
