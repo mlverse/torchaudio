@@ -289,10 +289,6 @@ sample
 plot(sample[[1]][1], col = "royalblue", type = "l")
 ```
 
-```{r, echo = FALSE}
-fs::dir_delete(temp)
-```
-
 Now, whenever you ask for a sound file from the dataset, it is loaded in memory only when you ask for it.
 Meaning, the dataset only loads and keeps in memory the items that you want and use, saving on memory.
 

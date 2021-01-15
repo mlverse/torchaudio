@@ -1,9 +1,7 @@
 
-# torch <a href='https://torch.mlverse.org'><img src='man/figures/torchaudio.png' align="right" height="139" /></a>
+# torchaudio <a href='https://curso-r.github.io/torchaudio/'><img src='man/figures/torchaudio.png' align="right" height="139" /></a>
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
-# torchaudio
 
 <!-- badges: start -->
 

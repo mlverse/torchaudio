@@ -8,6 +8,13 @@
 
 <title>Mel Spectrogram — transform_mel_spectrogram • torchaudio</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -38,6 +45,8 @@
 
 
 
+  <link href="../extra.css" rel="stylesheet">
+  
 
 <meta property="og:title" content="Mel Spectrogram — transform_mel_spectrogram" />
 <meta property="og:description" content="Create MelSpectrogram for a raw audio signal. This is a composition of Spectrogram
@@ -83,7 +92,7 @@ and MelScale." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">torchaudio</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1.0</span>
       </span>
     </div>
 
@@ -230,15 +239,20 @@ waveform (Tensor): Tensor of audio of dimension (..., time).</p>
 <ul>
 <li><p><a href='https://gist.github.com/kastnerkyle/179d6e9a88202ab0a2fe'>https://gist.github.com/kastnerkyle/179d6e9a88202ab0a2fe</a></p></li>
 <li><p><a href='https://timsainb.github.io/spectrograms-mfccs-and-inversion-in-python.html'>https://timsainb.github.io/spectrograms-mfccs-and-inversion-in-python.html</a></p></li>
-<li><p><a href='http://haythamfayek.com/2016/04/21/speech-processing-for-machine-learning.html'>http://haythamfayek.com/2016/04/21/speech-processing-for-machine-learning.html</a></p></li>
+<li><p><a href='https://haythamfayek.com/2016/04/21/speech-processing-for-machine-learning.html'>https://haythamfayek.com/2016/04/21/speech-processing-for-machine-learning.html</a></p></li>
 </ul>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>#'   Example</span>
+<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+
+<span class='kw'>if</span>(<span class='kw pkg'>torch</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/torch/man/torch_is_installed.html'>torch_is_installed</a></span>()) {
 <span class='no'>sample_mp3</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='torchaudio_load.html'>torchaudio_load</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"sample_audio_1.mp3"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"torchaudio"</span>))
 <span class='co'># (channel, n_mels, time)</span>
-<span class='no'>mel_specgram</span> <span class='kw'>&lt;-</span> <span class='fu'>transform_mel_spectrogram</span>(<span class='kw'>sample_rate</span> <span class='kw'>=</span> <span class='no'>sample_mp3</span><span class='kw'>[[</span><span class='fl'>2</span>]])(<span class='no'>sample_mp3</span><span class='kw'>[[</span><span class='fl'>1</span>]])</div></pre>
+<span class='no'>mel_specgram</span> <span class='kw'>&lt;-</span> <span class='fu'>transform_mel_spectrogram</span>(<span class='kw'>sample_rate</span> <span class='kw'>=</span> <span class='no'>sample_mp3</span><span class='kw'>[[</span><span class='fl'>2</span>]])(<span class='no'>sample_mp3</span><span class='kw'>[[</span><span class='fl'>1</span>]])
+}
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

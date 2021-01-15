@@ -8,6 +8,13 @@
 
 <title>Delta Coefficients (functional) — functional_compute_deltas • torchaudio</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -38,6 +45,8 @@
 
 
 
+  <link href="../extra.css" rel="stylesheet">
+  
 
 <meta property="og:title" content="Delta Coefficients (functional) — functional_compute_deltas" />
 <meta property="og:description" content="Compute delta coefficients of a tensor, usually a spectrogram." />
@@ -82,7 +91,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">torchaudio</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1.0</span>
       </span>
     </div>
 
@@ -170,16 +179,18 @@
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>math:
-$$
- d_t = \frac{\sum_{n=1}^{N} n  (c_{t+n} - c_{t-n})}{2 \sum_{n=1}^{N} n^2}
- $$</p>
+$$d_t = \frac{\sum_{n=1}^{N} n  (c_{t+n} - c_{t-n})}{2 \sum_{n=1}^{N} n^2}$$</p>
 <p>where <code>d_t</code> is the deltas at time <code>t</code>, <code>c_t</code> is the spectrogram coeffcients at time <code>t</code>,
 <code>N</code> is <code> (win_length-1) %/% 2</code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>specgram</span> <span class='kw'>=</span> <span class='kw pkg'>torch</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/torch/man/torch_randn.html'>torch_randn</a></span>(<span class='fl'>1</span>, <span class='fl'>40</span>, <span class='fl'>1000</span>)
+    <pre class="examples"><div class='input'><span class='kw'>if</span>(<span class='kw pkg'>torch</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/torch/man/torch_is_installed.html'>torch_is_installed</a></span>()) {
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>torch</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>torchaudio</span>)
+<span class='no'>specgram</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/torch/man/torch_randn.html'>torch_randn</a></span>(<span class='fl'>1</span>, <span class='fl'>40</span>, <span class='fl'>1000</span>)
 <span class='no'>delta</span> <span class='kw'>=</span> <span class='fu'>functional_compute_deltas</span>(<span class='no'>specgram</span>)
-<span class='no'>delta2</span> <span class='kw'>=</span> <span class='fu'>functional_compute_deltas</span>(<span class='no'>delta</span>)</div></pre>
+<span class='no'>delta2</span> <span class='kw'>=</span> <span class='fu'>functional_compute_deltas</span>(<span class='no'>delta</span>)
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
