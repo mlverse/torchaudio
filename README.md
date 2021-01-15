@@ -1,4 +1,6 @@
 
+# torch <a href='https://torch.mlverse.org'><img src='man/figures/torchaudio.png' align="right" height="139" /></a>
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # torchaudio
