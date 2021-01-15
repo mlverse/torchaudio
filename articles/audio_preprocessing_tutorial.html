@@ -338,7 +338,8 @@
 <li><p><strong>CMUArctics</strong></p></li>
 </ul>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">yesno_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/yesno_dataset.html">yesno_dataset</a></span><span class="op">(</span><span class="st">'.'</span>, download<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">temp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempdir</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">yesno_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/yesno_dataset.html">yesno_dataset</a></span><span class="op">(</span><span class="va">temp</span>, download<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
 
 <span class="co"># A data point in Yesno is a list (waveform, sample_rate, labels) where labels is a list of integers with 1 for yes and 0 for no.</span>
 
