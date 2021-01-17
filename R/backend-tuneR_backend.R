@@ -34,10 +34,10 @@ backend_tuneR_backend_load <- function(
   if(!fs::is_file(filepath))
     runtime_error(glue::glue("{filepath} not found or is a directory"))
 
-  if(num_frames < -1)
+  if(duration < -1)
     value_error("Expected value for num_samples -1 (entire file) or >=0")
-  if(num_frames %in% c(-1, 0))
-    num_frames = Inf
+  if(duration %in% c(-1, 0))
+    duration = Inf
   if(offset < 0)
     value_error("Expected positive offset value")
 
@@ -62,6 +62,6 @@ backend_tuneR_backend_load <- function(
   return(list(out_tensor, sample_rate))
 }
 
-backend_tuneR_backend_info <- function(){}
+backend_tuneR_backend_info <- function() {}
 
-backend_tuneR_backend_save <- function(){}
+backend_tuneR_backend_save <- function() {}

@@ -10,7 +10,7 @@ test_that("backend_tuneR_backend_load", {
     normalization = 10,
     channels_first = FALSE,
     offset = 2000,
-    num_frames = 2
+    duration = 2
   )
   expect_equal(waveform_and_sample_rate[[2]], sample_mp3@samp.rate)
   expect_tensor(waveform_and_sample_rate[[1]])
