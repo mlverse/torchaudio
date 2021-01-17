@@ -62,6 +62,6 @@ backend_tuneR_backend_load <- function(
   return(list(out_tensor, sample_rate))
 }
 
-backend_tuneR_backend_info <- function(){}
+backend_tuneR_backend_info <- function() {}
 
-backend_tuneR_backend_save <- function(){}
+backend_tuneR_backend_save <- function() {}
