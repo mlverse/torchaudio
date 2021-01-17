@@ -15,7 +15,8 @@ backend_tuneR_backend_load <- function(
   out = NULL,
   normalization = TRUE,
   channels_first = TRUE,
-  num_frames = 0L,
+  duration = 0L,
+  unit = c("samples", "time"),
   offset = 0L,
   signalinfo = NULL,
   encodinginfo = NULL,
@@ -42,7 +43,7 @@ backend_tuneR_backend_load <- function(
 
   # load audio file
   out <- tuneR_backend_read_audio(filepath)
-  out <- tuneR::extractWave(out, from = offset+1, to = offset + num_frames, xunit = "samples", interact = FALSE)
+  out <- tuneR::extractWave(out, from = offset+1, to = offset + duration, xunit = unit[1], interact = FALSE)
   l_out <- length(out)
   bits <- out@bit
 
