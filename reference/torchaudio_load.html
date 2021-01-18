@@ -159,8 +159,9 @@
   out <span class='op'>=</span> <span class='cn'>NULL</span>,
   normalization <span class='op'>=</span> <span class='cn'>TRUE</span>,
   channels_first <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  num_frames <span class='op'>=</span> <span class='fl'>0L</span>,
+  duration <span class='op'>=</span> <span class='fl'>0L</span>,
   offset <span class='op'>=</span> <span class='fl'>0L</span>,
+  unit <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"sample"</span>, <span class='st'>"time"</span><span class='op'>)</span>,
   signalinfo <span class='op'>=</span> <span class='cn'>NULL</span>,
   encodinginfo <span class='op'>=</span> <span class='cn'>NULL</span>,
   filetype <span class='op'>=</span> <span class='cn'>NULL</span>
@@ -191,12 +192,12 @@ then the output is divided by the result. (Default: <code>TRUE</code>)</p></td>
       <td><p>(bool): Set channels first or length first in result. (Default: <code>TRUE</code>)</p></td>
     </tr>
     <tr>
-      <th>num_frames</th>
-      <td><p>(int): Number of frames to load.  0 to load everything after the offset. (Default: <code>0</code>)</p></td>
+      <th>duration</th>
+      <td><p>(int): Number of frames (or seconds) to load.  0 to load everything after the offset. (Default: <code>0</code>)</p></td>
     </tr>
     <tr>
       <th>offset</th>
-      <td><p>(int): Number of frames from the start of the file to begin data loading. (Default: <code>0</code>)</p></td>
+      <td><p>(int): Number of frames (or seconds) from the start of the file to begin data loading. (Default: <code>0</code>)</p></td>
     </tr>
     <tr>
       <th>signalinfo</th>
@@ -212,6 +213,10 @@ audio type cannot be automatically determined. (Default: <code>NULL</code>)</p><
       <th>filetype</th>
       <td><p>(str): A filetype or extension to be set if sox cannot determine it
 automatically. (Default: <code>NULL</code>)</p></td>
+    </tr>
+    <tr>
+      <th>unit:</th>
+      <td><p>(str): "sample" or "time". If "sample" duration and offset will be interpreted as frames, and as seconds otherwise.</p></td>
     </tr>
     </table>
 
