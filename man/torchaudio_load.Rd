@@ -35,6 +35,8 @@ then the output is divided by the result. (Default: \code{TRUE})}
 
 \item{offset}{(int): Number of frames (or seconds) from the start of the file to begin data loading. (Default: \code{0})}
 
+\item{unit}{(str): "sample" or "time". If "sample" duration and offset will be interpreted as frames, and as seconds otherwise.}
+
 \item{signalinfo}{(str): A sox_signalinfo_t type, which could be helpful if the
 audio type cannot be automatically determined. (Default: \code{NULL})}
 
@@ -43,8 +45,6 @@ audio type cannot be automatically determined. (Default: \code{NULL})}
 
 \item{filetype}{(str): A filetype or extension to be set if sox cannot determine it
 automatically. (Default: \code{NULL})}
-
-\item{unit:}{(str): "sample" or "time". If "sample" duration and offset will be interpreted as frames, and as seconds otherwise.}
 }
 \value{
 \preformatted{list(Tensor, int): An output tensor of size `[C x L]` or `[L x C]` where

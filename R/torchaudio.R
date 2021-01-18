@@ -14,7 +14,7 @@
 #' @param channels_first (bool): Set channels first or length first in result. (Default: ``TRUE``)
 #' @param duration (int): Number of frames (or seconds) to load.  0 to load everything after the offset. (Default: ``0``)
 #' @param offset (int): Number of frames (or seconds) from the start of the file to begin data loading. (Default: ``0``)
-#' @param unit: (str): "sample" or "time". If "sample" duration and offset will be interpreted as frames, and as seconds otherwise.
+#' @param unit (str): "sample" or "time". If "sample" duration and offset will be interpreted as frames, and as seconds otherwise.
 #' @param signalinfo (str): A sox_signalinfo_t type, which could be helpful if the
 #'         audio type cannot be automatically determined. (Default: ``NULL``)
 #' @param encodinginfo (str): A sox_encodinginfo_t type, which could be set if the
