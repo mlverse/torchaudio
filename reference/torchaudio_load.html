@@ -200,6 +200,10 @@ then the output is divided by the result. (Default: <code>TRUE</code>)</p></td>
       <td><p>(int): Number of frames (or seconds) from the start of the file to begin data loading. (Default: <code>0</code>)</p></td>
     </tr>
     <tr>
+      <th>unit</th>
+      <td><p>(str): "sample" or "time". If "sample" duration and offset will be interpreted as frames, and as seconds otherwise.</p></td>
+    </tr>
+    <tr>
       <th>signalinfo</th>
       <td><p>(str): A sox_signalinfo_t type, which could be helpful if the
 audio type cannot be automatically determined. (Default: <code>NULL</code>)</p></td>
@@ -213,10 +217,6 @@ audio type cannot be automatically determined. (Default: <code>NULL</code>)</p><
       <th>filetype</th>
       <td><p>(str): A filetype or extension to be set if sox cannot determine it
 automatically. (Default: <code>NULL</code>)</p></td>
-    </tr>
-    <tr>
-      <th>unit:</th>
-      <td><p>(str): "sample" or "time". If "sample" duration and offset will be interpreted as frames, and as seconds otherwise.</p></td>
     </tr>
     </table>
 
