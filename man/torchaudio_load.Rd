@@ -9,8 +9,9 @@ torchaudio_load(
   out = NULL,
   normalization = TRUE,
   channels_first = TRUE,
-  num_frames = 0L,
+  duration = 0L,
   offset = 0L,
+  unit = c("sample", "time"),
   signalinfo = NULL,
   encodinginfo = NULL,
   filetype = NULL
@@ -30,9 +31,9 @@ then the output is divided by the result. (Default: \code{TRUE})}
 
 \item{channels_first}{(bool): Set channels first or length first in result. (Default: \code{TRUE})}
 
-\item{num_frames}{(int): Number of frames to load.  0 to load everything after the offset. (Default: \code{0})}
+\item{duration}{(int): Number of frames (or seconds) to load.  0 to load everything after the offset. (Default: \code{0})}
 
-\item{offset}{(int): Number of frames from the start of the file to begin data loading. (Default: \code{0})}
+\item{offset}{(int): Number of frames (or seconds) from the start of the file to begin data loading. (Default: \code{0})}
 
 \item{signalinfo}{(str): A sox_signalinfo_t type, which could be helpful if the
 audio type cannot be automatically determined. (Default: \code{NULL})}
@@ -42,6 +43,8 @@ audio type cannot be automatically determined. (Default: \code{NULL})}
 
 \item{filetype}{(str): A filetype or extension to be set if sox cannot determine it
 automatically. (Default: \code{NULL})}
+
+\item{unit:}{(str): "sample" or "time". If "sample" duration and offset will be interpreted as frames, and as seconds otherwise.}
 }
 \value{
 \preformatted{list(Tensor, int): An output tensor of size `[C x L]` or `[L x C]` where

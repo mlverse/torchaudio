@@ -12,8 +12,9 @@
 #'         then the output is divided by the result. (Default: ``TRUE``)
 #'
 #' @param channels_first (bool): Set channels first or length first in result. (Default: ``TRUE``)
-#' @param num_frames (int): Number of frames to load.  0 to load everything after the offset. (Default: ``0``)
-#' @param offset (int): Number of frames from the start of the file to begin data loading. (Default: ``0``)
+#' @param duration (int): Number of frames (or seconds) to load.  0 to load everything after the offset. (Default: ``0``)
+#' @param offset (int): Number of frames (or seconds) from the start of the file to begin data loading. (Default: ``0``)
+#' @param unit: (str): "sample" or "time". If "sample" duration and offset will be interpreted as frames, and as seconds otherwise.
 #' @param signalinfo (str): A sox_signalinfo_t type, which could be helpful if the
 #'         audio type cannot be automatically determined. (Default: ``NULL``)
 #' @param encodinginfo (str): A sox_encodinginfo_t type, which could be set if the
@@ -46,8 +47,9 @@ torchaudio_load <- function(
   out = NULL,
   normalization = TRUE,
   channels_first = TRUE,
-  num_frames = 0L,
+  duration = 0L,
   offset = 0L,
+  unit = c("sample", "time"),
   signalinfo = NULL,
   encodinginfo = NULL,
   filetype = NULL
@@ -60,9 +62,9 @@ torchaudio_load <- function(
     out = out,
     normalization = normalization,
     channels_first = channels_first,
-    duration = num_frames,
-    unit = "samples",
+    duration = duration,
     offset = offset,
+    unit = unit[1],
     signalinfo = signalinfo,
     encodinginfo = encodinginfo,
     filetype = filetype
