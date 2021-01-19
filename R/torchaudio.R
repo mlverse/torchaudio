@@ -57,7 +57,7 @@ torchaudio_load <- function(
   package_required("tuneR")
 
   # if tuneR is installed
-  backend_tuneR_backend_load(
+  tuneR_loader(
     filepath = filepath,
     out = out,
     normalization = normalization,
