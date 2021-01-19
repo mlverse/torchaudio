@@ -10,7 +10,7 @@ tuneR_backend_read_audio <- function(filepath, ...) {
   return(wave_obj)
 }
 
-backend_tuneR_backend_load <- function(
+tuneR_loader <- function(
   filepath,
   out = NULL,
   normalization = TRUE,
