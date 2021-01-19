@@ -44,22 +44,8 @@ tuneR_loader <- function(
   # load audio file
   out <- tuneR_backend_read_audio(filepath)
   out <- tuneR::extractWave(out, from = offset+1, to = offset + duration, xunit = unit[1], interact = FALSE)
-  l_out <- length(out)
-  bits <- out@bit
 
-  out_tensor <- torch::torch_zeros(2, l_out)
-  if(length(out@left) > 0) out_tensor[1] = out@left
-  if(length(out@right) > 0) out_tensor[2] = out@right
-
-  if(!channels_first)
-    out_tensor = out_tensor$t()
-
-  # normalize if needed
-  internal__normalize_audio(out_tensor, 2^(bits-1))
-
-  sample_rate = out@samp.rate
-
-  return(list(out_tensor, sample_rate))
+  out
 }
 
 backend_tuneR_backend_info <- function() {}
