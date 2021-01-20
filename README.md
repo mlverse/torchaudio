@@ -46,12 +46,12 @@ url = "https://pytorch.org/tutorials/_static/img/steam-train-whistle-daniel_simo
 filename = tempfile(fileext = ".wav")
 r = httr::GET(url, httr::write_disk(filename, overwrite = TRUE))
 
-waveform_and_sample_rate = torchaudio_load(filename)
+waveform_and_sample_rate = transform_to_tensor(tuneR_loader(filename))
 waveform = waveform_and_sample_rate[[1]]
 sample_rate = waveform_and_sample_rate[[2]]
 
 paste("Shape of waveform: ", paste(dim(waveform), collapse = " "))
-#> [1] "Shape of waveform:  2 276858"
+#> [1] "Shape of waveform:  2 276859"
 paste("Sample rate of waveform: ", sample_rate)
 #> [1] "Sample rate of waveform:  44100"
 

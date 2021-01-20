@@ -1,22 +1,26 @@
 tuneR_read_mp3_or_wav <- function(filepath, from = 0, to = Inf, unit = "samples") {
   file_ext <- tools::file_ext(filepath)
+  unit <- unit[1]
   if(file_ext == "mp3") {
     info <- suppressWarnings(audio_info(filepath))
     to_ <- to
+    from_ <- from
     if(unit == "samples") {
-      from <-max(1, from)/info$sample_rate
+      from_ <-max(1, from_)/info$sample_rate
       to_ <- to_/info$sample_rate
     }
-    from <-  max(0.01, from)
+    from_ <-  max(0.01, from_)
     to_ <- min(to_, info$duration)
-    to_ <- max(to_, from + 0.015)
+    to_ <- max(to_, from_ + 0.015)
     to_ <- to_*1.1
-    wave_obj <- monitoR::readMP3(filepath, from = from, to = to_)
-    if(unit[1] == "seconds") unit <- "time"
-    wave_obj <- tuneR::extractWave(wave_obj, from = from, to = to, xunit = unit[1])
+    wave_obj <- monitoR::readMP3(filepath, from = from_, to = to_)
+    if(unit == "seconds") unit <- "time"
+    if(unit == "samples") to <- to - 1
+    wave_obj <- tuneR::extractWave(wave_obj, from = from, to = to, xunit = unit)
   } else if(file_ext == "wav") {
-    if(unit[1] == "time") unit <- "seconds"
-    wave_obj <- tuneR::readWave(filepath, from = from, to = to, unit = unit[1])
+    if(unit == "time") unit <- "seconds"
+    if(unit == "samples") to <- to - 1
+    wave_obj <- tuneR::readWave(filepath, from = from, to = to, unit = unit)
   } else {
     runtime_error(glue::glue("Only .mp3 and .wav formats are supported. Got {file_ext}."))
   }
