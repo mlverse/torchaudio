@@ -33,5 +33,5 @@ Convert Audio Object to Tensor.
 }
 \details{
 If audio is a numeric vector, attributes "channels" and "sample_rate" will be used if exists.
-Numeric vectors returned from \link[av:read_audio]{av::read_audio_bin} have both attributes by default.
+Numeric vectors returned from \link[av:read_audio_bin]{av::read_audio_bin} have both attributes by default.
 }

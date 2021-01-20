@@ -1,5 +1,5 @@
 #' @keywords internal
-load_speechcommands_item <- function(filepath, path, hash_divider = "_nohash_") {
+load_speechcommands_item <- function(filepath, path, hash_divider = "_nohash_", class_to_index) {
   if(length(filepath) != 1) value_error("length(filepath) should be 1.")
   relpath = fs::path_rel(filepath, path)
   relpath_split = unlist(fs::path_split(relpath))
@@ -17,6 +17,7 @@ load_speechcommands_item <- function(filepath, path, hash_divider = "_nohash_") 
   sample_rate = waveform_and_sample_rate[[2]]
   return(list(waveform = waveform,
               sample_rate = sample_rate,
+              label_index = class_to_index(label),
               label = label, speaker_id,
               utterance_number = utterance_number))
 }
@@ -45,6 +46,11 @@ speechcommand_dataset <- torch::dataset(
     "https://storage.googleapis.com/download.tensorflow.org/data/speech_commands_v0.02.tar.gz" =
       "6b74f3901214cb2c2934e98196829835"
   ),
+
+  classes = c("bed", "bird", "cat", "dog", "down", "eight", "five", "four",
+              "go", "happy", "house", "left", "marvin", "nine", "no", "off",
+              "on", "one", "right", "seven", "sheila", "six", "stop", "three",
+              "tree", "two", "up", "wow", "yes", "zero"),
 
   initialize = function(
     root,
@@ -92,10 +98,18 @@ speechcommand_dataset <- torch::dataset(
     force(n)
     if(length(n) != 1 || n <= 0) value_error("n should be a single positive integer.")
     fileid = self$.walker[n]
-    return(load_speechcommands_item(fileid, self$.path, self$HASH_DIVIDER))
+    return(load_speechcommands_item(fileid, self$.path, self$HASH_DIVIDER, class_to_index = self$class_to_index))
   },
 
   .length = function() {
     length(self$.walker)
+  },
+
+  class_to_index = function(class) {
+    torch::torch_scalar_tensor(which(self$classes == class))
+  },
+
+  index_to_class = function(index) {
+    self$classes[as.numeric(index$item())]
   }
 )
