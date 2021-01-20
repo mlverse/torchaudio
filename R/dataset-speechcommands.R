@@ -12,7 +12,7 @@ load_speechcommands_item <- function(filepath, path, hash_divider = "_nohash_") 
   utterance_number = as.integer(speaker_id_and_utterance_number[2])
 
   # Load audio
-  waveform_and_sample_rate = torchaudio_load(filepath, normalization = FALSE)
+  waveform_and_sample_rate = transform_to_tensor(tuneR_loader(filepath, normalization = FALSE))
   waveform = waveform_and_sample_rate[[1]][1]$unsqueeze(1)
   sample_rate = waveform_and_sample_rate[[2]]
   return(list(waveform = waveform,

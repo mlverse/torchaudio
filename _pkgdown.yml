@@ -35,7 +35,7 @@ reference:
       - starts_with("model_")
   - title: Audio I/O
     contents:
-      - '`torchaudio_load`'
+      - '`tuneR_loader`'
   - title: Misc
     contents:
       - '`linear_to_mel_frequency`'

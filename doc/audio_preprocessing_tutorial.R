@@ -13,7 +13,7 @@ url = "https://pytorch.org/tutorials/_static/img/steam-train-whistle-daniel_simo
 filename = "steam-train-whistle-daniel_simon-converted-from-mp3.wav"
 r = httr::GET(url, httr::write_disk(filename, overwrite = TRUE))
 
-waveform_and_sample_rate = torchaudio_load(filename)
+waveform_and_sample_rate = transform_to_tensor(tuneR_loader(filename))
 waveform = waveform_and_sample_rate[[1]]
 sample_rate = waveform_and_sample_rate[[2]]
 

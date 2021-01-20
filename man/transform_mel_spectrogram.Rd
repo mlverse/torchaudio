@@ -70,7 +70,7 @@ waveform (Tensor): Tensor of audio of dimension (..., time).
 \dontrun{
 
 if(torch::torch_is_installed()) {
-sample_mp3 <- torchaudio_load(system.file("sample_audio_1.mp3", package = "torchaudio"))
+sample_mp3 <- transform_to_tensor(tuneR_loader(system.file("sample_audio_1.mp3", package = "torchaudio")))
 # (channel, n_mels, time)
 mel_specgram <- transform_mel_spectrogram(sample_rate = sample_mp3[[2]])(sample_mp3[[1]])
 }
