@@ -2,7 +2,7 @@
 
 # torchaudio 0.1.2.0
 
-* unit argument for `torchaudio_load()` to let choose between frames or seconds when load an interval.
+* `torchaudio_load()` has been replaced by `tuneR_loader()` and `tranform_to_tensor()`. Inspired by {torchvision}.
 
 # torchaudio 0.1.1.0
 

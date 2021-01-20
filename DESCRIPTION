@@ -26,7 +26,8 @@ Suggests:
     purrr,
     scales,
     httr,
-    viridis
+    viridis,
+    av
 Imports: 
     torch (>= 0.2.0),
     fs,

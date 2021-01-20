@@ -1,29 +1,37 @@
-tuneR_backend_read_audio <- function(filepath, ...) {
+tuneR_read_mp3_or_wav <- function(filepath, from = 0, to = Inf, unit = "samples") {
   file_ext <- tools::file_ext(filepath)
   if(file_ext == "mp3") {
-    wave_obj <- tuneR::readMP3(filepath)
+    info <- suppressWarnings(audio_info(filepath))
+    if(unit == "samples") {
+      from <-max(1, from)/info$sample_rate
+      to <- to/info$sample_rate
+    }
+    from <-  max(0.01, from)
+    to <- min(to, info$duration)
+    to <- max(to, from + 0.015)
+    wave_obj <- monitoR::readMP3(filepath, from = from, to = to)
   } else if(file_ext == "wav") {
-    wave_obj <- tuneR::readWave(filepath, ...)
+    wave_obj <- tuneR::readWave(filepath, from = from, to = to, units = units)
   } else {
     runtime_error(glue::glue("Only .mp3 and .wav formats are supported. Got {file_ext}."))
   }
   return(wave_obj)
 }
 
+
+
+#' @export
 tuneR_loader <- function(
   filepath,
-  out = NULL,
-  normalization = TRUE,
-  channels_first = TRUE,
+  offset = 0L,
   duration = 0L,
   unit = c("samples", "time"),
-  offset = 0L,
+  normalization = TRUE,
   signalinfo = NULL,
   encodinginfo = NULL,
   filetype = NULL
 ){
 
-  if(!is.null(out)) not_implemented_error('Argument "out" not implemented yet. Please set it to NULL.')
   if(is.null(normalization)) value_error('Argument "normalization" is missing. Should it be set to `TRUE`?')
   if(!is.null(signalinfo)) value_warning('Argument "signalinfo" is meaningful for sox backend only and will be ignored.')
   if(!is.null(encodinginfo)) value_error('Argument "encodinginfo" is meaningful for sox backend only and will be ignored.')
@@ -42,12 +50,9 @@ tuneR_loader <- function(
     value_error("Expected positive offset value")
 
   # load audio file
-  out <- tuneR_backend_read_audio(filepath)
-  out <- tuneR::extractWave(out, from = offset+1, to = offset + duration, xunit = unit[1], interact = FALSE)
-
-  out
+  tuneR_read_mp3_or_wav(filepath, from = offset, to = offset + duration, unit = unit)
 }
 
-backend_tuneR_backend_info <- function() {}
+tuneR_info <- function() {}
 
-backend_tuneR_backend_save <- function() {}
+tuneR_save <- function() {}
