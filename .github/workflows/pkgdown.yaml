@@ -22,7 +22,7 @@ jobs:
       - uses: r-lib/actions/setup-pandoc@v1
 
       - name: External dependencies
-        run: sudo apt install libcurl4-openssl-dev libharfbuzz-dev libfribidi-dev
+        run: sudo apt install libcurl4-openssl-dev libharfbuzz-dev libfribidi-dev libavfilter-dev
         
       - name: Query dependencies
         run: |
