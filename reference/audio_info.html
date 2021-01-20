@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Mel Spectrogram — transform_mel_spectrogram • torchaudio</title>
+<title>Audio Information — audio_info • torchaudio</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -48,9 +48,8 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Mel Spectrogram — transform_mel_spectrogram" />
-<meta property="og:description" content="Create MelSpectrogram for a raw audio signal. This is a composition of Spectrogram
-and MelScale." />
+<meta property="og:title" content="Audio Information — audio_info" />
+<meta property="og:description" content="Audio Information" />
 
 
 
@@ -146,115 +145,30 @@ and MelScale." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Mel Spectrogram</h1>
+    <h1>Audio Information</h1>
     
-    <div class="hidden name"><code>transform_mel_spectrogram.Rd</code></div>
+    <div class="hidden name"><code>audio_info.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Create MelSpectrogram for a raw audio signal. This is a composition of Spectrogram
-and MelScale.</p>
+    <p>Audio Information</p>
     </div>
 
-    <pre class="usage"><span class='fu'>transform_mel_spectrogram</span><span class='op'>(</span>
-  sample_rate <span class='op'>=</span> <span class='fl'>16000</span>,
-  n_fft <span class='op'>=</span> <span class='fl'>400</span>,
-  win_length <span class='op'>=</span> <span class='cn'>NULL</span>,
-  hop_length <span class='op'>=</span> <span class='cn'>NULL</span>,
-  f_min <span class='op'>=</span> <span class='fl'>0</span>,
-  f_max <span class='op'>=</span> <span class='cn'>NULL</span>,
-  pad <span class='op'>=</span> <span class='fl'>0</span>,
-  n_mels <span class='op'>=</span> <span class='fl'>128</span>,
-  window_fn <span class='op'>=</span> <span class='fu'>torch</span><span class='fu'>::</span><span class='va'><a href='https://torch.mlverse.org/docs/reference/torch_hann_window.html'>torch_hann_window</a></span>,
-  power <span class='op'>=</span> <span class='fl'>2</span>,
-  normalized <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  <span class='va'>...</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>audio_info</span><span class='op'>(</span><span class='va'>filepath</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>sample_rate</th>
-      <td><p>(int, optional): Sample rate of audio signal. (Default: <code>16000</code>)</p></td>
-    </tr>
-    <tr>
-      <th>n_fft</th>
-      <td><p>(int, optional): Size of FFT, creates <code>n_fft // 2 + 1</code> bins. (Default: <code>400</code>)</p></td>
-    </tr>
-    <tr>
-      <th>win_length</th>
-      <td><p>(int or NULL, optional): Window size. (Default: <code>n_fft</code>)</p></td>
-    </tr>
-    <tr>
-      <th>hop_length</th>
-      <td><p>(int or NULL, optional): Length of hop between STFT windows. (Default: <code>win_length // 2</code>)</p></td>
-    </tr>
-    <tr>
-      <th>f_min</th>
-      <td><p>(float, optional): Minimum frequency. (Default: <code>0.</code>)</p></td>
-    </tr>
-    <tr>
-      <th>f_max</th>
-      <td><p>(float or NULL, optional): Maximum frequency. (Default: <code>NULL</code>)</p></td>
-    </tr>
-    <tr>
-      <th>pad</th>
-      <td><p>(int, optional): Two sided padding of signal. (Default: <code>0</code>)</p></td>
-    </tr>
-    <tr>
-      <th>n_mels</th>
-      <td><p>(int, optional): Number of mel filterbanks. (Default: <code>128</code>)</p></td>
-    </tr>
-    <tr>
-      <th>window_fn</th>
-      <td><p>(function, optional): A function to create a window tensor
-that is applied/multiplied to each frame/window. (Default: <code>torch_hann_window</code>)</p></td>
-    </tr>
-    <tr>
-      <th>power</th>
-      <td><p>(float, optional): Power of the norm. (Default: to <code>2.0</code>)</p></td>
-    </tr>
-    <tr>
-      <th>normalized</th>
-      <td><p>(logical): Whether to normalize by magnitude after stft (Default: <code>FALSE</code>)</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>(optional): Arguments for window function.</p></td>
+      <th>filepath</th>
+      <td><p>(str) path to the mp3/wav file.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>tensor</code>: Mel frequency spectrogram of size (..., <code>n_mels</code>, time).</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+    <p>data.frame.</p>
 
-    <p>forward param:
-waveform (Tensor): Tensor of audio of dimension (..., time).</p>
-    <h2 class="hasAnchor" id="sources"><a class="anchor" href="#sources"></a>Sources</h2>
-
-    
-
-<ul>
-<li><p><a href='https://gist.github.com/kastnerkyle/179d6e9a88202ab0a2fe'>https://gist.github.com/kastnerkyle/179d6e9a88202ab0a2fe</a></p></li>
-<li><p><a href='https://timsainb.github.io/spectrograms-mfccs-and-inversion-in-python.html'>https://timsainb.github.io/spectrograms-mfccs-and-inversion-in-python.html</a></p></li>
-<li><p><a href='https://haythamfayek.com/2016/04/21/speech-processing-for-machine-learning.html'>https://haythamfayek.com/2016/04/21/speech-processing-for-machine-learning.html</a></p></li>
-</ul>
-
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>#'   Example</span>
-<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-
-<span class='kw'>if</span><span class='op'>(</span><span class='fu'>torch</span><span class='fu'>::</span><span class='fu'><a href='https://torch.mlverse.org/docs/reference/torch_is_installed.html'>torch_is_installed</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='va'>sample_mp3</span> <span class='op'>&lt;-</span> <span class='fu'><a href='transform_to_tensor.html'>transform_to_tensor</a></span><span class='op'>(</span><span class='fu'>tuneR_loader</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"sample_audio_1.mp3"</span>, package <span class='op'>=</span> <span class='st'>"torchaudio"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-<span class='co'># (channel, n_mels, time)</span>
-<span class='va'>mel_specgram</span> <span class='op'>&lt;-</span> <span class='fu'>transform_mel_spectrogram</span><span class='op'>(</span>sample_rate <span class='op'>=</span> <span class='va'>sample_mp3</span><span class='op'>[[</span><span class='fl'>2</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span><span class='op'>(</span><span class='va'>sample_mp3</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span>
-<span class='op'>}</span>
-<span class='op'>}</span>
-
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

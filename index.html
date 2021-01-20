@@ -127,12 +127,12 @@
 <span class="va">filename</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".wav"</span><span class="op">)</span>
 <span class="va">r</span> <span class="op">=</span> <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span><span class="op">(</span><span class="va">url</span>, <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/write_disk.html">write_disk</a></span><span class="op">(</span><span class="va">filename</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
 
-<span class="va">waveform_and_sample_rate</span> <span class="op">=</span> <span class="fu"><a href="reference/torchaudio_load.html">torchaudio_load</a></span><span class="op">(</span><span class="va">filename</span><span class="op">)</span>
+<span class="va">waveform_and_sample_rate</span> <span class="op">=</span> <span class="fu"><a href="reference/transform_to_tensor.html">transform_to_tensor</a></span><span class="op">(</span><span class="fu">tuneR_loader</span><span class="op">(</span><span class="va">filename</span><span class="op">)</span><span class="op">)</span>
 <span class="va">waveform</span> <span class="op">=</span> <span class="va">waveform_and_sample_rate</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>
 <span class="va">sample_rate</span> <span class="op">=</span> <span class="va">waveform_and_sample_rate</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>
 
 <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Shape of waveform: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">waveform</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">" "</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Shape of waveform:  2 276858"</span>
+<span class="co">#&gt; [1] "Shape of waveform:  2 276859"</span>
 <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Sample rate of waveform: "</span>, <span class="va">sample_rate</span><span class="op">)</span>
 <span class="co">#&gt; [1] "Sample rate of waveform:  44100"</span>
 
