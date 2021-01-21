@@ -47,11 +47,6 @@ speechcommand_dataset <- torch::dataset(
       "6b74f3901214cb2c2934e98196829835"
   ),
 
-  classes = c("bed", "bird", "cat", "dog", "down", "eight", "five", "four",
-              "go", "happy", "house", "left", "marvin", "nine", "no", "off",
-              "on", "one", "right", "seven", "sheila", "six", "stop", "three",
-              "tree", "two", "up", "wow", "yes", "zero"),
-
   initialize = function(
     root,
     url = "speech_commands_v0.02",
@@ -61,6 +56,15 @@ speechcommand_dataset <- torch::dataset(
 
     self$URL <- url
     self$FOLDER_IN_ARCHIVE <- folder_in_archive
+
+    self$classes <- if(url %in% "speech_commands_v0.01") {
+      c("bed", "bird", "cat", "dog", "down", "eight", "five", "four",
+        "go", "happy", "house", "left", "marvin", "nine", "no", "off",
+        "on", "one", "right", "seven", "sheila", "six", "stop", "three",
+        "tree", "two", "up", "wow", "yes", "zero")
+    } else {
+
+    }
 
     if(url %in% c(
       "speech_commands_v0.01",

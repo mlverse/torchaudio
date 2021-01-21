@@ -1,161 +1,107 @@
-# Speech Commands Data Set v0.01
 
-This is a set of one-second .wav audio files, each containing a single spoken
-English word. These words are from a small set of commands, and are spoken by a
-variety of different speakers. The audio files are organized into folders based
-on the word they contain, and this data set is designed to help train simple
-machine learning models.
+# torchaudio <a href='https://curso-r.github.io/torchaudio/'><img src='man/figures/torchaudio.png' align="right" height="139" /></a>
 
-It's licensed under the [Creative Commons BY 4.0
-license](https://creativecommons.org/licenses/by/4.0/). See the LICENSE
-file in this folder for full details. Its original location was at
-[http://download.tensorflow.org/data/speech_commands_v0.01.tar.gz](http://download.tensorflow.org/data/speech_commands_v0.01.tar.gz).
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- badges: start -->
 
-## History
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![R build
+status](https://github.com/curso-r/torchaudio/workflows/R-CMD-check/badge.svg)](https://github.com/curso-r/torchaudio/actions)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/torchaudio)](https://CRAN.R-project.org/package=torchaudio)
+[![](https://cranlogs.r-pkg.org/badges/torchaudio)](https://cran.r-project.org/package=torchaudio)
+<!-- badges: end -->
 
-This is version 0.01 of the data set containing 64,727 audio files, released on
-August 3rd 2017.
-[Update April 11th 2018 - This is now superceded by a new version of the dataset 
-with more audio clips and improved label quality, available at [http://download.tensorflow.org/data/speech_commands_v0.02.tar.gz](http://download.tensorflow.org/data/speech_commands_v0.02.tar.gz).
-There is also now a research paper on this dataset at [https://arxiv.org/abs/1804.03209](https://arxiv.org/abs/1804.03209).]
+torchaudio is an extension for [torch](https://github.com/mlverse/torch)
+providing audio loading, transformations, common architectures for
+signal processing, pre-trained weights and access to commonly used
+datasets. An almost literal translation from [PyTorch’s
+Torchaudio](https://pytorch.org/audio/stable/index.html) library to R.
 
-## Collection
+## Installation
 
-The audio files were collected using crowdsourcing, see
-[aiyprojects.withgoogle.com/open_speech_recording](https://github.com/petewarden/extract_loudest_section)
-for some of the open source audio collection code we used (and please consider
-contributing to enlarge this data set). The goal was to gather examples of
-people speaking single-word commands, rather than conversational sentences, so
-they were prompted for individual words over the course of a five minute
-session. Twenty core command words were recorded, with most speakers saying each
-of them five times. The core words are "Yes", "No", "Up", "Down", "Left",
-"Right", "On", "Off", "Stop", "Go", "Zero", "One", "Two", "Three", "Four",
-"Five", "Six", "Seven", "Eight", and "Nine". To help distinguish unrecognized
-words, there are also ten auxiliary words, which most speakers only said once.
-These include "Bed", "Bird", "Cat", "Dog", "Happy", "House", "Marvin", "Sheila",
-"Tree", and "Wow".
+The CRAN release can be installed with:
 
-## Organization
-
-The files are organized into folders, with each directory name labelling the
-word that is spoken in all the contained audio files. No details were kept of
-any of the participants age, gender, or location, and random ids were assigned
-to each individual. These ids are stable though, and encoded in each file name
-as the first part before the underscore. If a participant contributed multiple
-utterances of the same word, these are distinguished by the number at the end of
-the file name. For example, the file path `happy/3cfc6b3a_nohash_2.wav`
-indicates that the word spoken was "happy", the speaker's id was "3cfc6b3a", and
-this is the third utterance of that word by this speaker in the data set. The
-'nohash' section is to ensure that all the utterances by a single speaker are
-sorted into the same training partition, to keep very similar repetitions from
-giving unrealistically optimistic evaluation scores.
-
-## Partitioning
-
-The audio clips haven't been separated into training, test, and validation sets
-explicitly, but by convention a hashing function is used to stably assign each
-file to a set. Here's some Python code demonstrating how a complete file path
-and the desired validation and test set sizes (usually both 10%) are used to
-assign a set:
-
-```python
-MAX_NUM_WAVS_PER_CLASS = 2**27 - 1  # ~134M
-
-def which_set(filename, validation_percentage, testing_percentage):
-  """Determines which data partition the file should belong to.
-
-  We want to keep files in the same training, validation, or testing sets even
-  if new ones are added over time. This makes it less likely that testing
-  samples will accidentally be reused in training when long runs are restarted
-  for example. To keep this stability, a hash of the filename is taken and used
-  to determine which set it should belong to. This determination only depends on
-  the name and the set proportions, so it won't change as other files are added.
-
-  It's also useful to associate particular files as related (for example words
-  spoken by the same person), so anything after '_nohash_' in a filename is
-  ignored for set determination. This ensures that 'bobby_nohash_0.wav' and
-  'bobby_nohash_1.wav' are always in the same set, for example.
-
-  Args:
-    filename: File path of the data sample.
-    validation_percentage: How much of the data set to use for validation.
-    testing_percentage: How much of the data set to use for testing.
-
-  Returns:
-    String, one of 'training', 'validation', or 'testing'.
-  """
-  base_name = os.path.basename(filename)
-  # We want to ignore anything after '_nohash_' in the file name when
-  # deciding which set to put a wav in, so the data set creator has a way of
-  # grouping wavs that are close variations of each other.
-  hash_name = re.sub(r'_nohash_.*$', '', base_name)
-  # This looks a bit magical, but we need to decide whether this file should
-  # go into the training, testing, or validation sets, and we want to keep
-  # existing files in the same set even if more files are subsequently
-  # added.
-  # To do that, we need a stable way of deciding based on just the file name
-  # itself, so we do a hash of that and then use that to generate a
-  # probability value that we use to assign it.
-  hash_name_hashed = hashlib.sha1(hash_name).hexdigest()
-  percentage_hash = ((int(hash_name_hashed, 16) %
-                      (MAX_NUM_WAVS_PER_CLASS + 1)) *
-                     (100.0 / MAX_NUM_WAVS_PER_CLASS))
-  if percentage_hash < validation_percentage:
-    result = 'validation'
-  elif percentage_hash < (testing_percentage + validation_percentage):
-    result = 'testing'
-  else:
-    result = 'training'
-  return result
+``` r
+install.packages("torchaudio")
 ```
 
-The results of running this over the current set are included in this archive as
-validation_list.txt and testing_list.txt. These text files contain the paths to
-all the files in each set, with each path on a new line. Any files that aren't
-in either of these lists can be considered to be part of the training set.
+You can install the development version from GitHub with:
 
-## Processing
+``` r
+remotes::install_github("curso-r/torchaudio")
+```
 
-The original audio files were collected in uncontrolled locations by people
-around the world. We requested that they do the recording in a closed room for
-privacy reasons, but didn't stipulate any quality requirements. This was by
-design, since we wanted examples of the sort of speech data that we're likely to
-encounter in consumer and robotics applications, where we don't have much
-control over the recording equipment or environment. The data was captured in a
-variety of formats, for example Ogg Vorbis encoding for the web app, and then
-converted to a 16-bit little-endian PCM-encoded WAVE file at a 16000 sample
-rate. The audio was then trimmed to a one second length to align most
-utterances, using the
-[extract_loudest_section](https://github.com/petewarden/extract_loudest_section)
-tool. The audio files were then screened for silence or incorrect words, and
-arranged into folders by label.
+## A Waveform
 
-## Background Noise
+`torchaudio` also supports loading sound files in the wav and mp3
+format. We call waveform the resulting raw audio signal.
 
-To help train networks to cope with noisy environments, it can be helpful to mix
-in realistic background audio. The `_background_noise_` folder contains a set of
-longer audio clips that are either recordings or mathematical simulations of
-noise. For more details, see the `_background_noise_/README.md`.
+``` r
+library(torchaudio)
 
-## Citations
+url = "https://pytorch.org/tutorials/_static/img/steam-train-whistle-daniel_simon-converted-from-mp3.wav"
+filename = tempfile(fileext = ".wav")
+r = httr::GET(url, httr::write_disk(filename, overwrite = TRUE))
 
-If you use the Speech Commands dataset in your work, please cite it as:
+waveform_and_sample_rate = transform_to_tensor(tuneR_loader(filename))
+waveform = waveform_and_sample_rate[[1]]
+sample_rate = waveform_and_sample_rate[[2]]
 
-APA-style citation: "Warden P. Speech Commands: A public dataset for single-word
-speech recognition, 2017. Available from
-http://download.tensorflow.org/data/speech_commands_v0.01.tar.gz".
+paste("Shape of waveform: ", paste(dim(waveform), collapse = " "))
+#> [1] "Shape of waveform:  2 276859"
+paste("Sample rate of waveform: ", sample_rate)
+#> [1] "Sample rate of waveform:  44100"
 
-BibTeX `@article{speechcommands, title={Speech Commands: A public dataset for
-single-word speech recognition.}, author={Warden, Pete}, journal={Dataset
-available from
-http://download.tensorflow.org/data/speech_commands_v0.01.tar.gz}, year={2017}
-}`
+plot(waveform[1], col = "royalblue", type = "l")
+lines(waveform[2], col = "orange")
+```
 
-## Credits
+<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
 
-Massive thanks are due to everyone who donated recordings to this data set, I'm
-very grateful. I also couldn't have put this together without the help and
-support of Billy Rutledge, Rajat Monga, Raziel Alvarez, Brad Krueger, Barbara
-Petit, Gursheesh Kour, and all the AIY and TensorFlow teams.
+## A Spectrogram
 
-Pete Warden, petewarden@google.com
+``` r
+specgram <- transform_spectrogram()(waveform)
+
+paste("Shape of spectrogram: ", paste(dim(specgram), collapse = " "))
+#> [1] "Shape of spectrogram:  2 201 1385"
+
+specgram_as_array <- as.array(specgram$log2()[1]$t())
+image(specgram_as_array[,ncol(specgram_as_array):1], col = viridis::viridis(n = 257,  option = "magma"))
+```
+
+<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+
+## Datasets ([go to issue](https://github.com/curso-r/torchaudio/issues/17))
+
+-   [x] CMUARCTIC
+-   [ ] COMMONVOICE
+-   [ ] GTZAN
+-   [ ] LIBRISPEECH
+-   [ ] LIBRITTS
+-   [ ] LJSPEECH
+-   [x] SPEECHCOMMANDS
+-   [ ] TEDLIUM
+-   [ ] VCTK
+-   [ ] VCTK\_092
+-   [x] YESNO
+
+## Models ([go to issue](https://github.com/curso-r/torchaudio/issues/19))
+
+-   [ ] ConvTasNet
+-   [ ] Wav2Letter
+-   [x] WaveRNN
+-   [ ] (what else? novel structures are very welcome!)
+
+## I/O Backend
+
+-   [x] {tuneR}
+
+## Code of Conduct
+
+Please note that the torchaudio project is released with a [Contributor
+Code of
+Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
+By contributing to this project, you agree to abide by its terms.
