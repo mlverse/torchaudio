@@ -57,20 +57,23 @@ speechcommand_dataset <- torch::dataset(
     self$URL <- url
     self$FOLDER_IN_ARCHIVE <- folder_in_archive
 
-    self$classes <- if(url %in% "speech_commands_v0.01") {
-      c("bed", "bird", "cat", "dog", "down", "eight", "five", "four",
-        "go", "happy", "house", "left", "marvin", "nine", "no", "off",
-        "on", "one", "right", "seven", "sheila", "six", "stop", "three",
-        "tree", "two", "up", "wow", "yes", "zero")
+    if(url %in% "speech_commands_v0.01") {
+      classes <- c("_background_noise_", "bed", "bird", "cat", "dog", "down", "eight", "five", "four",
+                        "go", "happy", "house", "left", "marvin", "nine", "no", "off",
+                        "on", "one", "right", "seven", "sheila", "six", "stop", "three",
+                        "tree", "two", "up", "wow", "yes", "zero")
     } else {
-
+      classes <- c("_background_noise_", "backward", "bed", "bird", "cat", "dog",
+                        "down", "eight", "five", "follow", "forward", "four", "go", "happy",
+                        "house", "learn", "left", "marvin", "nine", "no", "off", "on",
+                        "one", "right", "seven", "sheila", "six", "stop", "three", "tree",
+                        "two", "up", "visual", "wow", "yes", "zero")
     }
-
+    self$classes <- classes[!(classes %in% self$EXCEPT_FOLDER)]
     if(url %in% c(
       "speech_commands_v0.01",
       "speech_commands_v0.02"
-    )
-    ) {
+    )) {
       base_url = "https://storage.googleapis.com/download.tensorflow.org/data"
       ext_archive = ".tar.gz"
       url = file.path(base_url, paste0(url, ext_archive))
