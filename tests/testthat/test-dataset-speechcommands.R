@@ -8,7 +8,7 @@ test_that("load_speechcommands_item", {
   expect_length(speechcommand_ds, 7)
 
   one_item <- speechcommand_ds[1]
-  expect_length(one_item, 5)
+  expect_length(one_item, 6)
   expect_tensor(one_item[[1]])
 })
 

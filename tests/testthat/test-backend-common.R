@@ -8,11 +8,13 @@ test_that("av_loader works", {
 })
 
 test_that("tuneR_loader works", {
+
+  a <- torchaudio:::tuneR_read_mp3_or_wav(filepath_mp3, from = 1, to = 40001, unit = "samples")
   # MP3
   by_samples <- tuneR_loader(filepath_mp3, offset = 1, duration = 40000, unit = "samples")
 
-  expect_gt(length(by_samples@left), 40000)
-  expect_lt(length(by_samples@left), 50000)
+  expect_gte(length(by_samples@left), 40000)
+  expect_lte(length(by_samples@left), 40000)
 
   by_time <-tuneR_loader(filepath_mp3, offset = 1, duration = 1, unit = "time")
 
@@ -22,13 +24,13 @@ test_that("tuneR_loader works", {
   # WAV
   by_samples <- tuneR_loader(filepath_wav, offset = 1, duration = 40000, unit = "samples")
 
-  expect_gt(length(by_samples@left), 40000)
-  expect_lt(length(by_samples@left), 50000)
+  expect_gte(length(by_samples@left), 40000)
+  expect_lte(length(by_samples@left), 40000)
 
   by_time <-tuneR_loader(filepath_wav, offset = 1, duration = 1, unit = "seconds")
 
-  expect_gt(length(by_time@left), 7999)
-  expect_lt(length(by_time@left), 8001)
+  expect_gte(length(by_time@left), 8000)
+  expect_lte(length(by_time@left), 8000)
 })
 
 

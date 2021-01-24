@@ -56,17 +56,43 @@ transform_to_tensor.Wave <- function(
   l_wave_obj <- length(wave_obj)
   bits <- wave_obj@bit
 
-  out_tensor <- torch::torch_zeros(2, l_wave_obj)
+  channels <- if(wave_obj@stereo) 2 else 1
+  out_tensor <- torch::torch_zeros(channels, l_wave_obj)
   if(length(wave_obj@left) > 0) out_tensor[1] = wave_obj@left
-  if(length(wave_obj@right) > 0) out_tensor[2] = wave_obj@right
+  if(length(wave_obj@right) > 0 & channels == 2) out_tensor[2] = wave_obj@right
 
   if(!channels_first)
     out_tensor = out_tensor$t()
 
   # normalize if needed
-  internal__normalize_audio(out_tensor, 2^(bits-1))
+  if(is.null(normalization))
+    max_abs_amplitude <- 2^(bits-1)
+  if(max_abs_amplitude > 0)
+    out_tensor <- internal__normalize_audio(out_tensor, max_abs_amplitude)
 
   sample_rate = wave_obj@samp.rate
+
+  return(list(out_tensor, sample_rate))
+}
+
+#' @export
+transform_to_tensor.numeric <- function(
+  matrix,
+  out = NULL,
+  normalization = NULL,
+  channels_first = TRUE
+) {
+
+  sample_rate <- attr(matrix, "sample_rate")
+  out_tensor <- torch::torch_tensor(matrix)
+
+  if(!channels_first)
+    out_tensor = out_tensor$t()
+
+  # normalize if needed
+  max_abs_amplitude <- as.numeric(torch::torch_max(torch_abs(out_tensor)))
+  if(max_abs_amplitude > 0)
+    out_tensor <- internal__normalize_audio(out_tensor*1., max_abs_amplitude)
 
   return(list(out_tensor, sample_rate))
 }
