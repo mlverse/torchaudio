@@ -4,7 +4,12 @@
 \alias{transform_to_tensor}
 \title{Convert an audio object into a tensor}
 \usage{
-transform_to_tensor(audio)
+transform_to_tensor(
+  audio,
+  out = NULL,
+  normalization = TRUE,
+  channels_first = TRUE
+)
 }
 \arguments{
 \item{audio}{(numeric or Wave): A numeric vector or Wave object, usually from \link[tuneR:readMP3]{tuneR::readMP3}, \link[tuneR:readWave]{tuneR::readWave} or \link[monitoR:readMP3]{monitoR::readMP3}.}
