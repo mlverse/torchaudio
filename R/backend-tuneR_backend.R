@@ -39,7 +39,7 @@ tuneR_loader <- function(
   encodinginfo = NULL,
   filetype = NULL
 ){
-
+  package_required("tuneR")
   if(is.null(normalization)) value_error('Argument "normalization" is missing. Should it be set to `TRUE`?')
   if(!is.null(signalinfo)) value_warning('Argument "signalinfo" is meaningful for sox backend only and will be ignored.')
   if(!is.null(encodinginfo)) value_error('Argument "encodinginfo" is meaningful for sox backend only and will be ignored.')
