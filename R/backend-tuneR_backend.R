@@ -11,7 +11,6 @@ tuneR_read_mp3_or_wav <- function(filepath, from = 0, to = Inf, unit = "samples"
       to_ <- to_/info$sample_rate
       duration <- duration/info$sample_rate
     }
-    from_ <-  max(0.01, from_)
     to_ <- min(to_, duration)
     to_ <- max(to_, from_ + 0.015)
     to_ <- 0.05 + to_*1.01

@@ -12,10 +12,10 @@ transform_to_tensor(audio)
 \item{out}{(Tensor): An optional output tensor to use instead of creating one. (Default: \code{NULL})}
 
 \item{normalization}{(bool, float or function): Optional normalization.
-If boolean \code{TRUE}, then output is divided by \code{2^31}.
-Assuming the input is signed 32-bit audio, this normalizes to \verb{[-1, 1]}.
+If boolean \code{TRUE}, then output is divided by \code{2^(bits-1)}.
+If \code{bits} info is not available it assumes the input is signed 32-bit audio.
 If \code{numeric}, then output is divided by that number.
-If \code{function}, then the output is passed as a paramete to the given function,
+If \code{function}, then the output is passed as a parameter to the given function,
 then the output is divided by the result. (Default: \code{TRUE})}
 
 \item{channels_first}{(bool): Set channels first or length first in result. (Default: \code{TRUE})}

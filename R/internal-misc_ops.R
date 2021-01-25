@@ -21,7 +21,7 @@ internal__normalize_audio <- function(signal, normalization = TRUE) {
   } else {
 
     if(!normalization)
-      return()
+      invisible(NULL)
 
     if(is.logical(normalization))
       normalization = 2^31

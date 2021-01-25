@@ -8,6 +8,7 @@ test_that("av_loader", {
 
   expect_equal(waveform_and_sample_rate[[2]], attr(sample_mp3, "sample_rate"))
   expect_tensor(waveform_and_sample_rate[[1]])
+  expect_equal(length(waveform_and_sample_rate[[1]]), length(sample_mp3))
 
   av_obj <- av_loader(
     system.file("sample_audio_1.mp3", package = "torchaudio"),

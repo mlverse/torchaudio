@@ -34,10 +34,10 @@ AudioMetaData <- R6::R6Class(
 #' @param audio (numeric or Wave): A numeric vector or Wave object, usually from [tuneR::readMP3], [tuneR::readWave] or [monitoR::readMP3].
 #' @param out (Tensor): An optional output tensor to use instead of creating one. (Default: ``NULL``)
 #' @param normalization (bool, float or function): Optional normalization.
-#'         If boolean `TRUE`, then output is divided by `2^31`.
-#'         Assuming the input is signed 32-bit audio, this normalizes to `[-1, 1]`.
+#'         If boolean `TRUE`, then output is divided by `2^(bits-1)`.
+#'         If `bits` info is not available it assumes the input is signed 32-bit audio.
 #'         If `numeric`, then output is divided by that number.
-#'         If `function`, then the output is passed as a paramete to the given function,
+#'         If `function`, then the output is passed as a parameter to the given function,
 #'         then the output is divided by the result. (Default: ``TRUE``)
 #' @param channels_first (bool): Set channels first or length first in result. (Default: ``TRUE``)
 #'
@@ -56,11 +56,10 @@ transform_to_tensor <- function(audio) {
 transform_to_tensor.Wave <- function(
   wave_obj,
   out = NULL,
-  normalization = NULL,
+  normalization = TRUE,
   channels_first = TRUE
 ) {
   l_wave_obj <- length(wave_obj)
-  bits <- wave_obj@bit
 
   channels <- if(wave_obj@stereo) 2 else 1
   out_tensor <- torch::torch_zeros(channels, l_wave_obj)
@@ -71,10 +70,12 @@ transform_to_tensor.Wave <- function(
     out_tensor = out_tensor$t()
 
   # normalize if needed
-  if(is.null(normalization))
-    max_abs_amplitude <- 2^(bits-1)
-  if(max_abs_amplitude > 0)
-    out_tensor <- internal__normalize_audio(out_tensor, max_abs_amplitude)
+  if(!is.null(normalization) && is.logical(normalization) && isTRUE(normalization)) {
+    bits <- wave_obj@bit %||% 32
+    normalization <- 2^(bits-1)
+  }
+
+  internal__normalize_audio(out_tensor, normalization)
 
   sample_rate = wave_obj@samp.rate
 
@@ -85,20 +86,18 @@ transform_to_tensor.Wave <- function(
 transform_to_tensor.numeric <- function(
   matrix,
   out = NULL,
-  normalization = NULL,
+  normalization = TRUE,
   channels_first = TRUE
 ) {
 
   sample_rate <- attr(matrix, "sample_rate")
-  out_tensor <- torch::torch_tensor(matrix)
+  out_tensor <- torch::torch_tensor(matrix, dtype = torch::torch_float())
 
   if(!channels_first)
     out_tensor = out_tensor$t()
 
   # normalize if needed
-  max_abs_amplitude <- as.numeric(torch::torch_max(torch::torch_abs(out_tensor)))
-  if(max_abs_amplitude > 0)
-    out_tensor <- internal__normalize_audio(out_tensor*1., max_abs_amplitude)
+  internal__normalize_audio(out_tensor, normalization)
 
   return(list(out_tensor, sample_rate))
 }
