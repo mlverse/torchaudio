@@ -184,10 +184,10 @@ $$d_t = \frac{\sum_{n=1}^{N} n  (c_{t+n} - c_{t-n})}{2 \sum_{n=1}^{N} n^2}$$</p>
 <code>N</code> is <code> (win_length-1) %/% 2</code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span><span class='op'>(</span><span class='fu'>torch</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/torch/man/torch_is_installed.html'>torch_is_installed</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+    <pre class="examples"><div class='input'><span class='kw'>if</span><span class='op'>(</span><span class='fu'>torch</span><span class='fu'>::</span><span class='fu'><a href='https://torch.mlverse.org/docs/reference/torch_is_installed.html'>torch_is_installed</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://torch.mlverse.org/docs'>torch</a></span><span class='op'>)</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'>torchaudio</span><span class='op'>)</span>
-<span class='va'>specgram</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/torch/man/torch_randn.html'>torch_randn</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>40</span>, <span class='fl'>1000</span><span class='op'>)</span>
+<span class='va'>specgram</span> <span class='op'>=</span> <span class='fu'><a href='https://torch.mlverse.org/docs/reference/torch_randn.html'>torch_randn</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>40</span>, <span class='fl'>1000</span><span class='op'>)</span>
 <span class='va'>delta</span> <span class='op'>=</span> <span class='fu'>functional_compute_deltas</span><span class='op'>(</span><span class='va'>specgram</span><span class='op'>)</span>
 <span class='va'>delta2</span> <span class='op'>=</span> <span class='fu'>functional_compute_deltas</span><span class='op'>(</span><span class='va'>delta</span><span class='op'>)</span>
 <span class='op'>}</span>
