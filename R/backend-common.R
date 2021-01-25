@@ -1,3 +1,9 @@
+validate_audio_extension <- function(file_extension) {
+  valid_extensions <- c("mp3", "wav")
+  if(!file_extension %in% valid_extensions)
+    value_error(glue::glue("{file_extension} is not a valid audio extension."))
+}
+
 #' @keywords internal
 AudioMetaData <- R6::R6Class(
   "AudioMetaData",
@@ -90,24 +96,75 @@ transform_to_tensor.numeric <- function(
     out_tensor = out_tensor$t()
 
   # normalize if needed
-  max_abs_amplitude <- as.numeric(torch::torch_max(torch_abs(out_tensor)))
+  max_abs_amplitude <- as.numeric(torch::torch_max(torch::torch_abs(out_tensor)))
   if(max_abs_amplitude > 0)
     out_tensor <- internal__normalize_audio(out_tensor*1., max_abs_amplitude)
 
   return(list(out_tensor, sample_rate))
 }
 
+#' MP3 Information
+#'
+#' Retrive metadata from mp3 without load the audio samples in memory.
+#'
+#' @param filepath (chr) path to mp3 file
+#'
+#' @return AudioMetaData: sample_rate, channels, samples
+#'
+#' @examples
+#' mp3_path <- system.file("sample_audio_1.mp3", package = "torchaudio")
+#' mp3_info(mp3_path)
+#'
+#' @export
+mp3_info <- function(filepath) {
+  info <- torchaudio:::get_info_mp3(filepath)
+  AudioMetaData$new(
+    sample_rate = info$hz,
+    num_frames = info$samples,
+    num_channels = info$channels
+  )
+}
+
+#' Wave Information
+#'
+#' Retrive metadata from wav without load the audio samples in memory.
+#'
+#' @param filepath (chr) path to wav file
+#'
+#' @return AudioMetaData: sample_rate, channels, samples
+#'
+#' @examples
+#' wav_path <- system.file("waves_yesno/1_1_0_1_1_0_1_1.wav", package = "torchaudio")
+#' wav_info(wav_path)
+#'
+#' @export
+wav_info <- function(filepath) {
+  info <- tuneR::readWave(filepath, header = TRUE)
+  AudioMetaData$new(
+    sample_rate = info$sample.rate,
+    num_frames = info$samples,
+    num_channels = info$channels
+  )
+}
+
 #' Audio Information
+#'
+#' Retrive metadata from mp3 or wave file without load the audio samples in memory.
 #'
 #' @param filepath (str) path to the mp3/wav file.
 #'
-#' @return data.frame.
+#' @return list(sample_rate, channels, samples)
 #'
 #' @export
-audio_info <- function(filepath) {
-  package_required("av")
-  info <- av::av_media_info(filepath)
-  info$audio$duration <- info$duration
-  info$audio
+info <- function(filepath) {
+  file_ext <- tools::file_ext(filepath)
+  validate_audio_extension(file_ext)
+
+  if(file_ext == "mp3")
+    info <- mp3_info(filepath)
+  if(file_ext == "wav")
+    info <- wav_info(filepath)
+
+  info
 }
 

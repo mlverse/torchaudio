@@ -35,5 +35,8 @@ Imports:
     rappdirs,
     utils,
     tools,
-    glue
+    glue,
+    Rcpp
 VignetteBuilder: knitr
+LinkingTo: 
+    Rcpp
