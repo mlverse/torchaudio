@@ -7,14 +7,17 @@
 set_audio_backend(backend)
 }
 \arguments{
-\item{backend}{(str or function): one of \code{av_loader},
-\code{audiofile_loader} or \code{tuneR_loader}.}
+\item{backend}{(str): one of \code{'av_loader'},
+\code{'audiofile_loader'} or \code{'tuneR_loader'}.}
 }
 \value{
 invisible(NULL).
 
-It will set \code{torchaudio.loader} option:``
-options(torchaudio.loader = rlang::as_function(backend))
+It will set \code{torchaudio.loader} and \code{torchaudio.loader.name} options:``
+options(
+torchaudio.loader = rlang::as_function(backend),
+torchaudio.loader.name = backend
+)
 }
 \description{
 Set the backend for I/O operation

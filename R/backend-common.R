@@ -201,17 +201,23 @@ info <- function(filepath) {
 
 #' Set the backend for I/O operation
 #'
-#' @param backend (str or function): one of `av_loader`,
-#' `audiofile_loader` or `tuneR_loader`.
+#' @param backend (str): one of `'av_loader'`,
+#' `'audiofile_loader'` or `'tuneR_loader'`.
 #'
 #' @return invisible(NULL).
 #'
-#' It will set `torchaudio.loader` option:``
-#' options(torchaudio.loader = rlang::as_function(backend))
+#' It will set `torchaudio.loader` and `torchaudio.loader.name` options:``
+#' options(
+#'   torchaudio.loader = rlang::as_function(backend),
+#'   torchaudio.loader.name = backend
+#' )
 #'
 #' @export
 set_audio_backend <- function(backend) {
-  options(torchaudio.loader = rlang::as_function(backend))
+  options(
+    torchaudio.loader = rlang::as_function(backend),
+    torchaudio.loader.name = backend
+  )
 }
 
 #' @export
