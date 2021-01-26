@@ -1,34 +1,14 @@
-av_read_mp3_or_wav <- function(filepath, from = 0, to = Inf, unit = "samples") {
+audiofile_read_wav <- function(filepath, from = 0, to = Inf, unit = "samples") {
   file_ext <- tools::file_ext(filepath)
+  if(!file_ext %in% "wav") runtime_error(glue::glue("audiofile_loader supports .wav formats only. Got {file_ext}."))
   unit <- unit[1]
-  info <- info(filepath)
-  to_ <- to
-  from_ <- from
-  if(unit == "samples") {
-    from_ <- from_/info$sample_rate
-    to_ <- to_/info$sample_rate
-  }
-
-  to_ <- max(to_, from_ + 0.015) + 0.05
-  av_obj <- av::read_audio_bin(audio = filepath, start_time = from_, end_time = to_)
-  channels <- attr(av_obj, "channels")
-  samples <- length(av_obj)
-  dim(av_obj) <- c(channels, samples/channels)
-  attrs <- attributes(av_obj)
-  if(unit == "samples") {
-    len <- min(to - from, samples)
-    av_obj <- av_obj[channels, 1:(len), drop = FALSE]
-    attrs$dim <- c(channels, len)
-    attributes(av_obj) <- attrs
-  }
-  class(av_obj) <- c("av", class(av_obj))
-  return(av_obj)
+  wave_obj <- audiofile_read_wav_cpp(filepath, from = from, to = to, unit = unit)
+  class(wave_obj) <- c("audiofile", class(wave_obj))
+  wave_obj
 }
 
-
-
 #' @export
-av_loader <- function(
+audiofile_loader <- function(
   filepath,
   offset = 0L,
   duration = 0L,
@@ -38,8 +18,6 @@ av_loader <- function(
   encodinginfo = NULL,
   filetype = NULL
 ){
-  package_required("av")
-
   if(is.null(normalization)) value_error('Argument "normalization" is missing. Should it be set to `TRUE`?')
   if(!is.null(signalinfo)) value_warning('Argument "signalinfo" is meaningful for sox backend only and will be ignored.')
   if(!is.null(encodinginfo)) value_error('Argument "encodinginfo" is meaningful for sox backend only and will be ignored.')
@@ -58,9 +36,5 @@ av_loader <- function(
     value_error("Expected positive offset value")
 
   # load audio file
-  av_read_mp3_or_wav(filepath, from = offset, to = offset + duration, unit = unit)
+  audiofile_read_wav(filepath, from = offset, to = offset + duration, unit = unit)
 }
-
-av_info <- function() {}
-
-av_save <- function() {}

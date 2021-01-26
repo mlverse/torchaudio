@@ -88,7 +88,7 @@ transform_to_tensor.Wave <- function(
 }
 
 #' @export
-transform_to_tensor.numeric <- function(
+transform_to_tensor.av <- function(
   matrix,
   out = NULL,
   normalization = TRUE,
@@ -97,6 +97,33 @@ transform_to_tensor.numeric <- function(
 
   sample_rate <- attr(matrix, "sample_rate")
   out_tensor <- torch::torch_tensor(matrix, dtype = torch::torch_float())
+
+  if(!channels_first)
+    out_tensor = out_tensor$t()
+
+  # normalize if needed
+  internal__normalize_audio(out_tensor, normalization)
+
+  return(list(out_tensor, sample_rate))
+}
+
+
+#' @export
+transform_to_tensor.audiofile <- function(
+  audiofile,
+  out = NULL,
+  normalization = TRUE,
+  channels_first = TRUE
+) {
+  to_tensor <- function(x) torch::torch_tensor(x, dtype = torch::torch_float())
+  sample_rate <- audiofile$sample_rate
+
+  if(audiofile$channels > 1) {
+    out_tensor <- Map(to_tensor, audiofile$waveform)
+    out_tensor <- torch::torch_stack(out_tensor)
+  } else {
+    out_tensor <- to_tensor(audiofile$waveform[[1]])
+  }
 
   if(!channels_first)
     out_tensor = out_tensor$t()

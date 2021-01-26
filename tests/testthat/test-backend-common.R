@@ -7,6 +7,15 @@ test_that("av_loader works", {
 
 })
 
+test_that("audiofile_loader works", {
+  # WAV
+  by_samples <- audiofile_loader(filepath_wav, offset = 1, duration = 40000, unit = "samples")
+  expect_equal(length(by_samples$waveform[[1]]), 40000)
+
+  # MP3
+  expect_error(by_samples <- audiofile_loader(filepath_mp3), class = "runtime_error")
+})
+
 test_that("tuneR_loader works", {
 
   a <- torchaudio:::tuneR_read_mp3_or_wav(filepath_mp3, from = 1, to = 40001, unit = "samples")
