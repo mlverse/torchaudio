@@ -122,7 +122,7 @@ transform_to_tensor.audiofile <- function(
     out_tensor <- Map(to_tensor, audiofile$waveform)
     out_tensor <- torch::torch_stack(out_tensor)
   } else {
-    out_tensor <- to_tensor(audiofile$waveform[[1]])
+    out_tensor <- to_tensor(audiofile$waveform[[1]])$unsqueeze(1)
   }
 
   if(!channels_first)
