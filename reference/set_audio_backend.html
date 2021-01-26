@@ -161,16 +161,19 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>backend</th>
-      <td><p>(str or function): one of <code>av_loader</code>,
-<code>audiofile_loader</code> or <code>tuneR_loader</code>.</p></td>
+      <td><p>(str): one of <code>'av_loader'</code>,
+<code>'audiofile_loader'</code> or <code>'tuneR_loader'</code>.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>invisible(NULL).</p>
-<p>It will set <code>torchaudio.loader</code> option:``
-options(torchaudio.loader = rlang::as_function(backend))</p>
+<p>It will set <code>torchaudio.loader</code> and <code>torchaudio.loader.name</code> options:``
+options(
+torchaudio.loader = rlang::as_function(backend),
+torchaudio.loader.name = backend
+)</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
