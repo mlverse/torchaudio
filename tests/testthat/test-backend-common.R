@@ -121,51 +121,24 @@ test_that("torchaudio_load works", {
   expect_tensor(waveform_and_sample_rate[[1]])
 })
 
-
-filepath_mp3 <- system.file("sample_audio_1.mp3", package = "torchaudio")
-sample_mp3 <- tuneR::readMP3(filepath_mp3)
-filepath_wav <- system.file("SpeechCommands/speech_commands_v0.02/seven/0a2b400e_nohash_1.wav", package = "torchaudio")
-sample_wav <- tuneR::readWave(filepath_wav)
-
-
 test_that("loaders returns the same output", {
+  speechcommand_ds <- speechcommand_dataset(
+    root = system.file("SpeechCommands", package = "torchaudio"),
+    folder_in_archive = ""
+  )
 
+  item_to_vector <- function(loader) {
+    set_audio_backend(loader)
+    as.numeric(speechcommand_ds[1]$waveform)
+  }
+
+  a3 <- data.frame(
+    audiofile_wf = item_to_vector(audiofile_loader),
+    tuner_wf = item_to_vector(tuneR_loader),
+    av_wf = item_to_vector(av_loader)
+  )
+
+  expect_equal(sum(cor(a3)), 9)
 })
 
-a1 <- data.frame(
-  audiofile = torchaudio::audiofile_loader(filepath_wav)$waveform[[1]],
-  tuner = torchaudio::tuneR_loader(filepath_wav)@left,
-  av = as.vector(torchaudio::av_loader(filepath_wav))
-)
-
-GGally::ggpairs(a1)
-purrr::map(a1, ~sum(is.na(.x)))
-
-a2 <- data.frame(
-  audiofile_wf = as.numeric(transform_to_tensor(torchaudio::audiofile_loader(filepath_wav))[[1]]),
-  tuner_wf = as.numeric(transform_to_tensor(torchaudio::tuneR_loader(filepath_wav))[[1]]),
-  av_wf = as.numeric(transform_to_tensor(torchaudio::av_loader(filepath_wav))[[1]])
-)
-
-GGally::ggpairs(a2)
-purrr::map(a2, ~sum(is.na(.x)))
-
-
-
-speechcommand_ds <- speechcommand_dataset(root = "/home/athos/R/x86_64-pc-linux-gnu-library/4.0/torchaudio/")
-
-library(torchaudio)
-aff <- function(loader) {
-  set_audio_backend(loader)
-  as.numeric(speechcommand_ds[1]$waveform)
-}
-
-a3 <- data.frame(
-  audiofile_wf = aff(audiofile_loader),
-  tuner_wf = aff(tuneR_loader),
-  av_wf = aff(av_loader)
-)
-
-GGally::ggpairs(a3)
-purrr::map(a3, ~sum(is.na(.x)))
 
