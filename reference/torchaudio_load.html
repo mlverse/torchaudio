@@ -157,7 +157,7 @@
     <pre class="usage"><span class='fu'>torchaudio_load</span><span class='op'>(</span>
   <span class='va'>filepath</span>,
   out <span class='op'>=</span> <span class='cn'>NULL</span>,
-  normalization <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  normalization <span class='op'>=</span> <span class='cn'>NULL</span>,
   channels_first <span class='op'>=</span> <span class='cn'>TRUE</span>,
   duration <span class='op'>=</span> <span class='fl'>0L</span>,
   offset <span class='op'>=</span> <span class='fl'>0L</span>,
@@ -180,12 +180,13 @@
     </tr>
     <tr>
       <th>normalization</th>
-      <td><p>(bool, float or function): Optional normalization.
+      <td><p>(NULL, bool, float or function): Optional normalization.
 If boolean <code>TRUE</code>, then output is divided by <code>2^31</code>.
 Assuming the input is signed 32-bit audio, this normalizes to <code>[-1, 1]</code>.
 If <code>numeric</code>, then output is divided by that number.
 If <code>function</code>, then the output is passed as a paramete to the given function,
-then the output is divided by the result. (Default: <code>TRUE</code>)</p></td>
+then the output is divided by the result.
+If <code>NULL</code>, defaults to specific loader behaviour (Default: <code>NULL</code>)</p></td>
     </tr>
     <tr>
       <th>channels_first</th>
