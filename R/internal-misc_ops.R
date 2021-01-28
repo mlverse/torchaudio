@@ -20,15 +20,17 @@ internal__normalize_audio <- function(signal, normalization = TRUE) {
     invisible(signal$div_(normalization(signal)))
   } else {
 
+    # do not normalize
     if(!normalization)
-      invisible(NULL)
+      return(invisible(NULL))
 
+    # assumes it has 32-bit rate (sox default)
     if(is.logical(normalization))
-      normalization = 2^31
+      return(invisible(signal$div_(2^31)))
 
     # normalize with custom value
-    if(is.numeric(normalization)) {
-      invisible(signal$div_(normalization))
-    }
+    if(is.numeric(normalization))
+      return(invisible(signal$div_(normalization)))
+
   }
 }

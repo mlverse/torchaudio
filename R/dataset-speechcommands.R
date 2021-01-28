@@ -12,7 +12,7 @@ load_speechcommands_item <- function(filepath, path, hash_divider = "_nohash_", 
   utterance_number = as.integer(speaker_id_and_utterance_number[2])
 
   # Load audio
-  waveform_and_sample_rate = torchaudio_load(filepath, normalization = FALSE)
+  waveform_and_sample_rate = torchaudio_load(filepath)
   waveform = waveform_and_sample_rate[[1]][1]$unsqueeze(1)
   sample_rate = waveform_and_sample_rate[[2]]
   return(list(waveform = waveform,
@@ -105,7 +105,8 @@ speechcommand_dataset <- torch::dataset(
     force(n)
     if(length(n) != 1 || n <= 0) value_error("n should be a single positive integer.")
     fileid = self$.walker[n]
-    return(load_speechcommands_item(fileid, self$.path, self$HASH_DIVIDER, class_to_index = self$class_to_index))
+    output <- load_speechcommands_item(fileid, self$.path, self$HASH_DIVIDER, class_to_index = self$class_to_index)
+    return(output)
   },
 
   .length = function() {

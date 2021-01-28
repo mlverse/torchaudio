@@ -1,3 +1,4 @@
+#' @keywords internal
 validate_audio_extension <- function(file_extension) {
   valid_extensions <- c("mp3", "wav")
   if(!file_extension %in% valid_extensions)
@@ -75,11 +76,11 @@ transform_to_tensor.Wave <- function(
     out_tensor = out_tensor$t()
 
   # normalize if needed
-  if(!is.null(normalization) && is.logical(normalization) && isTRUE(normalization)) {
+  if(is.null(normalization)) normalization <- TRUE
+  if(is.logical(normalization) && isTRUE(normalization)) {
     bits <- wave_obj@bit %||% 32
     normalization <- 2^(bits-1)
   }
-
   internal__normalize_audio(out_tensor, normalization)
 
   sample_rate = wave_obj@samp.rate
@@ -102,33 +103,40 @@ transform_to_tensor.av <- function(
     out_tensor = out_tensor$t()
 
   # normalize if needed
+  if(is.null(normalization)) normalization <- TRUE
   internal__normalize_audio(out_tensor, normalization)
 
   return(list(out_tensor, sample_rate))
 }
 
+to_tensor_float <- function(x) torch::torch_tensor(x, dtype = torch::torch_float())
 
 #' @export
 transform_to_tensor.audiofile <- function(
   audiofile,
   out = NULL,
-  normalization = TRUE,
+  normalization = FALSE,
   channels_first = TRUE
 ) {
-  to_tensor <- function(x) torch::torch_tensor(x, dtype = torch::torch_float())
+
   sample_rate <- audiofile$sample_rate
 
   if(audiofile$channels > 1) {
-    out_tensor <- Map(to_tensor, audiofile$waveform)
+    out_tensor <- Map(to_tensor_float, audiofile$waveform)
     out_tensor <- torch::torch_stack(out_tensor)
   } else {
-    out_tensor <- to_tensor(audiofile$waveform[[1]])$unsqueeze(1)
+    out_tensor <- to_tensor_float(audiofile$waveform[[1]])$unsqueeze(1)
   }
 
   if(!channels_first)
     out_tensor = out_tensor$t()
 
   # normalize if needed
+  if(is.null(normalization)) normalization <- FALSE
+  if(is.logical(normalization) && isTRUE(normalization)) {
+    bits <- audiofile$bit %||% 32
+    normalization <- 2^(bits-1)
+  }
   internal__normalize_audio(out_tensor, normalization)
 
   return(list(out_tensor, sample_rate))
@@ -225,22 +233,14 @@ torchaudio_loader <- function(
   filepath,
   offset = 0L,
   duration = 0L,
-  unit = c("samples", "time"),
-  normalization = TRUE,
-  signalinfo = NULL,
-  encodinginfo = NULL,
-  filetype = NULL
+  unit = c("samples", "time")
 ) {
   loader <- getOption("torchaudio.loader", default = av_loader)
   loader(
     filepath,
     offset = offset,
     duration = duration,
-    unit = unit[1],
-    normalization = normalization,
-    signalinfo = signalinfo,
-    encodinginfo = encodinginfo,
-    filetype = filetype
+    unit = unit[1]
   )
 }
 
@@ -250,12 +250,13 @@ torchaudio_loader <- function(
 #'
 #' @param filepath (str): Path to audio file
 #' @param out (Tensor): An optional output tensor to use instead of creating one. (Default: ``NULL``)
-#' @param normalization (bool, float or function): Optional normalization.
+#' @param normalization (NULL, bool, float or function): Optional normalization.
 #'         If boolean `TRUE`, then output is divided by `2^31`.
 #'         Assuming the input is signed 32-bit audio, this normalizes to `[-1, 1]`.
 #'         If `numeric`, then output is divided by that number.
 #'         If `function`, then the output is passed as a paramete to the given function,
-#'         then the output is divided by the result. (Default: ``TRUE``)
+#'         then the output is divided by the result.
+#'         If `NULL`, defaults to specific loader behaviour (Default: ``NULL``)
 #'
 #' @param channels_first (bool): Set channels first or length first in result. (Default: ``TRUE``)
 #' @param duration (int): Number of frames (or seconds) to load.  0 to load everything after the offset. (Default: ``0``)
@@ -291,7 +292,7 @@ torchaudio_loader <- function(
 torchaudio_load <- function(
   filepath,
   out = NULL,
-  normalization = TRUE,
+  normalization = NULL,
   channels_first = TRUE,
   duration = 0L,
   offset = 0L,
@@ -303,17 +304,14 @@ torchaudio_load <- function(
   # if tuneR is installed
   audio_r <- torchaudio_loader(
     filepath = filepath,
-    normalization = normalization,
     duration = duration,
     offset = offset,
-    unit = unit[1],
-    signalinfo = signalinfo,
-    encodinginfo = encodinginfo,
-    filetype = filetype
+    unit = unit[1]
   )
 
-  transform_to_tensor(audio_r,
-    normalization = FALSE,
+  transform_to_tensor(
+    audio_r,
+    normalization = normalization,
     channels_first = channels_first
   )
 }

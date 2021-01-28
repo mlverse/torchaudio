@@ -7,7 +7,7 @@
 torchaudio_load(
   filepath,
   out = NULL,
-  normalization = TRUE,
+  normalization = NULL,
   channels_first = TRUE,
   duration = 0L,
   offset = 0L,
@@ -22,12 +22,13 @@ torchaudio_load(
 
 \item{out}{(Tensor): An optional output tensor to use instead of creating one. (Default: \code{NULL})}
 
-\item{normalization}{(bool, float or function): Optional normalization.
+\item{normalization}{(NULL, bool, float or function): Optional normalization.
 If boolean \code{TRUE}, then output is divided by \code{2^31}.
 Assuming the input is signed 32-bit audio, this normalizes to \verb{[-1, 1]}.
 If \code{numeric}, then output is divided by that number.
 If \code{function}, then the output is passed as a paramete to the given function,
-then the output is divided by the result. (Default: \code{TRUE})}
+then the output is divided by the result.
+If \code{NULL}, defaults to specific loader behaviour (Default: \code{NULL})}
 
 \item{channels_first}{(bool): Set channels first or length first in result. (Default: \code{TRUE})}
 

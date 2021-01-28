@@ -1,3 +1,4 @@
+#' @keywords internal
 av_read_mp3_or_wav <- function(filepath, from = 0, to = Inf, unit = "samples") {
   file_ext <- tools::file_ext(filepath)
   unit <- unit[1]
@@ -32,18 +33,9 @@ av_loader <- function(
   filepath,
   offset = 0L,
   duration = 0L,
-  unit = c("samples", "time"),
-  normalization = TRUE,
-  signalinfo = NULL,
-  encodinginfo = NULL,
-  filetype = NULL
+  unit = c("samples", "time")
 ){
   package_required("av")
-
-  if(is.null(normalization)) value_error('Argument "normalization" is missing. Should it be set to `TRUE`?')
-  if(!is.null(signalinfo)) value_warning('Argument "signalinfo" is meaningful for sox backend only and will be ignored.')
-  if(!is.null(encodinginfo)) value_error('Argument "encodinginfo" is meaningful for sox backend only and will be ignored.')
-
   filepath = as.character(filepath)
 
   # check if valid file
@@ -61,6 +53,3 @@ av_loader <- function(
   av_read_mp3_or_wav(filepath, from = offset, to = offset + duration, unit = unit)
 }
 
-av_info <- function() {}
-
-av_save <- function() {}
