@@ -22,4 +22,16 @@ test_that("load_speechcommands_item", {
   expect_tensor(one_item[[1]])
 })
 
+test_that("normalization param works", {
+  speechcommand_ds <- speechcommand_dataset(
+    speechcommand_dir,
+    folder_in_archive = "",
+    normalization = function(x) torch::torch_max(x)
+  )
+
+  one_item <- speechcommand_ds[1]
+  expect_length(one_item, 6)
+  expect_tensor(one_item[[1]])
+  expect_equal(as.numeric(max(one_item[[1]])), 1)
+})
 
