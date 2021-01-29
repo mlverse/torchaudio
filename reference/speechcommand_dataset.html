@@ -158,7 +158,8 @@
   <span class='va'>root</span>,
   url <span class='op'>=</span> <span class='st'>"speech_commands_v0.02"</span>,
   folder_in_archive <span class='op'>=</span> <span class='st'>"SpeechCommands"</span>,
-  download <span class='op'>=</span> <span class='cn'>FALSE</span>
+  download <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  normalization <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -182,6 +183,14 @@ Allowed type values are <code>"speech_commands_v0.01"</code> and <code>"speech_c
     <tr>
       <th>download</th>
       <td><p>(bool, optional): Whether to download the dataset if it is not found at root path.  (default: <code>FALSE</code>).</p></td>
+    </tr>
+    <tr>
+      <th>normalization</th>
+      <td><p>(NULL, bool, int or function): Optional normalization.
+If boolean TRUE, then output is divided by 2^31. Assuming the input is signed 32-bit audio,
+this normalizes to -1, 1. If numeric, then output is divided by that number.
+If function, then the output is passed as a paramete to the given function,
+then the output is divided by the result. (Default: NULL)</p></td>
     </tr>
     </table>
 
