@@ -4,6 +4,7 @@
 
 * `torchaudio_load()` has been replaced by `tuneR_loader()` and `tranform_to_tensor()`. Inspired by {torchvision}.
 * `av_loader()` (experimental)
+* New model `model_convtasnet()`
 
 # torchaudio 0.1.1.0
 
