@@ -133,8 +133,8 @@ functional_create_dct <- function(
   n_mels,
   norm = NULL
 ) {
-  n = torch::torch_arange(0, n_mels)
-  k = torch::torch_arange(0, n_mfcc)$unsqueeze(2)
+  n = torch::torch_arange(0, n_mels-1)
+  k = torch::torch_arange(0, n_mfcc-1)$unsqueeze(2)
   dct = torch::torch_cos(pi / n_mels * ((n + 0.5) * k))  # size (n_mfcc, n_mels)
   if(is.null(norm)) {
     dct = dct * 2.0
@@ -398,7 +398,7 @@ functional_phase_vocoder <- function(
 
   time_steps = torch::torch_arange(
     0,
-    complex_specgrams$size(ls-1),
+    complex_specgrams$size(ls-1)-1,
     rate,
     device = complex_specgrams$device,
     dtype = complex_specgrams$dtype
@@ -603,9 +603,9 @@ functional_lfilter <- function(
 
   # calculate windowed_input_signal in parallel
   # create indices of original with shape (n_channel, n_order, n_sample)
-  window_idxs = torch::torch_arange(0, n_sample, device=device)$unsqueeze(1) + torch::torch_arange(0, n_order, device=device)$unsqueeze(2)
+  window_idxs = torch::torch_arange(0, n_sample-1, device=device)$unsqueeze(1) + torch::torch_arange(0, n_order, device=device)$unsqueeze(2)
   window_idxs = window_idxs$`repeat`(c(n_channel, 1, 1))
-  window_idxs = window_idxs + (torch::torch_arange(0, n_channel, device=device)$unsqueeze(-1)$unsqueeze(-1) * n_sample_padded)
+  window_idxs = window_idxs + (torch::torch_arange(0, n_channel-1, device=device)$unsqueeze(-1)$unsqueeze(-1) * n_sample_padded)
   # Indices/Index start at 1 in R.
   window_idxs = (window_idxs + 1)$to(torch::torch_long())
   # (n_order, ) matmul (n_channel, n_order, n_sample) -> (n_channel, n_sample)
@@ -1380,7 +1380,7 @@ functional__generate_wave_table <- function(
 ) {
 
   phase_offset = as.integer(phase / pi / 2 * table_size + 0.5)
-  t = torch::torch_arange(0, table_size, device=device, dtype=torch::torch_int32())
+  t = torch::torch_arange(0, table_size-1, device=device, dtype=torch::torch_int32())
   point = (t + phase_offset) %% table_size
   d = torch::torch_zeros_like(point, device=device, dtype=torch::torch_float64())
 
@@ -1519,7 +1519,7 @@ functional_flanger <- function(
 
   delay_buf_pos = 0L
   lfo_pos = 0L
-  channel_idxs = torch::torch_arange(0, n_channels, device=device)$to(torch::torch_long())
+  channel_idxs = torch::torch_arange(0, n_channels-1, device=device)$to(torch::torch_long())
 
   for(i in seq.int(waveform$shape[lws])) {
     delay_buf_pos = (delay_buf_pos + delay_buf_length - 1L) %% delay_buf_length
@@ -1599,7 +1599,7 @@ functional_mask_along_axis_iid <- function(
   # Create broadcastable mask
   mask_start = min_value[.., NULL, NULL]
   mask_end = (min_value + value)[.., NULL, NULL]
-  mask = torch::torch_arange(0, specgrams$size(axis), device=device, dtype=dtype)
+  mask = torch::torch_arange(0, specgrams$size(axis)-1, device=device, dtype=dtype)
 
   # Per batch example masking
   specgrams = specgrams$transpose(axis, -1)
@@ -1708,7 +1708,7 @@ functional_compute_deltas <- function(
   denom = n * (n + 1) * (2 * n + 1) / 3
 
   specgram = torch::nnf_pad(specgram, c(n, n), mode=mode)
-  kernel = torch::torch_arange(-n, n + 1, 1, device=device, dtype=dtype)$`repeat`(c(specgram$shape[2], 1, 1))
+  kernel = torch::torch_arange(-n, n, 1, device=device, dtype=dtype)$`repeat`(c(specgram$shape[2], 1, 1))
   output = torch::nnf_conv1d(specgram, kernel, groups=specgram$shape[2]) / denom
 
   # unpack batch

@@ -41,3 +41,5 @@ Imports:
 VignetteBuilder: knitr
 LinkingTo: 
     Rcpp
+Remotes:
+    mlverse/torch
