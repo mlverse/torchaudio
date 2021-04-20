@@ -61,7 +61,7 @@ kaldi__get_lr_indices_and_weights <- function(
   dtype
 ) {
   if(lowpass_cutoff >= min(orig_freq, new_freq) / 2) value_error("lowpass_cutoff >= min(orig_freq, new_freq) / 2")
-  output_t = torch::torch_arange(0., output_samples_in_unit, device=device, dtype=dtype) / new_freq
+  output_t = torch::torch_arange(0., output_samples_in_unit-1, device=device, dtype=dtype) / new_freq
   min_t = output_t - window_width
   max_t = output_t + window_width
 
@@ -71,7 +71,7 @@ kaldi__get_lr_indices_and_weights <- function(
 
   max_weight_width = num_indices$max()
   # create a group of weights of size (output_samples_in_unit, max_weight_width)
-  j = torch::torch_arange(0, as.numeric(max_weight_width$to(device = "cpu")), device=device, dtype=dtype)$unsqueeze(1)
+  j = torch::torch_arange(0, as.numeric(max_weight_width$to(device = "cpu"))-1, device=device, dtype=dtype)$unsqueeze(1)
   input_index = min_input_index$unsqueeze(2) + j
   delta_t = (input_index / orig_freq) - output_t$unsqueeze(2)
 
