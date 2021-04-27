@@ -318,7 +318,7 @@ test_that("gain", {
 })
 
 test_that("add_noise_shaping", {
-  add_noise_shaping <- functional_add_noise_shaping(torch::torch_arange(0,4), torch::torch_arange(0,5))
+  add_noise_shaping <- functional_add_noise_shaping(torch::torch_arange(0,4), torch::torch_arange(0,4))
   expect_tensor(add_noise_shaping)
   expect_tensor_shape(add_noise_shaping, 5)
 })

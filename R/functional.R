@@ -33,7 +33,7 @@ functional_spectrogram <- function(
   shape = waveform$size()
   ls = length(shape)
   waveform = waveform$reshape(list(-1, shape[ls]))
-  ls = length(shape)
+  lws = length(waveform$size())
 
   # default values are consistent with librosa.core.spectrum._spectrogram
   spec_f <- torch::torch_stft(
@@ -41,17 +41,20 @@ functional_spectrogram <- function(
     hop_length = hop_length, win_length = win_length,
     window = window, center = TRUE,
     pad_mode = "reflect", normalized = FALSE,
-    onesided = TRUE
+    onesided = TRUE, return_complex = TRUE
   )
 
   # unpack batch
   lspec = length(spec_f$shape)
-  spec_f = spec_f$reshape(c(shape[-ls], spec_f$shape[(lspec-2):lspec]))
+  spec_f = spec_f$reshape(c(shape[-ls], spec_f$shape[(lspec-1):lspec]))
 
   if(normalized) spec_f <- spec_f/sqrt(sum(window^2))
-  if(!is.null(power)) spec_f <- functional_complex_norm(spec_f, power = power)
-
-  return(spec_f)
+  if(!is.null(power)) {
+    if(power == 1)
+      return(spec_f$abs())
+    return(spec_f$abs()$pow(power))
+  }
+  return(torch::torch_view_as_real(spec_f))
 }
 
 #' Frequency Bin Conversion Matrix (functional)
@@ -571,7 +574,6 @@ functional_lfilter <- function(
   b_coeffs,
   clamp = TRUE
 ) {
-
   # pack batch
   shape = waveform$size()
   ls = length(shape)
@@ -603,7 +605,7 @@ functional_lfilter <- function(
 
   # calculate windowed_input_signal in parallel
   # create indices of original with shape (n_channel, n_order, n_sample)
-  window_idxs = torch::torch_arange(0, n_sample-1, device=device)$unsqueeze(1) + torch::torch_arange(0, n_order, device=device)$unsqueeze(2)
+  window_idxs = torch::torch_arange(0, n_sample-1, device=device)$unsqueeze(1) + torch::torch_arange(0, n_order-1, device=device)$unsqueeze(2)
   window_idxs = window_idxs$`repeat`(c(n_channel, 1, 1))
   window_idxs = window_idxs + (torch::torch_arange(0, n_channel-1, device=device)$unsqueeze(-1)$unsqueeze(-1) * n_sample_padded)
   # Indices/Index start at 1 in R.
@@ -1692,6 +1694,7 @@ functional_compute_deltas <- function(
   win_length = 5,
   mode = "replicate"
 ) {
+  specgram = torch::torch_randn(1, 4, 10)
   device = specgram$device
   dtype = specgram$dtype
 
@@ -2234,7 +2237,7 @@ functional_measure <- function(
   dftBuf[measure_len_ws:(dft_len_ws-1)]$zero_()
 
   # lsx_safe_rdft((int)p->dft_len_ws, 1, c->dftBuf);
-  .dftBuf = torch::torch_rfft(dftBuf, 1)
+  .dftBuf = torch::torch_fft_rfft(dftBuf)
 
   # memset(c->dftBuf, 0, p->spectrum_start * sizeof(*c->dftBuf));
   .dftBuf[1:spectrum_start]$zero_()
@@ -2242,7 +2245,7 @@ functional_measure <- function(
   mult = if(boot_count >= 0) boot_count / (1. + boot_count) else measure_smooth_time_mult
 
   spectrum_end_minus_1 = spectrum_end - 1
-  .d = functional_complex_norm(.dftBuf[spectrum_start:spectrum_end_minus_1])
+  .d = .dftBuf[spectrum_start:spectrum_end_minus_1]$abs()
   spectrum[spectrum_start:spectrum_end_minus_1]$mul_(mult)$add_(.d * (1 - mult))
   .d = spectrum[spectrum_start:spectrum_end_minus_1] ** 2
 
@@ -2272,11 +2275,11 @@ functional_measure <- function(
 
 
   # lsx_safe_rdft((int)p->dft_len_ws >> 1, 1, c->dftBuf);
-  .cepstrum_Buf = torch::torch_rfft(.cepstrum_Buf, 1)
+  .cepstrum_Buf = torch::torch_fft_rfft(.cepstrum_Buf, 1)
 
   result = as.numeric(
     torch::torch_sum(
-      functional_complex_norm(.cepstrum_Buf[cepstrum_start:cepstrum_end], power=2.0)
+      .cepstrum_Buf[cepstrum_start:cepstrum_end]$abs()$pow(2)
     )
   )
 
