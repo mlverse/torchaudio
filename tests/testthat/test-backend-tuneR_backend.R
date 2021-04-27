@@ -12,7 +12,6 @@ test_that("tuneR_loader", {
 
   tuneR_Wave <- tuneR_loader(
     system.file("sample_audio_1.mp3", package = "torchaudio"),
-    normalization = 10,
     offset = 2000,
     duration = 2
   )

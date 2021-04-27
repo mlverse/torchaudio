@@ -12,7 +12,6 @@ test_that("av_loader", {
 
   av_obj <- av_loader(
     system.file("sample_audio_1.mp3", package = "torchaudio"),
-    normalization = 10,
     offset = 5000,
     duration = 2
   )
