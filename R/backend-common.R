@@ -60,17 +60,17 @@ transform_to_tensor <- function(
 
 #' @export
 transform_to_tensor.Wave <- function(
-  wave_obj,
+  audio,
   out = NULL,
   normalization = TRUE,
   channels_first = TRUE
 ) {
-  l_wave_obj <- length(wave_obj)
+  l_wave_obj <- length(audio)
 
-  channels <- if(wave_obj@stereo) 2 else 1
+  channels <- if(audio@stereo) 2 else 1
   out_tensor <- torch::torch_zeros(channels, l_wave_obj)
-  if(length(wave_obj@left) > 0) out_tensor[1] = wave_obj@left
-  if(length(wave_obj@right) > 0 & channels == 2) out_tensor[2] = wave_obj@right
+  if(length(audio@left) > 0) out_tensor[1] = audio@left
+  if(length(audio@right) > 0 & channels == 2) out_tensor[2] = audio@right
 
   if(!channels_first)
     out_tensor = out_tensor$t()
@@ -78,26 +78,26 @@ transform_to_tensor.Wave <- function(
   # normalize if needed
   if(is.null(normalization)) normalization <- TRUE
   if(is.logical(normalization) && isTRUE(normalization)) {
-    bits <- wave_obj@bit %||% 32
+    bits <- audio@bit %||% 32
     normalization <- 2^(bits-1)
   }
   internal__normalize_audio(out_tensor, normalization)
 
-  sample_rate = wave_obj@samp.rate
+  sample_rate = audio@samp.rate
 
   return(list(out_tensor, sample_rate))
 }
 
 #' @export
 transform_to_tensor.av <- function(
-  matrix,
+  audio,
   out = NULL,
   normalization = TRUE,
   channels_first = TRUE
 ) {
 
-  sample_rate <- attr(matrix, "sample_rate")
-  out_tensor <- torch::torch_tensor(matrix, dtype = torch::torch_float())
+  sample_rate <- attr(audio, "sample_rate")
+  out_tensor <- torch::torch_tensor(audio, dtype = torch::torch_float())
 
   if(!channels_first)
     out_tensor = out_tensor$t()
@@ -113,19 +113,19 @@ to_tensor_float <- function(x) torch::torch_tensor(x, dtype = torch::torch_float
 
 #' @export
 transform_to_tensor.audiofile <- function(
-  audiofile,
+  audio,
   out = NULL,
   normalization = FALSE,
   channels_first = TRUE
 ) {
 
-  sample_rate <- audiofile$sample_rate
+  sample_rate <- audio$sample_rate
 
-  if(audiofile$channels > 1) {
-    out_tensor <- Map(to_tensor_float, audiofile$waveform)
+  if(audio$channels > 1) {
+    out_tensor <- Map(to_tensor_float, audio$waveform)
     out_tensor <- torch::torch_stack(out_tensor)
   } else {
-    out_tensor <- to_tensor_float(audiofile$waveform[[1]])$unsqueeze(1)
+    out_tensor <- to_tensor_float(audio$waveform[[1]])$unsqueeze(1)
   }
 
   if(!channels_first)
@@ -134,7 +134,7 @@ transform_to_tensor.audiofile <- function(
   # normalize if needed
   if(is.null(normalization)) normalization <- FALSE
   if(is.logical(normalization) && isTRUE(normalization)) {
-    bits <- audiofile$bit %||% 32
+    bits <- audio$bit %||% 32
     normalization <- 2^(bits-1)
   }
   internal__normalize_audio(out_tensor, normalization)
@@ -156,7 +156,7 @@ transform_to_tensor.audiofile <- function(
 #'
 #' @export
 mp3_info <- function(filepath) {
-  info <- torchaudio:::get_info_mp3(filepath)
+  info <- get_info_mp3(filepath)
   AudioMetaData$new(
     sample_rate = info$hz,
     num_frames = info$samples,
@@ -261,7 +261,7 @@ torchaudio_loader <- function(
 #' @param channels_first (bool): Set channels first or length first in result. (Default: ``TRUE``)
 #' @param duration (int): Number of frames (or seconds) to load.  0 to load everything after the offset. (Default: ``0``)
 #' @param offset (int): Number of frames (or seconds) from the start of the file to begin data loading. (Default: ``0``)
-#' @param unit: (str): "sample" or "time". If "sample" duration and offset will be interpreted as frames, and as seconds otherwise.
+#' @param unit (str): "sample" or "time". If "sample" duration and offset will be interpreted as frames, and as seconds otherwise.
 #' @param signalinfo (str): A sox_signalinfo_t type, which could be helpful if the
 #'         audio type cannot be automatically determined. (Default: ``NULL``)
 #' @param encodinginfo (str): A sox_encodinginfo_t type, which could be set if the
