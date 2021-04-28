@@ -214,7 +214,8 @@ transform_amplitude_to_db <- torch::nn_module(
 #' \dontrun{
 #'
 #' if(torch::torch_is_installed()) {
-#' sample_mp3 <- transform_to_tensor(tuneR_loader(system.file("sample_audio_1.mp3", package = "torchaudio")))
+#' mp3_path <- system.file("sample_audio_1.mp3", package = "torchaudio")
+#' sample_mp3 <- transform_to_tensor(tuneR_loader(mp3_path))
 #' # (channel, n_mels, time)
 #' mel_specgram <- transform_mel_spectrogram(sample_rate = sample_mp3[[2]])(sample_mp3[[1]])
 #' }
