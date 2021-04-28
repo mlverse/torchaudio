@@ -12,6 +12,15 @@ audiofile_read_wav <- function(filepath, from = 0, to = Inf, unit = "samples") {
   wave_obj
 }
 
+#' audiofile_loader
+#'
+#' Load an audio located at 'filepath' using audiofile backend.
+#'
+#' @param filepath (str) path to the audio file.
+#' @param offset (num) the sample (or the second if unit = 'time') where the audio should start.
+#' @param duration (num) how many samples (or how many seconds if unit = 'time') should be extracted.
+#' @param unit (str) 'samples' or 'time'
+#'
 #' @export
 audiofile_loader <- function(
   filepath,

@@ -27,7 +27,15 @@ av_read_mp3_or_wav <- function(filepath, from = 0, to = Inf, unit = "samples") {
 }
 
 
-
+#' av_loader
+#'
+#' Load an audio located at 'filepath' using av package.
+#'
+#' @param filepath (str) path to the audio file.
+#' @param offset (num) the sample (or the second if unit = 'time') where the audio should start.
+#' @param duration (num) how many samples (or how many seconds if unit = 'time') should be extracted.
+#' @param unit (str) 'samples' or 'time'
+#'
 #' @export
 av_loader <- function(
   filepath,
