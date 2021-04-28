@@ -188,7 +188,7 @@ Allowed type values are <code>"speech_commands_v0.01"</code> and <code>"speech_c
       <th>normalization</th>
       <td><p>(NULL, bool, int or function): Optional normalization.
 If boolean TRUE, then output is divided by 2^31. Assuming the input is signed 32-bit audio,
-this normalizes to -1, 1. If numeric, then output is divided by that number.
+this normalizes to [-1, 1]. If numeric, then output is divided by that number.
 If function, then the output is passed as a paramete to the given function,
 then the output is divided by the result. (Default: NULL)</p></td>
     </tr>
