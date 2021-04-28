@@ -4,7 +4,6 @@
     https://github.com/lieff/minimp3
     To the extent possible under law, the author(s) have dedicated all copyright and related and neighboring rights to this software to the public domain worldwide.
     This software is distributed without any warranty.
-    See <http://creativecommons.org/publicdomain/zero/1.0/>.
 */
 #include "minimp3.h"
 
@@ -1154,6 +1153,15 @@ error:
 }
 #endif /*MINIMP3_ENABLE_RING*/
 #elif defined(_WIN32)
+
+// Copied from: https://stackoverflow.com/a/11593943/3297472
+// Taken from http://tolstoy.newcastle.edu.au/R/e2/devel/06/11/1242.html
+// Undefine the Realloc macro, which is defined by both R and by Windows stuff
+#undef Realloc
+// Also need to undefine the Free macro
+#undef Free
+
+
 #include <windows.h>
 
 static void mp3dec_close_file(mp3dec_map_info_t *map_info)
