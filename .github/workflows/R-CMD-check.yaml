@@ -42,7 +42,7 @@ jobs:
       - name: External deps
         if: runner.os == 'Linux'
         run: |
-          audo apt-get update -y
+          sudo apt-get update -y
           sudo apt-get install -y libavdevice-dev
           sudo apt-get install -y ffmpeg libavfilter-dev
 
