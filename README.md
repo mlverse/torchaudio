@@ -50,7 +50,7 @@ waveform = waveform_and_sample_rate[[1]]
 sample_rate = waveform_and_sample_rate[[2]]
 
 paste("Shape of waveform: ", paste(dim(waveform), collapse = " "))
-#> [1] "Shape of waveform:  2 276859"
+#> [1] "Shape of waveform:  2 276858"
 paste("Sample rate of waveform: ", sample_rate)
 #> [1] "Sample rate of waveform:  44100"
 
