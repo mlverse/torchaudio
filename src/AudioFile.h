@@ -1280,8 +1280,9 @@ T AudioFile<T>::clamp (T value, T minValue, T maxValue)
 template <class T>
 void AudioFile<T>::reportError (std::string errorMessage)
 {
-    if (logErrorsToConsole)
-        std::cout << errorMessage << std::endl;
+    if (logErrorsToConsole) {
+      //std::cout << errorMessage << std::endl;
+    }
 }
 
 #if defined (_MSC_VER)
