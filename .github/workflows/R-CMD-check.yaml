@@ -42,7 +42,7 @@ jobs:
       - name: External deps
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get install -y ffmpeg
+          sudo apt-get install -y ffmpeg libavfilter-dev
 
       - name: Install dependencies
         run: |
