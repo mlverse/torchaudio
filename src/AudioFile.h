@@ -111,7 +111,7 @@ public:
     double getLengthInSeconds() const;
 
     /** Prints a summary of the audio file to the console */
-    void printSummary() const;
+    //void printSummary() const;
 
     //=============================================================
 
@@ -335,17 +335,17 @@ double AudioFile<T>::getLengthInSeconds() const
 }
 
 //=============================================================
-template <class T>
-void AudioFile<T>::printSummary() const
-{
-    std::cout << "|======================================|" << std::endl;
-    std::cout << "Num Channels: " << getNumChannels() << std::endl;
-    std::cout << "Num Samples Per Channel: " << getNumSamplesPerChannel() << std::endl;
-    std::cout << "Sample Rate: " << sampleRate << std::endl;
-    std::cout << "Bit Depth: " << bitDepth << std::endl;
-    std::cout << "Length in Seconds: " << getLengthInSeconds() << std::endl;
-    std::cout << "|======================================|" << std::endl;
-}
+// template <class T>
+// void AudioFile<T>::printSummary() const
+// {
+//     std::cout << "|======================================|" << std::endl;
+//     std::cout << "Num Channels: " << getNumChannels() << std::endl;
+//     std::cout << "Num Samples Per Channel: " << getNumSamplesPerChannel() << std::endl;
+//     std::cout << "Sample Rate: " << sampleRate << std::endl;
+//     std::cout << "Bit Depth: " << bitDepth << std::endl;
+//     std::cout << "Length in Seconds: " << getLengthInSeconds() << std::endl;
+//     std::cout << "|======================================|" << std::endl;
+// }
 
 //=============================================================
 template <class T>
