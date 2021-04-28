@@ -237,6 +237,7 @@ set_audio_backend <- function(backend) {
 #' @param duration (int): Number of frames (or seconds) to load.  0 to load everything after the offset. (Default: ``0``)
 #' @param unit (str): "sample" or "time". If "sample" duration and offset will be interpreted as frames, and as seconds otherwise.
 #'
+#'
 #' @export
 torchaudio_loader <- function(
   filepath,
