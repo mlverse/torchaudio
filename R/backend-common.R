@@ -228,6 +228,15 @@ set_audio_backend <- function(backend) {
   )
 }
 
+#' Load Audio File
+#'
+#' Loads an audio file from disk using the default loader (getOption("torchaudio.loader")).
+#'
+#' @param filepath (str): Path to audio file
+#' @param offset (int): Number of frames (or seconds) from the start of the file to begin data loading. (Default: ``0``)
+#' @param duration (int): Number of frames (or seconds) to load.  0 to load everything after the offset. (Default: ``0``)
+#' @param unit (str): "sample" or "time". If "sample" duration and offset will be interpreted as frames, and as seconds otherwise.
+#'
 #' @export
 torchaudio_loader <- function(
   filepath,
@@ -235,7 +244,7 @@ torchaudio_loader <- function(
   duration = 0L,
   unit = c("samples", "time")
 ) {
-  loader <- getOption("torchaudio.loader", default = av_loader)
+  loader <- getOption("torchaudio.loader", default = tuneR_loader)
   loader(
     filepath,
     offset = offset,
