@@ -1,6 +1,4 @@
-# torchaudio (development version)
-
-# torchaudio 0.1.2.0
+# torchaudio 0.2.0
 
 * `torchaudio_load()` has been replaced by `tuneR_loader()` and `tranform_to_tensor()`. Inspired by {torchvision}.
 * `av_loader()` (experimental)
