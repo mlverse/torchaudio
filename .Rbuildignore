@@ -21,3 +21,4 @@ torchaudio-manual\.tex$
 val\.de$
 val\.en$
 validation\.tar\.gz$
+^loaders benchmark\.R$

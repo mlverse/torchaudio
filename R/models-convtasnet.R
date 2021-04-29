@@ -1,8 +1,8 @@
 #' 1D Convolutional block.
 #'
-#' @param io_channels  (int): The number of input/output channels, <B, Sc>
-#' @param hidden_channels  (int): The number of channels in the internal layers, <H>.
-#' @param kernel_size  (int): The convolution kernel size of the middle layer, <P>.
+#' @param io_channels  (int): The number of input/output channels, (B, Sc)
+#' @param hidden_channels  (int): The number of channels in the internal layers, H.
+#' @param kernel_size  (int): The convolution kernel size of the middle layer, P.
 #' @param padding  (int): Padding value of the convolution in the middle layer.
 #' @param dilation  (int): Dilation value of the convolution in the middle layer.
 #' @param no_redisual  (bool): Disable residual block/output.
@@ -10,12 +10,12 @@
 #' @details
 #'  This implementation corresponds to the "non-causal" setting in the paper.
 #'
-#' @section Reference
+#' @section Reference:
 #'  - Conv-TasNet: Surpassing Ideal Time--Frequency Magnitude Masking for Speech Separation
 #'    Luo, Yi and Mesgarani, Nima - [https://arxiv.org/abs/1809.07454]()
 #'
 #' @export
-model_convblock <- torch::nn_module(
+model_conv_block <- torch::nn_module(
   "ConvBlock",
   initialize = function(
     io_channels,
@@ -65,18 +65,18 @@ model_convblock <- torch::nn_module(
 #' Generates masks for separation. This implementation corresponds to
 #' the "non-causal" setting in the paper.
 #'
-#' @param input_dim  (int): Input feature dimension, <N>.
+#' @param input_dim  (int): Input feature dimension, N.
 #' @param num_sources  (int): The number of sources to separate.
-#' @param kernel_size  (int): The convolution kernel size of conv blocks, <P>.
-#' @param num_featrs  (int): Input/output feature dimenstion of conv blocks, <B, Sc>.
-#' @param num_hidden  (int): Intermediate feature dimention of conv blocks, <H>
-#' @param num_layers  (int): The number of conv blocks in one stack, <X>.
-#' @param num_stacks  (int): The number of conv block stacks, <R>.
+#' @param kernel_size  (int): The convolution kernel size of conv blocks, P.
+#' @param num_featrs  (int): Input/output feature dimenstion of conv blocks, (B, Sc).
+#' @param num_hidden  (int): Intermediate feature dimention of conv blocks, H
+#' @param num_layers  (int): The number of conv blocks in one stack, X.
+#' @param num_stacks  (int): The number of conv block stacks, R.
 #'
-#' @details forward param:
+#' @details forward param
 #' - input (Tensor): 3D Tensor with shape [batch, features, frames]
 #'
-#' @section References
+#' @section References:
 #'        - Conv-TasNet: Surpassing Ideal Time--Frequency Magnitude Masking for Speech Separation
 #'          Luo, Yi and Mesgarani, Nima [https://arxiv.org/abs/1809.07454]()
 #'
@@ -108,7 +108,7 @@ model_mask_generator <- torch::nn_module(
       for(l in range(num_layers)) {
         multi = 2^l
         self$conv_layers$append(
-          model_convblock(
+          model_conv_block(
             io_channels = num_feats,
             hidden_channels = num_hidden,
             kernel_size = kernel_size,
@@ -151,10 +151,10 @@ model_mask_generator <- torch::nn_module(
 #' Pad input Tensor so that the end of the input tensor corresponds with.
 #'
 #' @param input  (Tensor): 3D Tensor with shape (batch_size, channels==1, frames)
-#' @param enc_kernel_size  (int): The convolution kernel size of the encoder/decoder, <L>.
-#' @param enc_num_feats  (int): The feature dimensions passed to mask generator, <N>.
+#' @param enc_kernel_size  (int): The convolution kernel size of the encoder/decoder, L.
+#' @param enc_num_feats  (int): The feature dimensions passed to mask generator, N.
 #'
-#' @section Assumption
+#' @section Assumption:
 #'
 #'  The resulting Tensor will be padded with the size of stride  (== kernel_width // 2)
 #'  on the both ends in Conv1D
@@ -203,27 +203,26 @@ model_mask_generator <- torch::nn_module(
 #' setting in the paper.
 #'
 #' @param num_sources  (int): The number of sources to split.
-#' @param enc_kernel_size  (int): The convolution kernel size of the encoder/decoder, <L>.
-#' @param enc_num_feats  (int): The feature dimensions passed to mask generator, <N>.
-#' @param msk_kernel_size  (int): The convolution kernel size of the mask generator, <P>.
-#' @param msk_num_feats  (int): The input/output feature dimension of conv block in the mask generator, <B, Sc>.
-#' @param msk_num_hidden_feats  (int): The internal feature dimension of conv block of the mask generator, <H>.
-#' @param msk_num_layers  (int): The number of layers in one conv block of the mask generator, <X>.
-#' @param msk_num_stacks  (int): The numbr of conv blocks of the mask generator, <R>.
+#' @param enc_kernel_size  (int): The convolution kernel size of the encoder/decoder, L.
+#' @param enc_num_feats  (int): The feature dimensions passed to mask generator, N.
+#' @param msk_kernel_size  (int): The convolution kernel size of the mask generator, P.
+#' @param msk_num_feats  (int): The input/output feature dimension of conv block in the mask generator, (B, Sc).
+#' @param msk_num_hidden_feats  (int): The internal feature dimension of conv block of the mask generator, H.
+#' @param msk_num_layers  (int): The number of layers in one conv block of the mask generator, X.
+#' @param msk_num_stacks  (int): The numbr of conv blocks of the mask generator, R.
 #'
 #' @details forward param:
 #' - input  (Tensor): 3D Tensor with shape [batch, channel==1, frames]
+#' - .align_num_frames_with_strides
 #'
-#' @section .align_num_frames_with_strides
-#'
-#' @section Reference
+#' @section Reference:
 #' - Conv-TasNet: Surpassing Ideal Time--Frequency Magnitude Masking for Speech Separation
 #'   Luo, Yi and Mesgarani, Nima [https://arxiv.org/abs/1809.07454]()
 #'
 #' @return Tensor: 3D Tensor with shape [batch, channel==num_sources, frames]
 #'
 #' @export
-model_convtasnet <- torch::nn_module(
+model_conv_tasnet <- torch::nn_module(
   "ConvTasNet",
   initialize = function(
     num_sources = 2,
