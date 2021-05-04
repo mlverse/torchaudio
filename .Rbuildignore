@@ -18,6 +18,7 @@
 ^Meta$
 ^CRAN-RELEASE$
 torchaudio-manual\.tex$
-val\.de$
-val\.en$
-validation\.tar\.gz$
+^val\.de$
+^val\.en$
+^validation\.tar\.gz$
+^docs/reference/validation\.tar\.gz$
