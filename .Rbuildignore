@@ -22,3 +22,4 @@ torchaudio-manual\.tex$
 ^val\.en$
 ^validation\.tar\.gz$
 ^docs/reference/validation\.tar\.gz$
+^inst/loaders_benchmark\.R$

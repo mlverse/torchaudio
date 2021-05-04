@@ -45,7 +45,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">torchaudio</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -122,9 +122,9 @@
 
 <span class="no">url</span> <span class="kw">=</span> <span class="st">"https://pytorch.org/tutorials/_static/img/steam-train-whistle-daniel_simon-converted-from-mp3.wav"</span>
 <span class="no">filename</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempfile</a></span>(<span class="kw">fileext</span> <span class="kw">=</span> <span class="st">".wav"</span>)
-<span class="no">r</span> <span class="kw">=</span> <span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/httr/man/GET.html">GET</a></span>(<span class="no">url</span>, <span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/httr/man/write_disk.html">write_disk</a></span>(<span class="no">filename</span>, <span class="kw">overwrite</span> <span class="kw">=</span> <span class="fl">TRUE</span>))
+<span class="no">r</span> <span class="kw">=</span> <span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span>(<span class="no">url</span>, <span class="kw pkg">httr</span><span class="kw ns">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/write_disk.html">write_disk</a></span>(<span class="no">filename</span>, <span class="kw">overwrite</span> <span class="kw">=</span> <span class="fl">TRUE</span>))
 
-<span class="no">waveform_and_sample_rate</span> <span class="kw">=</span> <span class="fu"><a href="reference/torchaudio_load.html">torchaudio_load</a></span>(<span class="no">filename</span>)
+<span class="no">waveform_and_sample_rate</span> <span class="kw">=</span> <span class="fu"><a href="reference/transform_to_tensor.html">transform_to_tensor</a></span>(<span class="fu"><a href="reference/tuneR_loader.html">tuneR_loader</a></span>(<span class="no">filename</span>))
 <span class="no">waveform</span> <span class="kw">=</span> <span class="no">waveform_and_sample_rate</span><span class="kw">[[</span><span class="fl">1</span>]]
 <span class="no">sample_rate</span> <span class="kw">=</span> <span class="no">waveform_and_sample_rate</span><span class="kw">[[</span><span class="fl">2</span>]]
 
@@ -152,7 +152,7 @@
 <div id="datasets-go-to-issue" class="section level2">
 <h2 class="hasAnchor">
 <a href="#datasets-go-to-issue" class="anchor"></a>Datasets (<a href="https://github.com/curso-r/torchaudio/issues/17">go to issue</a>)</h2>
-<ul>
+<ul class="task-list">
 <li>
 <input type="checkbox" disabled checked>
 CMUARCTIC</li>
@@ -191,7 +191,7 @@ YESNO</li>
 <div id="models-go-to-issue" class="section level2">
 <h2 class="hasAnchor">
 <a href="#models-go-to-issue" class="anchor"></a>Models (<a href="https://github.com/curso-r/torchaudio/issues/19">go to issue</a>)</h2>
-<ul>
+<ul class="task-list">
 <li>
 <input type="checkbox" disabled>
 ConvTasNet</li>
@@ -209,7 +209,7 @@ WaveRNN</li>
 <div id="io-backend" class="section level2">
 <h2 class="hasAnchor">
 <a href="#io-backend" class="anchor"></a>I/O Backend</h2>
-<ul>
+<ul class="task-list">
 <li>
 <input type="checkbox" disabled checked>
 {tuneR}</li>
@@ -227,6 +227,8 @@ WaveRNN</li>
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
+<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=torchaudio">https://​cloud.r-project.org/​package=torchaudio</a>
+</li>
 <li>Ask a question about this work at <br><a href="https://github.com/curso-r/torchaudio/issues">https://​github.com/​curso-r/​torchaudio/​issues</a>
 </li>
 </ul>
@@ -256,7 +258,7 @@ WaveRNN</li>
   <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://www.tidyverse.org/lifecycle/#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 <li><a href="https://github.com/curso-r/torchaudio/actions"><img src="https://github.com/curso-r/torchaudio/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
 <li><a href="https://CRAN.R-project.org/package=torchaudio"><img src="https://www.r-pkg.org/badges/version/torchaudio" alt="CRAN status"></a></li>
 <li><a href="https://cran.r-project.org/package=torchaudio"><img src="https://cranlogs.r-pkg.org/badges/torchaudio"></a></li>
