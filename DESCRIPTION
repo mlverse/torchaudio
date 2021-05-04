@@ -12,7 +12,6 @@ Description: Provides access to datasets, models and preprocessing
     facilities for deep learning in audio.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Suggests: 
