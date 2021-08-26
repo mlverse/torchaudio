@@ -34,7 +34,7 @@ extract_archive <- function(from_path, to_path = NULL, overwrite = FALSE) {
   if(ext_file %in% "zip") {
     utils::unzip(zipfile = from_path, exdir = to_path, overwrite = overwrite)
   } else if(grepl("tar", from_path)) {
-    utils::untar(tarfile = from_path, exdir = to_path)
+    utils::untar(tarfile = from_path, exdir = path.expand(to_path))
   }
 }
 
