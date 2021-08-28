@@ -2,7 +2,7 @@ tuneR_read_mp3_or_wav <- function(filepath, from = 0, to = Inf, unit = "samples"
   file_ext <- tools::file_ext(filepath)
   unit <- unit[1]
   if(file_ext == "mp3") {
-    info <- suppressWarnings(audio_info(filepath))
+    info <- (audio_info(filepath))
     to_ <- to
     from_ <- from
     if(unit == "samples") {
@@ -14,7 +14,8 @@ tuneR_read_mp3_or_wav <- function(filepath, from = 0, to = Inf, unit = "samples"
     to_ <- max(to_, from_ + 0.015)
     to_ <- 0.05 + to_*1.01
     wave_obj <- monitoR::readMP3(filepath, from = from_, to = to_)
-    wave_obj <- tuneR::extractWave(wave_obj, from = unit=="samples", to = to - from, xunit = unit)
+    if(from > 0 | is.finite(to))
+      wave_obj <- tuneR::extractWave(wave_obj, from = unit=="samples", to = to - from, xunit = unit)
   } else if(file_ext == "wav") {
     if(unit == "time") unit <- "seconds"
     if(unit == "samples") to <- to - 1
