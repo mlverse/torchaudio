@@ -79,7 +79,7 @@ test_that("functional_create_dct", {
 })
 
 test_that("functional_amplitude_to_db and functional_db_to_amplitude", {
-  x1 <- torch::torch_arange(0,3, dtype = torch::torch_float())
+  x1 <- torch::torch_arange(0,2, dtype = torch::torch_float())
 
   # amplitude_to_DB
   x2 <- functional_amplitude_to_db(x1, multiplier = 10, amin = 1, db_multiplier = 2, top_db = 1)
@@ -94,7 +94,7 @@ test_that("functional_amplitude_to_db and functional_db_to_amplitude", {
 
 
 test_that("functional_mu_law_encoding and functional_mu_law_decoding", {
-  x1 <- torch::torch_arange(0,3, dtype = torch::torch_float())
+  x1 <- torch::torch_arange(0,2, dtype = torch::torch_float())
   # functional_mu_law_encoding
   x2 <- functional_mu_law_encoding(x1, quantization_channels = 300)
   expect_tensor(x2)
@@ -318,7 +318,7 @@ test_that("gain", {
 })
 
 test_that("add_noise_shaping", {
-  add_noise_shaping <- functional_add_noise_shaping(torch::torch_arange(0,5), torch::torch_arange(0,5))
+  add_noise_shaping <- functional_add_noise_shaping(torch::torch_arange(0,4), torch::torch_arange(0,4))
   expect_tensor(add_noise_shaping)
   expect_tensor_shape(add_noise_shaping, 5)
 })
@@ -407,7 +407,7 @@ test_that("median_smoothing", {
 
 test_that("sliding_window_cmn", {
   sliding_window_cmn <- functional_sliding_window_cmn(
-    waveform = torch::torch_arange(0, 15)$reshape(c(3, 5)),
+    waveform = torch::torch_arange(0, 14)$reshape(c(3, 5)),
     cmn_window = 600,
     min_cmn_window = 100,
     center = TRUE,

@@ -3,7 +3,7 @@ load_yesno_item <- function(fileid, path, ext_audio) {
   if(length(fileid) != 1) value_error("length(fileid) should be 1.")
 
   # Read audio
-  waveform_and_sample_rate = transform_to_tensor(tuneR_loader(fileid))
+  waveform_and_sample_rate = torchaudio_load(fileid)
 
   # Read label
   fileid <- basename(fileid)

@@ -8,10 +8,10 @@ test_that("tuneR_loader", {
 
   expect_equal(waveform_and_sample_rate[[2]], sample_mp3@samp.rate)
   expect_tensor(waveform_and_sample_rate[[1]])
+  expect_equal(length(waveform_and_sample_rate[[1]]), length(sample_mp3@left))
 
   tuneR_Wave <- tuneR_loader(
     system.file("sample_audio_1.mp3", package = "torchaudio"),
-    normalization = 10,
     offset = 2000,
     duration = 2
   )

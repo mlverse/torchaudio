@@ -1,7 +1,8 @@
+#' @keywords internal
 av_read_mp3_or_wav <- function(filepath, from = 0, to = Inf, unit = "samples") {
   file_ext <- tools::file_ext(filepath)
   unit <- unit[1]
-  info <- suppressWarnings(audio_info(filepath))
+  info <- info(filepath)
   to_ <- to
   from_ <- from
   if(unit == "samples") {
@@ -21,28 +22,28 @@ av_read_mp3_or_wav <- function(filepath, from = 0, to = Inf, unit = "samples") {
     attrs$dim <- c(channels, len)
     attributes(av_obj) <- attrs
   }
-
+  class(av_obj) <- c("av", class(av_obj))
   return(av_obj)
 }
 
 
-
+#' av_loader
+#'
+#' Load an audio located at 'filepath' using av package.
+#'
+#' @param filepath (str) path to the audio file.
+#' @param offset (num) the sample (or the second if unit = 'time') where the audio should start.
+#' @param duration (num) how many samples (or how many seconds if unit = 'time') should be extracted.
+#' @param unit (str) 'samples' or 'time'
+#'
 #' @export
 av_loader <- function(
   filepath,
   offset = 0L,
   duration = 0L,
-  unit = c("samples", "time"),
-  normalization = TRUE,
-  signalinfo = NULL,
-  encodinginfo = NULL,
-  filetype = NULL
+  unit = c("samples", "time")
 ){
-
-  if(is.null(normalization)) value_error('Argument "normalization" is missing. Should it be set to `TRUE`?')
-  if(!is.null(signalinfo)) value_warning('Argument "signalinfo" is meaningful for sox backend only and will be ignored.')
-  if(!is.null(encodinginfo)) value_error('Argument "encodinginfo" is meaningful for sox backend only and will be ignored.')
-
+  package_required("av")
   filepath = as.character(filepath)
 
   # check if valid file
@@ -60,6 +61,3 @@ av_loader <- function(
   av_read_mp3_or_wav(filepath, from = offset, to = offset + duration, unit = unit)
 }
 
-av_info <- function() {}
-
-av_save <- function() {}

@@ -1,16 +1,18 @@
+#' @keywords internal
 tuneR_read_mp3_or_wav <- function(filepath, from = 0, to = Inf, unit = "samples") {
   file_ext <- tools::file_ext(filepath)
   unit <- unit[1]
   if(file_ext == "mp3") {
-    info <- (audio_info(filepath))
+    info <- info(filepath)
     to_ <- to
     from_ <- from
+    duration <- info$num_frames
     if(unit == "samples") {
       from_ <-max(1, from_)/info$sample_rate
       to_ <- to_/info$sample_rate
+      duration <- duration/info$sample_rate
     }
-    from_ <-  max(0.01, from_)
-    to_ <- min(to_, info$duration)
+    to_ <- min(to_, duration)
     to_ <- max(to_, from_ + 0.015)
     to_ <- 0.05 + to_*1.01
     wave_obj <- monitoR::readMP3(filepath, from = from_, to = to_)
@@ -18,7 +20,10 @@ tuneR_read_mp3_or_wav <- function(filepath, from = 0, to = Inf, unit = "samples"
       wave_obj <- tuneR::extractWave(wave_obj, from = unit=="samples", to = to - from, xunit = unit)
   } else if(file_ext == "wav") {
     if(unit == "time") unit <- "seconds"
-    if(unit == "samples") to <- to - 1
+    if(unit %in% c("samples", "sample")) {
+      to <- to - 1
+      from <- max(1, from)
+    }
     wave_obj <- tuneR::readWave(filepath, from = from, to = to, unit = unit)
   } else {
     runtime_error(glue::glue("Only .mp3 and .wav formats are supported. Got {file_ext}."))
@@ -28,22 +33,23 @@ tuneR_read_mp3_or_wav <- function(filepath, from = 0, to = Inf, unit = "samples"
 
 
 
+#' tuneR_loader
+#'
+#' Load an audio located at 'filepath' using tuneR package.
+#'
+#' @param filepath (str) path to the audio file.
+#' @param offset (num) the sample (or the second if unit = 'time') where the audio should start.
+#' @param duration (num) how many samples (or how many seconds if unit = 'time') should be extracted.
+#' @param unit (str) 'samples' or 'time'
+#'
 #' @export
 tuneR_loader <- function(
   filepath,
   offset = 0L,
   duration = 0L,
-  unit = c("samples", "time"),
-  normalization = TRUE,
-  signalinfo = NULL,
-  encodinginfo = NULL,
-  filetype = NULL
+  unit = c("samples", "time")
 ){
-
-  if(is.null(normalization)) value_error('Argument "normalization" is missing. Should it be set to `TRUE`?')
-  if(!is.null(signalinfo)) value_warning('Argument "signalinfo" is meaningful for sox backend only and will be ignored.')
-  if(!is.null(encodinginfo)) value_error('Argument "encodinginfo" is meaningful for sox backend only and will be ignored.')
-
+  package_required("tuneR")
   filepath = as.character(filepath)
 
   # check if valid file
@@ -61,6 +67,4 @@ tuneR_loader <- function(
   tuneR_read_mp3_or_wav(filepath, from = offset, to = offset + duration, unit = unit)
 }
 
-tuneR_info <- function() {}
 
-tuneR_save <- function() {}

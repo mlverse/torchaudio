@@ -5,7 +5,7 @@
 <!-- badges: start -->
 
 [![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R build
 status](https://github.com/curso-r/torchaudio/workflows/R-CMD-check/badge.svg)](https://github.com/curso-r/torchaudio/actions)
 [![CRAN
@@ -50,7 +50,7 @@ waveform = waveform_and_sample_rate[[1]]
 sample_rate = waveform_and_sample_rate[[2]]
 
 paste("Shape of waveform: ", paste(dim(waveform), collapse = " "))
-#> [1] "Shape of waveform:  2 276859"
+#> [1] "Shape of waveform:  2 276858"
 paste("Sample rate of waveform: ", sample_rate)
 #> [1] "Sample rate of waveform:  44100"
 

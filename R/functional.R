@@ -33,7 +33,7 @@ functional_spectrogram <- function(
   shape = waveform$size()
   ls = length(shape)
   waveform = waveform$reshape(list(-1, shape[ls]))
-  ls = length(shape)
+  lws = length(waveform$size())
 
   # default values are consistent with librosa.core.spectrum._spectrogram
   spec_f <- torch::torch_stft(
@@ -41,17 +41,20 @@ functional_spectrogram <- function(
     hop_length = hop_length, win_length = win_length,
     window = window, center = TRUE,
     pad_mode = "reflect", normalized = FALSE,
-    onesided = TRUE
+    onesided = TRUE, return_complex = TRUE
   )
 
   # unpack batch
   lspec = length(spec_f$shape)
-  spec_f = spec_f$reshape(c(shape[-ls], spec_f$shape[(lspec-2):lspec]))
+  spec_f = spec_f$reshape(c(shape[-ls], spec_f$shape[(lspec-1):lspec]))
 
   if(normalized) spec_f <- spec_f/sqrt(sum(window^2))
-  if(!is.null(power)) spec_f <- functional_complex_norm(spec_f, power = power)
-
-  return(spec_f)
+  if(!is.null(power)) {
+    if(power == 1)
+      return(spec_f$abs())
+    return(spec_f$abs()$pow(power))
+  }
+  return(torch::torch_view_as_real(spec_f))
 }
 
 #' Frequency Bin Conversion Matrix (functional)
@@ -133,8 +136,8 @@ functional_create_dct <- function(
   n_mels,
   norm = NULL
 ) {
-  n = torch::torch_arange(0, n_mels)
-  k = torch::torch_arange(0, n_mfcc)$unsqueeze(2)
+  n = torch::torch_arange(0, n_mels-1)
+  k = torch::torch_arange(0, n_mfcc-1)$unsqueeze(2)
   dct = torch::torch_cos(pi / n_mels * ((n + 0.5) * k))  # size (n_mfcc, n_mels)
   if(is.null(norm)) {
     dct = dct * 2.0
@@ -398,7 +401,7 @@ functional_phase_vocoder <- function(
 
   time_steps = torch::torch_arange(
     0,
-    complex_specgrams$size(ls-1),
+    complex_specgrams$size(ls-1)-1,
     rate,
     device = complex_specgrams$device,
     dtype = complex_specgrams$dtype
@@ -571,7 +574,6 @@ functional_lfilter <- function(
   b_coeffs,
   clamp = TRUE
 ) {
-
   # pack batch
   shape = waveform$size()
   ls = length(shape)
@@ -603,9 +605,9 @@ functional_lfilter <- function(
 
   # calculate windowed_input_signal in parallel
   # create indices of original with shape (n_channel, n_order, n_sample)
-  window_idxs = torch::torch_arange(0, n_sample, device=device)$unsqueeze(1) + torch::torch_arange(0, n_order, device=device)$unsqueeze(2)
+  window_idxs = torch::torch_arange(0, n_sample-1, device=device)$unsqueeze(1) + torch::torch_arange(0, n_order-1, device=device)$unsqueeze(2)
   window_idxs = window_idxs$`repeat`(c(n_channel, 1, 1))
-  window_idxs = window_idxs + (torch::torch_arange(0, n_channel, device=device)$unsqueeze(-1)$unsqueeze(-1) * n_sample_padded)
+  window_idxs = window_idxs + (torch::torch_arange(0, n_channel-1, device=device)$unsqueeze(-1)$unsqueeze(-1) * n_sample_padded)
   # Indices/Index start at 1 in R.
   window_idxs = (window_idxs + 1)$to(torch::torch_long())
   # (n_order, ) matmul (n_channel, n_order, n_sample) -> (n_channel, n_sample)
@@ -1380,7 +1382,7 @@ functional__generate_wave_table <- function(
 ) {
 
   phase_offset = as.integer(phase / pi / 2 * table_size + 0.5)
-  t = torch::torch_arange(0, table_size, device=device, dtype=torch::torch_int32())
+  t = torch::torch_arange(0, table_size-1, device=device, dtype=torch::torch_int32())
   point = (t + phase_offset) %% table_size
   d = torch::torch_zeros_like(point, device=device, dtype=torch::torch_float64())
 
@@ -1519,7 +1521,7 @@ functional_flanger <- function(
 
   delay_buf_pos = 0L
   lfo_pos = 0L
-  channel_idxs = torch::torch_arange(0, n_channels, device=device)$to(torch::torch_long())
+  channel_idxs = torch::torch_arange(0, n_channels-1, device=device)$to(torch::torch_long())
 
   for(i in seq.int(waveform$shape[lws])) {
     delay_buf_pos = (delay_buf_pos + delay_buf_length - 1L) %% delay_buf_length
@@ -1599,7 +1601,7 @@ functional_mask_along_axis_iid <- function(
   # Create broadcastable mask
   mask_start = min_value[.., NULL, NULL]
   mask_end = (min_value + value)[.., NULL, NULL]
-  mask = torch::torch_arange(0, specgrams$size(axis), device=device, dtype=dtype)
+  mask = torch::torch_arange(0, specgrams$size(axis)-1, device=device, dtype=dtype)
 
   # Per batch example masking
   specgrams = specgrams$transpose(axis, -1)
@@ -1692,6 +1694,7 @@ functional_compute_deltas <- function(
   win_length = 5,
   mode = "replicate"
 ) {
+  specgram = torch::torch_randn(1, 4, 10)
   device = specgram$device
   dtype = specgram$dtype
 
@@ -1708,7 +1711,7 @@ functional_compute_deltas <- function(
   denom = n * (n + 1) * (2 * n + 1) / 3
 
   specgram = torch::nnf_pad(specgram, c(n, n), mode=mode)
-  kernel = torch::torch_arange(-n, n + 1, 1, device=device, dtype=dtype)$`repeat`(c(specgram$shape[2], 1, 1))
+  kernel = torch::torch_arange(-n, n, 1, device=device, dtype=dtype)$`repeat`(c(specgram$shape[2], 1, 1))
   output = torch::nnf_conv1d(specgram, kernel, groups=specgram$shape[2]) / denom
 
   # unpack batch
@@ -2234,7 +2237,7 @@ functional_measure <- function(
   dftBuf[measure_len_ws:(dft_len_ws-1)]$zero_()
 
   # lsx_safe_rdft((int)p->dft_len_ws, 1, c->dftBuf);
-  .dftBuf = torch::torch_rfft(dftBuf, 1)
+  .dftBuf = torch::torch_fft_rfft(dftBuf)
 
   # memset(c->dftBuf, 0, p->spectrum_start * sizeof(*c->dftBuf));
   .dftBuf[1:spectrum_start]$zero_()
@@ -2242,7 +2245,7 @@ functional_measure <- function(
   mult = if(boot_count >= 0) boot_count / (1. + boot_count) else measure_smooth_time_mult
 
   spectrum_end_minus_1 = spectrum_end - 1
-  .d = functional_complex_norm(.dftBuf[spectrum_start:spectrum_end_minus_1])
+  .d = .dftBuf[spectrum_start:spectrum_end_minus_1]$abs()
   spectrum[spectrum_start:spectrum_end_minus_1]$mul_(mult)$add_(.d * (1 - mult))
   .d = spectrum[spectrum_start:spectrum_end_minus_1] ** 2
 
@@ -2272,11 +2275,11 @@ functional_measure <- function(
 
 
   # lsx_safe_rdft((int)p->dft_len_ws >> 1, 1, c->dftBuf);
-  .cepstrum_Buf = torch::torch_rfft(.cepstrum_Buf, 1)
+  .cepstrum_Buf = torch::torch_fft_rfft(.cepstrum_Buf, 1)
 
   result = as.numeric(
     torch::torch_sum(
-      functional_complex_norm(.cepstrum_Buf[cepstrum_start:cepstrum_end], power=2.0)
+      .cepstrum_Buf[cepstrum_start:cepstrum_end]$abs()$pow(2)
     )
   )
 

@@ -35,7 +35,7 @@ test_that("transform_mel_spectrogram", {
 })
 
 test_that("transform_amplitude_to_db", {
-  x1 <- torch::torch_arange(0,3, dtype = torch::torch_float())
+  x1 <- torch::torch_arange(0,2, dtype = torch::torch_float())
 
   # amplitude_to_db
   x2 <- transform_amplitude_to_db()(x1)
@@ -102,7 +102,7 @@ test_that("transform_vol", {
   expect_error(transform_vol(-1, 'power'), class = "value_error")
 
   vol = transform_vol(-1, "db")
-  x1 <- torch::torch_arange(0,3, dtype = torch::torch_float())
+  x1 <- torch::torch_arange(0,2, dtype = torch::torch_float())
   vol_x1 = vol(x1)
   expect_tensor(vol_x1)
 
