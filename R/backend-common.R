@@ -89,6 +89,17 @@ transform_to_tensor.Wave <- function(
 }
 
 #' @export
+transform_to_tensor.WaveMC <- function(
+    audio,
+    out = NULL,
+    normalization = TRUE,
+    channels_first = TRUE
+) {
+  audio <- as(audio, 'Wave')
+  transform_to_tensor(audio, out, normalization, channels_first)
+}
+
+#' @export
 transform_to_tensor.av <- function(
   audio,
   out = NULL,
