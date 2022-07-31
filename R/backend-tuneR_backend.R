@@ -20,6 +20,11 @@ tuneR_read_mp3_or_wav <- function(filepath, from = 0, to = Inf, unit = "samples"
       to_ <- min(to_, duration)
       to_ <- max(to_, from_ + 0.015)
       to_ <- 0.05 + to_*1.01
+      # mac throws permission denied when not set to afplay
+      afplay_path <- system("which afplay", intern = TRUE)
+      if(grepl("^darwin", R.version$os) & grepl(afplay_path, tuneR::getWavPlayer())) {
+        tuneR::setWavPlayer(afplay_path)
+      }
       wave_obj <- monitoR::readMP3(filepath, from = from_, to = to_)
     }
 

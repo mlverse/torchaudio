@@ -48,11 +48,11 @@ audio type cannot be automatically determined. (Default: \code{NULL})}
 automatically. (Default: \code{NULL})}
 }
 \value{
-\preformatted{list(Tensor, int): An output tensor of size `[C x L]` or `[L x C]` where
+\if{html}{\out{<div class="sourceCode">}}\preformatted{list(Tensor, int): An output tensor of size `[C x L]` or `[L x C]` where
     L is the number of audio frames and
     C is the number of channels.
     An integer which is the sample rate of the audio (as listed in the metadata of the file)
-}
+}\if{html}{\out{</div>}}
 }
 \description{
 Loads an audio file from disk into a tensor

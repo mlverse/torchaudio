@@ -26,11 +26,11 @@ then the output is divided by the result. (Default: \code{TRUE})}
 \item{channels_first}{(bool): Set channels first or length first in result. (Default: \code{TRUE})}
 }
 \value{
-\preformatted{list(Tensor, int): An output tensor of size `[C x L]` or `[L x C]` where
+\if{html}{\out{<div class="sourceCode">}}\preformatted{list(Tensor, int): An output tensor of size `[C x L]` or `[L x C]` where
     L is the number of audio frames and
     C is the number of channels.
     An integer which is the sample rate of the audio (as listed in the metadata of the file)
-}
+}\if{html}{\out{</div>}}
 }
 \description{
 Converts a tuneR Wave object or numeric vector into a \code{torch_tensor} of shape (Channels x Samples).
