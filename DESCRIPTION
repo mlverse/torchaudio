@@ -14,7 +14,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: false
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1
 Suggests: 
     testthat,
     monitoR,
@@ -32,12 +32,11 @@ Imports:
     torch (>= 0.3.0),
     fs,
     rlang,
-    rappdirs,
     utils,
     tools,
     glue,
     Rcpp,
-    withr
+    methods
 VignetteBuilder: knitr
 LinkingTo: 
     Rcpp

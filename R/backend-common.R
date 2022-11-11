@@ -88,6 +88,7 @@ transform_to_tensor.Wave <- function(
   return(list(out_tensor, sample_rate))
 }
 
+#' @importFrom methods as
 #' @export
 transform_to_tensor.WaveMC <- function(
     audio,
