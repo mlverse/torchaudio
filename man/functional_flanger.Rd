@@ -53,7 +53,7 @@ Apply a flanger effect to the audio. Similar to SoX implementation.
 }
 \references{
 \itemize{
-\item \url{http://sox.sourceforge.net/sox.html}
+\item \url{https://sox.sourceforge.net/sox.html}
 \item Scott Lehman, Effects Explained, \url{https://web.archive.org/web/20051125072557/http://www.harmony-central.com/Effects/effects-explained.html}
 }
 }

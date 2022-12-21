@@ -96,6 +96,6 @@ waveform  (Tensor): Tensor of audio of dimension \verb{(..., time)}
 }
 \references{
 \itemize{
-\item \url{http://sox.sourceforge.net/sox.html}
+\item \url{https://sox.sourceforge.net/sox.html}
 }
 }

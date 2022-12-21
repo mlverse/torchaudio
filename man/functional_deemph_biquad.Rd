@@ -19,7 +19,7 @@ Apply ISO 908 CD de-emphasis (shelving) IIR filter.  Similar to SoX implementati
 }
 \references{
 \itemize{
-\item \url{http://sox.sourceforge.net/sox.html}
+\item \url{https://sox.sourceforge.net/sox.html}
 \item \url{https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html}
 }
 }

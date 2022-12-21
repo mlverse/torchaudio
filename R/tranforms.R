@@ -974,7 +974,7 @@ transform_sliding_window_cmn <- torch::nn_module(
 #'  waveform  (Tensor): Tensor of audio of dimension `(..., time)`
 #'
 #' @references
-#' - [http://sox.sourceforge.net/sox.html]()
+#' - [https://sox.sourceforge.net/sox.html]()
 #'
 #' @return torch::nn_module()
 #'
