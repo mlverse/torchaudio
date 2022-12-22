@@ -21,13 +21,13 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v2
 
+      - name: External dependencies
+        run: sudo apt install libcurl4-openssl-dev libharfbuzz-dev libfribidi-dev libavfilter-dev
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
             any::pkgdown
-
-      - name: External dependencies
-        run: sudo apt install libcurl4-openssl-dev libharfbuzz-dev libfribidi-dev libavfilter-dev
 
       - name: Install package
         run: R CMD INSTALL .
