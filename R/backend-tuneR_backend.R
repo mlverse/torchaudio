@@ -25,7 +25,14 @@ tuneR_read_mp3_or_wav <- function(filepath, from = 0, to = Inf, unit = "samples"
       if(nzchar(afplay_path) && grepl("^darwin", R.version$os) && grepl(afplay_path, tuneR::getWavPlayer())) {
         tuneR::setWavPlayer(afplay_path)
       }
-      wave_obj <- monitoR::readMP3(filepath, from = from_, to = to_)
+
+      # monitoR::readMP3 needs libmp3splt to be installed, which will not normally
+      # be the case
+      if (nzchar(Sys.which("mp3splt")["mp3splt"])) {
+        wave_obj <- monitoR::readMP3(filepath, from = from_, to = to_)
+      } else {
+        wave_obj <- tuneR::readMP3(filepath)
+      }
     }
 
     if(from > 0 | is.finite(to))
