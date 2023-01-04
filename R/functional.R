@@ -1537,19 +1537,37 @@ functional_flanger <- function(
 
     delay_bufs[ ,  , delay_buf_pos+1] = temp + delay_last * feedback_gain
 
-    delayed_0 = delay_bufs[ , channel_idxs + 1L, (delay_buf_pos + int_delay) %% delay_buf_length + 1L]
+    delayed_0 = torch_index(
+      delay_bufs,
+      list(torch_arange(1, dim(delay_bufs)[1])$to(dtype = torch_long()),
+           channel_idxs + 1L,
+           (delay_buf_pos + int_delay) %% delay_buf_length + 1L
+           )
+    )
 
     int_delay = int_delay + 1L
 
-    delayed_1 = delay_bufs[ , channel_idxs + 1L, (delay_buf_pos + int_delay) %% delay_buf_length + 1L]
+    delayed_1 = torch_index(
+      delay_bufs,
+      list(torch_arange(1, dim(delay_bufs)[1])$to(dtype = torch_long()),
+           channel_idxs + 1L,
+           (delay_buf_pos + int_delay) %% delay_buf_length + 1L
+      )
+    )
 
     int_delay = int_delay + 1L
 
     if(interpolation == "linear") {
       delayed = delayed_0 + (delayed_1 - delayed_0) * frac_delay
     } else {
-      delayed_2 = delay_bufs[ , channel_idxs + 1L, (delay_buf_pos + int_delay) %% delay_buf_length + 1L]
-
+      delayed_2 =
+        torch_index(
+          delay_bufs,
+          list(torch_arange(1, dim(delay_bufs)[1])$to(dtype = torch_long()),
+               channel_idxs + 1L,
+               (delay_buf_pos + int_delay) %% delay_buf_length + 1L
+          )
+        )
       int_delay = int_delay + 1L
 
       delayed_2 = delayed_2 - delayed_0
