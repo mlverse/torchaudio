@@ -12,7 +12,7 @@ transform_to_tensor(
 )
 }
 \arguments{
-\item{audio}{(numeric or Wave): A numeric vector or Wave object, usually from \link[tuneR:readMP3]{tuneR::readMP3}, \link[tuneR:readWave]{tuneR::readWave} or \link[monitoR:readMP3]{monitoR::readMP3}.}
+\item{audio}{(numeric or Wave): A numeric vector or Wave object, usually from \link[tuneR:readMP3]{tuneR::readMP3} or \link[tuneR:readWave]{tuneR::readWave}.}
 
 \item{out}{(Tensor): An optional output tensor to use instead of creating one. (Default: \code{NULL})}
 
@@ -38,5 +38,5 @@ Convert Audio Object to Tensor.
 }
 \details{
 If audio is a numeric vector, attributes "channels" and "sample_rate" will be used if exists.
-Numeric vectors returned from \link[av:read_audio_bin]{av::read_audio_bin} have both attributes by default.
+Numeric vectors returned from \link[av:read_audio]{av::read_audio_bin} have both attributes by default.
 }
