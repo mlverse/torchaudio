@@ -1,34 +1,10 @@
 #' @keywords internal
 tuneR_read_mp3_or_wav <- function(filepath, from = 0, to = Inf, unit = "samples") {
-  full_lenght = from == 0 & is.infinite(to)
-
   file_ext <- tools::file_ext(filepath)
   unit <- unit[1]
-  if(file_ext == "mp3") {
-    if(full_lenght) {
-      wave_obj <- monitoR::readMP3(filepath)
-    } else {
-      info <- info(filepath)
-      to_ <- to
-      from_ <- from
-      duration <- info$num_frames
-      if(unit == "samples") {
-        from_ <-max(1, from_)/info$sample_rate
-        to_ <- to_/info$sample_rate
-        duration <- duration/info$sample_rate
-      }
-      to_ <- min(to_, duration)
-      to_ <- max(to_, from_ + 0.015)
-      to_ <- 0.05 + to_*1.01
-      # mac throws permission denied when not set to afplay
-      afplay_path <- system("which afplay", intern = TRUE)
-      if(grepl("^darwin", R.version$os) & grepl(afplay_path, tuneR::getWavPlayer())) {
-        tuneR::setWavPlayer(afplay_path)
-      }
-      wave_obj <- monitoR::readMP3(filepath, from = from_, to = to_)
-    }
-
-    if(from > 0 | is.finite(to))
+  if( file_ext == "mp3") {
+      wave_obj <- tuneR::readMP3(filepath)
+      if(from > 0 | is.finite(to))
       wave_obj <- tuneR::extractWave(wave_obj, from = unit=="samples", to = to - from, xunit = unit)
   } else if(file_ext == "wav") {
     if(unit == "time") unit <- "seconds"

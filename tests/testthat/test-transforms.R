@@ -64,8 +64,10 @@ test_that("transform_mu_law_encoding and transform_mu_law_decoding", {
 })
 
 test_that("transform_resample", {
-  expect_no_error(m <- transform_resample()(sample_torch))
-  # expect_tensor(m)
+  if(requireNamespace("numbers", quietly = TRUE)) {
+    expect_no_error(m <- transform_resample()(sample_torch))
+    # expect_tensor(m)
+  }
 })
 
 test_that("transform_complex_norm", {

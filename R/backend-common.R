@@ -32,7 +32,7 @@ AudioMetaData <- R6::R6Class(
 #' If audio is a numeric vector, attributes "channels" and "sample_rate" will be used if exists.
 #' Numeric vectors returned from [av::read_audio_bin] have both attributes by default.
 #'
-#' @param audio (numeric or Wave): A numeric vector or Wave object, usually from [tuneR::readMP3], [tuneR::readWave] or [monitoR::readMP3].
+#' @param audio (numeric or Wave): A numeric vector or Wave object, usually from [tuneR::readMP3] or [tuneR::readWave].
 #' @param out (Tensor): An optional output tensor to use instead of creating one. (Default: ``NULL``)
 #' @param normalization (bool, float or function): Optional normalization.
 #'         If boolean `TRUE`, then output is divided by `2^(bits-1)`.
