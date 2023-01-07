@@ -97,6 +97,6 @@ so in order to trim from the back, the reverse effect must also be used.
 }
 \references{
 \itemize{
-\item \url{http://sox.sourceforge.net/sox.html}
+\item \url{https://sox.sourceforge.net/sox.html}
 }
 }

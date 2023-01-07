@@ -746,7 +746,7 @@ functional_lowpass_biquad <- function(
 #' @return `tensor`: Waveform of dimension of `(..., time)`
 #'
 #' @references
-#' - [http://sox.sourceforge.net/sox.html]()
+#' - [https://sox.sourceforge.net/sox.html]()
 #' - [https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html]()
 #'
 #' @export
@@ -783,7 +783,7 @@ functional_allpass_biquad <- function(
 #' @return Tensor: Waveform of dimension of `(..., time)`
 #'
 #' @references
-#' - [http://sox.sourceforge.net/sox.html]()
+#' - [https://sox.sourceforge.net/sox.html]()
 #' - [https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html]()
 #'
 #' @export
@@ -820,7 +820,7 @@ functional_bandpass_biquad <- function(
 #' @return `tensor`: Waveform of dimension of `(..., time)`
 #'
 #' @references
-#' - [http://sox.sourceforge.net/sox.html]()
+#' - [https://sox.sourceforge.net/sox.html]()
 #' - [https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html]()
 #'
 #' @export
@@ -892,7 +892,7 @@ functional_equalizer_biquad <- function(
 #' @return `tensor`: Waveform of dimension of `(..., time)`
 #'
 #' @references
-#' - [http://sox.sourceforge.net/sox.html]()
+#' - [https://sox.sourceforge.net/sox.html]()
 #' - [https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html]()
 #'
 #' @export
@@ -937,7 +937,7 @@ functional_band_biquad <- function(
 #' @return `tensor`: Waveform of dimension of `(..., time)`
 #'
 #' @references
-#' - [http://sox.sourceforge.net/sox.html]()
+#' - [https://sox.sourceforge.net/sox.html]()
 #' - [https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html]()
 #'
 #' @export
@@ -980,7 +980,7 @@ functional_treble_biquad <- function(
 #' @return `tensor`: Waveform of dimension of `(..., time)`
 #'
 #' @references
-#' - [http://sox.sourceforge.net/sox.html]()
+#' - [https://sox.sourceforge.net/sox.html]()
 #' - [https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html]()
 #'
 #' @export
@@ -1021,7 +1021,7 @@ functional_bass_biquad <- function(
 #' @return Tensor: Waveform of dimension of `(..., time)`
 #'
 #' @references
-#' - [http://sox.sourceforge.net/sox.html]()
+#' - [https://sox.sourceforge.net/sox.html]()
 #' - [https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html]()
 #'
 #' @export
@@ -1070,7 +1070,7 @@ functional_deemph_biquad <- function(
 #' @return `tensor`: Waveform of dimension of `(..., time)`
 #'
 #' @references
-#' - [http://sox.sourceforge.net/sox.html]()
+#' - [https://sox.sourceforge.net/sox.html]()
 #' - [https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html]()
 #'
 #' @export
@@ -1140,7 +1140,7 @@ functional_riaa_biquad <- function(
 #' @return `tensor`: Waveform of dimension of `(..., time)`
 #'
 #' @references
-#' - [http://sox.sourceforge.net/sox.html]()
+#' - [https://sox.sourceforge.net/sox.html]()
 #'
 #' @export
 functional_contrast <- function(
@@ -1175,7 +1175,7 @@ functional_contrast <- function(
 #' @return `tensor`: Waveform of dimension of `(..., time)`
 #'
 #' @references
-#' - [http://sox.sourceforge.net/sox.html]()
+#' - [https://sox.sourceforge.net/sox.html]()
 #'
 #' @export
 functional_dcshift <- function(
@@ -1221,7 +1221,7 @@ functional_dcshift <- function(
 #' @return Tensor: Waveform of dimension of `(..., time)`
 #'
 #' @references
-#' - [http://sox.sourceforge.net/sox.html]()
+#' - [https://sox.sourceforge.net/sox.html]()
 #'
 #' @export
 functional_overdrive <- function(
@@ -1288,7 +1288,7 @@ functional_overdrive <- function(
 #' @return `tensor`: Waveform of dimension of `(..., time)`
 #'
 #' @references
-#' - [http://sox.sourceforge.net/sox.html]()
+#' - [https://sox.sourceforge.net/sox.html]()
 #'
 #' @export
 functional_phaser <- function(
@@ -1436,7 +1436,7 @@ functional__generate_wave_table <- function(
 #' @return `tensor`: Waveform of dimension of `(..., channel, time)`
 #'
 #' @references
-#' - [http://sox.sourceforge.net/sox.html]()
+#' - [https://sox.sourceforge.net/sox.html]()
 #'- Scott Lehman, Effects Explained, [https://web.archive.org/web/20051125072557/http://www.harmony-central.com/Effects/effects-explained.html]()
 #'
 #' @export
@@ -2341,7 +2341,7 @@ functional_measure <- function(
 #' @return Tensor: Tensor of audio of dimension (..., time).
 #'
 #' @references
-#' - [http://sox.sourceforge.net/sox.html]()
+#' - [https://sox.sourceforge.net/sox.html]()
 #'
 #' @export
 functional_vad <- function(

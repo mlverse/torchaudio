@@ -31,7 +31,7 @@ Design a bass tone-control effect.  Similar to SoX implementation.
 }
 \references{
 \itemize{
-\item \url{http://sox.sourceforge.net/sox.html}
+\item \url{https://sox.sourceforge.net/sox.html}
 \item \url{https://webaudio.github.io/Audio-EQ-Cookbook/audio-eq-cookbook.html}
 }
 }

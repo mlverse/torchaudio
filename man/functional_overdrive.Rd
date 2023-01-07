@@ -24,6 +24,6 @@ This effect applies a non linear distortion to the audio signal.
 }
 \references{
 \itemize{
-\item \url{http://sox.sourceforge.net/sox.html}
+\item \url{https://sox.sourceforge.net/sox.html}
 }
 }
