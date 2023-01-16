@@ -2,11 +2,9 @@ Package: torchaudio
 Title: R Interface to 'pytorch''s 'torchaudio'
 Version: 0.2.1
 Authors@R: c(
-    person(given = "Athos",
-           family = "Damiani",
-           role = c("aut", "cre"),
-           email = "athos.damiani@gmail.com"
-           )
+    person("Athos", "Damiani", role = c("aut"), email = "athos.damiani@gmail.com"),
+    person("Daniel", "Falbel", email = "daniel@posit.co", role = c("aut")),
+    person("Sigrid", "Keydana", email = "sigrid@posit.co", role = c("aut", "cre"))
     )
 Description: Provides access to datasets, models and pre-processing
     facilities for deep learning in audio.
@@ -14,7 +12,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: false
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Suggests: 
     testthat,
     tuneR,

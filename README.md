@@ -1,5 +1,5 @@
 
-# torchaudio <a href='https://curso-r.github.io/torchaudio/'><img src='man/figures/torchaudio.png' align="right" height="139" /></a>
+# torchaudio <a href='https://curso-r.github.io/torchaudio/'><img src="man/figures/torchaudio.png" align="right" height="139"/></a>
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
@@ -11,13 +11,22 @@ status](https://github.com/curso-r/torchaudio/workflows/R-CMD-check/badge.svg)](
 [![CRAN
 status](https://www.r-pkg.org/badges/version/torchaudio)](https://CRAN.R-project.org/package=torchaudio)
 [![](https://cranlogs.r-pkg.org/badges/torchaudio)](https://cran.r-project.org/package=torchaudio)
+
 <!-- badges: end -->
 
-torchaudio is an extension for [torch](https://github.com/mlverse/torch)
-providing audio loading, transformations, common architectures for
-signal processing, pre-trained weights and access to commonly used
-datasets. An almost literal translation from [PyTorch’s
-Torchaudio](https://pytorch.org/audio/stable/index.html) library to R.
+`torchaudio` is an extension for
+[`torch`](https://github.com/mlverse/torch) providing audio loading,
+transformations, common architectures for signal processing, pre-trained
+weights and access to commonly used datasets. The package is a port to R
+of [PyTorch’s TorchAudio](https://pytorch.org/audio/stable/index.html).
+
+`torchaudio` was originally developed by [Athos
+Damiani](https://github.com/Athospd) as part of
+[Curso-R](https://github.com/Athospd) work. Development will continue
+under the roof of the *mlverse* organization, together with `torch`
+itself, [`torchvision`](https://github.com/mlverse/torchvision),
+[`luz`](https://github.com/mlverse/luz), and a number of extensions
+building on `torch`.
 
 ## Installation
 
@@ -76,28 +85,28 @@ image(specgram_as_array[,ncol(specgram_as_array):1], col = viridis::viridis(n = 
 
 ## Datasets ([go to issue](https://github.com/curso-r/torchaudio/issues/17))
 
--   [x] CMUARCTIC
--   [ ] COMMONVOICE
--   [ ] GTZAN
--   [ ] LIBRISPEECH
--   [ ] LIBRITTS
--   [ ] LJSPEECH
--   [x] SPEECHCOMMANDS
--   [ ] TEDLIUM
--   [ ] VCTK
--   [ ] VCTK\_092
--   [x] YESNO
+- [x] CMUARCTIC
+- [ ] COMMONVOICE
+- [ ] GTZAN
+- [ ] LIBRISPEECH
+- [ ] LIBRITTS
+- [ ] LJSPEECH
+- [x] SPEECHCOMMANDS
+- [ ] TEDLIUM
+- [ ] VCTK
+- [ ] VCTK_092
+- [x] YESNO
 
 ## Models ([go to issue](https://github.com/curso-r/torchaudio/issues/19))
 
--   [ ] ConvTasNet
--   [ ] Wav2Letter
--   [x] WaveRNN
--   [ ] (what else? novel structures are very welcome!)
+- [ ] ConvTasNet
+- [ ] Wav2Letter
+- [x] WaveRNN
+- [ ] (what else? novel structures are very welcome!)
 
 ## I/O Backend
 
--   [x] {tuneR}
+- [x] {tuneR}
 
 ## Code of Conduct
 
