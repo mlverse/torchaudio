@@ -81,4 +81,4 @@ navbar:
         href: articles/speech_command_recognition_with_torchaudio.html
     github:
       icon: fa-github
-      href: https://github.com/curso-r/torchaudio
+      href: https://github.com/mlverse/torchaudio
