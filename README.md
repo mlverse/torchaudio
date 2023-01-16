@@ -7,7 +7,7 @@
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R build
-status](https://github.com/curso-r/torchaudio/workflows/R-CMD-check/badge.svg)](https://github.com/curso-r/torchaudio/actions)
+status](https://github.com/mlverse/torchaudio/workflows/R-CMD-check/badge.svg)](https://github.com/mlverse/torchaudio/actions)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/torchaudio)](https://CRAN.R-project.org/package=torchaudio)
 [![](https://cranlogs.r-pkg.org/badges/torchaudio)](https://cran.r-project.org/package=torchaudio)
@@ -22,7 +22,7 @@ of [PyTorch’s TorchAudio](https://pytorch.org/audio/stable/index.html).
 
 `torchaudio` was originally developed by [Athos
 Damiani](https://github.com/Athospd) as part of
-[Curso-R](https://github.com/Athospd) work. Development will continue
+[Curso-R](https://github.com/curso-r) work. Development will continue
 under the roof of the *mlverse* organization, together with `torch`
 itself, [`torchvision`](https://github.com/mlverse/torchvision),
 [`luz`](https://github.com/mlverse/luz), and a number of extensions
@@ -39,7 +39,7 @@ install.packages("torchaudio")
 You can install the development version from GitHub with:
 
 ``` r
-remotes::install_github("curso-r/torchaudio")
+remotes::install_github("mlverse/torchaudio")
 ```
 
 ## A Waveform
@@ -83,7 +83,7 @@ image(specgram_as_array[,ncol(specgram_as_array):1], col = viridis::viridis(n = 
 
 <img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
 
-## Datasets ([go to issue](https://github.com/curso-r/torchaudio/issues/17))
+## Datasets ([go to issue](https://github.com/mlverse/torchaudio/issues/17))
 
 - [x] CMUARCTIC
 - [ ] COMMONVOICE
@@ -97,7 +97,7 @@ image(specgram_as_array[,ncol(specgram_as_array):1], col = viridis::viridis(n = 
 - [ ] VCTK_092
 - [x] YESNO
 
-## Models ([go to issue](https://github.com/curso-r/torchaudio/issues/19))
+## Models ([go to issue](https://github.com/mlverse/torchaudio/issues/19))
 
 - [ ] ConvTasNet
 - [ ] Wav2Letter
