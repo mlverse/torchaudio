@@ -2,9 +2,9 @@ Package: torchaudio
 Title: R Interface to 'pytorch''s 'torchaudio'
 Version: 0.2.1
 Authors@R: c(
+    person("Sigrid", "Keydana", email = "sigrid@posit.co", role = c("aut", "cre")),
     person("Athos", "Damiani", role = c("aut"), email = "athos.damiani@gmail.com"),
-    person("Daniel", "Falbel", email = "daniel@posit.co", role = c("aut")),
-    person("Sigrid", "Keydana", email = "sigrid@posit.co", role = c("aut", "cre"))
+    person("Daniel", "Falbel", email = "daniel@posit.co", role = c("aut"))
     )
 Description: Provides access to datasets, models and processing
     facilities for deep learning in audio.
