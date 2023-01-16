@@ -24,4 +24,4 @@ torchaudio-manual\.tex$
 ^docs/reference/validation\.tar\.gz$
 ^inst/loaders_benchmark\.R$
 ^CRAN-SUBMISSION$
-^rstudio
+^rstudio$
