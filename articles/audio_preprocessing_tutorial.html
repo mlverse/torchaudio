@@ -32,6 +32,8 @@
 </script>
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -44,7 +46,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">torchaudio</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.1</span>
       </span>
     </div>
 
@@ -57,7 +59,7 @@
   </a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -74,13 +76,10 @@
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
-</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/curso-r/torchaudio">
+  <a href="https://github.com/curso-r/torchaudio" class="external-link">
     <span class="fa fa-github"></span>
      
   </a>
@@ -95,10 +94,11 @@
 
       
 
-      </header><script src="audio_preprocessing_tutorial_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Audio I/O and Pre-Processing with torchaudio</h1>
+      <h1 data-toc-skip>Audio I/O and Pre-Processing with
+torchaudio</h1>
             
       
       
@@ -109,200 +109,252 @@
     
     
 <blockquote>
-<p>Note: This is an R port of the official tutorial available <a href="https://pytorch.org/tutorials/beginner/audio_preprocessing_tutorial.html">here</a>. All credits goes to <a href="https://vincentqb.github.io/">Vincent Quenneville-Bélair</a>.</p>
+<p>Note: This is an R port of the official tutorial available <a href="https://pytorch.org/tutorials/beginner/audio_preprocessing_tutorial.html" class="external-link">here</a>.
+All credits goes to <a href="https://vincentqb.github.io/" class="external-link">Vincent
+Quenneville-Bélair</a>.</p>
 </blockquote>
-<p>{torch} is an open source deep learning platform that provides a seamless path from research prototyping to production deployment with GPU support.</p>
-<p>Significant effort in solving machine learning problems goes into data preparation. <code>torchaudio</code> leverages torch’s GPU support, and provides many tools to make data loading easy and more readable. In this tutorial, we will see how to load and preprocess data from a simple dataset.</p>
+<p>{torch} is an open source deep learning platform that provides a
+seamless path from research prototyping to production deployment with
+GPU support.</p>
+<p>Significant effort in solving machine learning problems goes into
+data preparation. <code>torchaudio</code> leverages torch’s GPU support,
+and provides many tools to make data loading easy and more readable. In
+this tutorial, we will see how to load and preprocess data from a simple
+dataset.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">torchaudio</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/">viridis</a></span><span class="op">)</span></code></pre></div>
-<div id="opening-a-file" class="section level1">
-<h1 class="hasAnchor">
-<a href="#opening-a-file" class="anchor"></a>Opening a file</h1>
-<p><code>torchaudio</code> also supports loading sound files in the wav and mp3 format. We call waveform the resulting raw audio signal.</p>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">torchaudio</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/" class="external-link">viridis</a></span><span class="op">)</span></span></code></pre></div>
+<div class="section level2">
+<h2 id="opening-a-file">Opening a file<a class="anchor" aria-label="anchor" href="#opening-a-file"></a>
+</h2>
+<p><code>torchaudio</code> also supports loading sound files in the wav
+and mp3 format. We call waveform the resulting raw audio signal.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">url</span> <span class="op">=</span> <span class="st">"https://pytorch.org/tutorials/_static/img/steam-train-whistle-daniel_simon-converted-from-mp3.wav"</span>
-<span class="va">filename</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".wav"</span><span class="op">)</span>
-<span class="va">r</span> <span class="op">=</span> <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span><span class="op">(</span><span class="va">url</span>, <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/write_disk.html">write_disk</a></span><span class="op">(</span><span class="va">filename</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">waveform_and_sample_rate</span> <span class="op">=</span> <span class="fu"><a href="../reference/transform_to_tensor.html">transform_to_tensor</a></span><span class="op">(</span><span class="fu"><a href="../reference/tuneR_loader.html">tuneR_loader</a></span><span class="op">(</span><span class="va">filename</span><span class="op">)</span><span class="op">)</span>
-<span class="va">waveform</span> <span class="op">=</span> <span class="va">waveform_and_sample_rate</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>
-<span class="va">sample_rate</span> <span class="op">=</span> <span class="va">waveform_and_sample_rate</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Shape of waveform: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">waveform</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">" "</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Sample rate of waveform: "</span>, <span class="va">sample_rate</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">waveform</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"royalblue"</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">waveform</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"orange"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">url</span> <span class="op">=</span> <span class="st">"https://pytorch.org/tutorials/_static/img/steam-train-whistle-daniel_simon-converted-from-mp3.wav"</span></span>
+<span><span class="va">filename</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".wav"</span><span class="op">)</span></span>
+<span><span class="va">r</span> <span class="op">=</span> <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html" class="external-link">GET</a></span><span class="op">(</span><span class="va">url</span>, <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/write_disk.html" class="external-link">write_disk</a></span><span class="op">(</span><span class="va">filename</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">waveform_and_sample_rate</span> <span class="op">=</span> <span class="fu"><a href="../reference/transform_to_tensor.html">transform_to_tensor</a></span><span class="op">(</span><span class="fu"><a href="../reference/tuneR_loader.html">tuneR_loader</a></span><span class="op">(</span><span class="va">filename</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">waveform</span> <span class="op">=</span> <span class="va">waveform_and_sample_rate</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="va">sample_rate</span> <span class="op">=</span> <span class="va">waveform_and_sample_rate</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Shape of waveform: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">waveform</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">" "</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Sample rate of waveform: "</span>, <span class="va">sample_rate</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">waveform</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"royalblue"</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">waveform</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"orange"</span><span class="op">)</span></span></code></pre></div>
 <p>Package {tuneR} is the only backend implemented yet.</p>
-<div id="transformations" class="section level2">
-<h2 class="hasAnchor">
-<a href="#transformations" class="anchor"></a>Transformations</h2>
-<p><code>torchaudio</code> supports a growing list of <a href="https://pytorch.org/audio/stable/transforms.html"><code>transformations</code></a>.</p>
+<div class="section level3">
+<h3 id="transformations">Transformations<a class="anchor" aria-label="anchor" href="#transformations"></a>
+</h3>
+<p><code>torchaudio</code> supports a growing list of <a href="https://pytorch.org/audio/stable/transforms.html" class="external-link"><code>transformations</code></a>.</p>
 <ul>
 <li>
-<strong>Resample</strong>: Resample waveform to a different sample rate.</li>
+<strong>Resample</strong>: Resample waveform to a different sample
+rate.</li>
 <li>
-<strong>Spectrogram</strong>: Create a spectrogram from a waveform.</li>
+<strong>Spectrogram</strong>: Create a spectrogram from a
+waveform.</li>
 <li>
-<strong>GriffinLim</strong>: Compute waveform from a linear scale magnitude spectrogram using the Griffin-Lim transformation.</li>
+<strong>GriffinLim</strong>: Compute waveform from a linear scale
+magnitude spectrogram using the Griffin-Lim transformation.</li>
 <li>
-<strong>ComputeDeltas</strong>: Compute delta coefficients of a tensor, usually a spectrogram.</li>
+<strong>ComputeDeltas</strong>: Compute delta coefficients of a
+tensor, usually a spectrogram.</li>
 <li>
-<strong>ComplexNorm</strong>: Compute the norm of a complex tensor.</li>
+<strong>ComplexNorm</strong>: Compute the norm of a complex
+tensor.</li>
 <li>
-<strong>MelScale</strong>: This turns a normal STFT into a Mel-frequency STFT, using a conversion matrix.</li>
+<strong>MelScale</strong>: This turns a normal STFT into a
+Mel-frequency STFT, using a conversion matrix.</li>
 <li>
-<strong>AmplitudeToDB</strong>: This turns a spectrogram from the power/amplitude scale to the decibel scale.</li>
+<strong>AmplitudeToDB</strong>: This turns a spectrogram from the
+power/amplitude scale to the decibel scale.</li>
 <li>
-<strong>MFCC</strong>: Create the Mel-frequency cepstrum coefficients from a waveform.</li>
+<strong>MFCC</strong>: Create the Mel-frequency cepstrum
+coefficients from a waveform.</li>
 <li>
-<strong>MelSpectrogram</strong>: Create MEL Spectrograms from a waveform using the STFT function in Torch.</li>
+<strong>MelSpectrogram</strong>: Create MEL Spectrograms from a
+waveform using the STFT function in Torch.</li>
 <li>
-<strong>MuLawEncoding</strong>: Encode waveform based on mu-law companding.</li>
+<strong>MuLawEncoding</strong>: Encode waveform based on mu-law
+companding.</li>
 <li>
 <strong>MuLawDecoding</strong>: Decode mu-law encoded waveform.</li>
 <li>
-<strong>TimeStretch</strong>: Stretch a spectrogram in time without modifying pitch for a given rate.</li>
+<strong>TimeStretch</strong>: Stretch a spectrogram in time without
+modifying pitch for a given rate.</li>
 <li>
-<strong>FrequencyMasking</strong>: Apply masking to a spectrogram in the frequency domain.</li>
+<strong>FrequencyMasking</strong>: Apply masking to a spectrogram in
+the frequency domain.</li>
 <li>
-<strong>TimeMasking</strong>: Apply masking to a spectrogram in the time domain.</li>
+<strong>TimeMasking</strong>: Apply masking to a spectrogram in the
+time domain.</li>
 </ul>
-<p>Each transform supports batching: you can perform a transform on a single raw audio signal or spectrogram, or many of the same shape.</p>
-<p>Since all transforms are <code>torch::nn_modules</code>, they can be used as part of a neural network at any point.</p>
-<p>To start, we can look at the log of the spectrogram on a log scale.</p>
+<p>Each transform supports batching: you can perform a transform on a
+single raw audio signal or spectrogram, or many of the same shape.</p>
+<p>Since all transforms are <code>torch::nn_modules</code>, they can be
+used as part of a neural network at any point.</p>
+<p>To start, we can look at the log of the spectrogram on a log
+scale.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">specgram</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/transform_spectrogram.html">transform_spectrogram</a></span><span class="op">(</span><span class="op">)</span><span class="op">(</span><span class="va">waveform</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Shape of spectrogram: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">specgram</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">" "</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">specgram_as_array</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html">as.array</a></span><span class="op">(</span><span class="va">specgram</span><span class="op">$</span><span class="fu">log2</span><span class="op">(</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">$</span><span class="fu">t</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/image.html">image</a></span><span class="op">(</span><span class="va">specgram_as_array</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">specgram_as_array</span><span class="op">)</span><span class="op">:</span><span class="fl">1</span><span class="op">]</span>, col <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html">viridis</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">257</span>,  option <span class="op">=</span> <span class="st">"magma"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">specgram</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/transform_spectrogram.html">transform_spectrogram</a></span><span class="op">(</span><span class="op">)</span><span class="op">(</span><span class="va">waveform</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Shape of spectrogram: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">specgram</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">" "</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">specgram_as_array</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">as.array</a></span><span class="op">(</span><span class="va">specgram</span><span class="op">$</span><span class="fu">log2</span><span class="op">(</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">$</span><span class="fu">t</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/image.html" class="external-link">image</a></span><span class="op">(</span><span class="va">specgram_as_array</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">specgram_as_array</span><span class="op">)</span><span class="op">:</span><span class="fl">1</span><span class="op">]</span>, col <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">257</span>,  option <span class="op">=</span> <span class="st">"magma"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Or we can look at the Mel Spectrogram on a log scale.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">specgram</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/transform_mel_spectrogram.html">transform_mel_spectrogram</a></span><span class="op">(</span><span class="op">)</span><span class="op">(</span><span class="va">waveform</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Shape of spectrogram: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">specgram</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">" "</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">specgram_as_array</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html">as.array</a></span><span class="op">(</span><span class="va">specgram</span><span class="op">$</span><span class="fu">log2</span><span class="op">(</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">$</span><span class="fu">t</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/image.html">image</a></span><span class="op">(</span><span class="va">specgram_as_array</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">specgram_as_array</span><span class="op">)</span><span class="op">:</span><span class="fl">1</span><span class="op">]</span>, col <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html">viridis</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">257</span>,  option <span class="op">=</span> <span class="st">"magma"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">specgram</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/transform_mel_spectrogram.html">transform_mel_spectrogram</a></span><span class="op">(</span><span class="op">)</span><span class="op">(</span><span class="va">waveform</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Shape of spectrogram: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">specgram</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">" "</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">specgram_as_array</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">as.array</a></span><span class="op">(</span><span class="va">specgram</span><span class="op">$</span><span class="fu">log2</span><span class="op">(</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">$</span><span class="fu">t</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/image.html" class="external-link">image</a></span><span class="op">(</span><span class="va">specgram_as_array</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">specgram_as_array</span><span class="op">)</span><span class="op">:</span><span class="fl">1</span><span class="op">]</span>, col <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">257</span>,  option <span class="op">=</span> <span class="st">"magma"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>We can resample the waveform, one channel at a time.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">new_sample_rate</span> <span class="op">&lt;-</span> <span class="va">sample_rate</span><span class="op">/</span><span class="fl">10</span>
-
-<span class="co"># Since Resample applies to a single channel, we resample first channel here</span>
-<span class="va">channel</span> <span class="op">&lt;-</span> <span class="fl">1</span>
-<span class="va">transformed</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/transform_resample.html">transform_resample</a></span><span class="op">(</span><span class="va">sample_rate</span>, <span class="va">new_sample_rate</span><span class="op">)</span><span class="op">(</span><span class="va">waveform</span><span class="op">[</span><span class="va">channel</span>, <span class="op">]</span><span class="op">$</span><span class="fu">view</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Shape of transformed waveform: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">transformed</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">" "</span><span class="op">)</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">transformed</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"royalblue"</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span></code></pre></div>
-<p>As another example of transformations, we can encode the signal based on Mu-Law enconding. But to do so, we need the signal to be between -1 and 1. Since the tensor is just a regular PyTorch tensor, we can apply standard operators on it.</p>
+<code class="sourceCode R"><span><span class="va">new_sample_rate</span> <span class="op">&lt;-</span> <span class="va">sample_rate</span><span class="op">/</span><span class="fl">10</span></span>
+<span></span>
+<span><span class="co"># Since Resample applies to a single channel, we resample first channel here</span></span>
+<span><span class="va">channel</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
+<span><span class="va">transformed</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/transform_resample.html">transform_resample</a></span><span class="op">(</span><span class="va">sample_rate</span>, <span class="va">new_sample_rate</span><span class="op">)</span><span class="op">(</span><span class="va">waveform</span><span class="op">[</span><span class="va">channel</span>, <span class="op">]</span><span class="op">$</span><span class="fu">view</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Shape of transformed waveform: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">transformed</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">" "</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">transformed</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"royalblue"</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span></span></code></pre></div>
+<p>As another example of transformations, we can encode the signal based
+on Mu-Law enconding. But to do so, we need the signal to be between -1
+and 1. Since the tensor is just a regular PyTorch tensor, we can apply
+standard operators on it.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Let's check if the tensor is in the interval [-1,1]</span>
-<span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"Min of waveform: %f \nMax of waveform: %f \nMean of waveform: %f"</span>, <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">waveform</span><span class="op">$</span><span class="fu">min</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">waveform</span><span class="op">$</span><span class="fu">max</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">waveform</span><span class="op">$</span><span class="fu">mean</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>Since the waveform is already between -1 and 1, we do not need to normalize it.</p>
+<code class="sourceCode R"><span><span class="co"># Let's check if the tensor is in the interval [-1,1]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Min of waveform: %f \nMax of waveform: %f \nMean of waveform: %f"</span>, <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">waveform</span><span class="op">$</span><span class="fu">min</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">waveform</span><span class="op">$</span><span class="fu">max</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">waveform</span><span class="op">$</span><span class="fu">mean</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Since the waveform is already between -1 and 1, we do not need to
+normalize it.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">normalize</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">tensor</span><span class="op">)</span> <span class="op">{</span>
- <span class="co"># Subtract the mean, and scale to the interval [-1,1]</span>
- <span class="va">tensor_minusmean</span> <span class="op">&lt;-</span> <span class="va">tensor</span> <span class="op">-</span> <span class="fu">tensor.mean</span><span class="op">(</span><span class="op">)</span>
- <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">tensor_minusmean</span><span class="op">/</span><span class="va">tensor_minusmean</span><span class="op">$</span><span class="fu">abs</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">max</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="op">}</span>
-
-<span class="co"># Let's normalize to the full interval [-1,1]</span>
-<span class="co"># waveform = normalize(waveform)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">normalize</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">tensor</span><span class="op">)</span> <span class="op">{</span></span>
+<span> <span class="co"># Subtract the mean, and scale to the interval [-1,1]</span></span>
+<span> <span class="va">tensor_minusmean</span> <span class="op">&lt;-</span> <span class="va">tensor</span> <span class="op">-</span> <span class="va">tensor</span><span class="op">$</span><span class="fu">mean</span><span class="op">(</span><span class="op">)</span></span>
+<span> <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">tensor_minusmean</span><span class="op">/</span><span class="va">tensor_minusmean</span><span class="op">$</span><span class="fu">abs</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="fu">max</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># Let's normalize to the full interval [-1,1]</span></span>
+<span><span class="co"># waveform = normalize(waveform)</span></span></code></pre></div>
 <p>Let’s apply encode the waveform.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">transformed</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/transform_mu_law_encoding.html">transform_mu_law_encoding</a></span><span class="op">(</span><span class="op">)</span><span class="op">(</span><span class="va">waveform</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Shape of transformed waveform: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">transformed</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">" "</span><span class="op">)</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">transformed</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"royalblue"</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">transformed</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/transform_mu_law_encoding.html">transform_mu_law_encoding</a></span><span class="op">(</span><span class="op">)</span><span class="op">(</span><span class="va">waveform</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Shape of transformed waveform: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">transformed</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">" "</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">transformed</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"royalblue"</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span></span></code></pre></div>
 <p>And now decode.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">reconstructed</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/transform_mu_law_decoding.html">transform_mu_law_decoding</a></span><span class="op">(</span><span class="op">)</span><span class="op">(</span><span class="va">transformed</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Shape of recovered waveform: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">reconstructed</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">" "</span><span class="op">)</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">reconstructed</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"royalblue"</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span></code></pre></div>
-<p>We can finally compare the original waveform with its reconstructed version.</p>
+<code class="sourceCode R"><span><span class="va">reconstructed</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/transform_mu_law_decoding.html">transform_mu_law_decoding</a></span><span class="op">(</span><span class="op">)</span><span class="op">(</span><span class="va">transformed</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Shape of recovered waveform: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">reconstructed</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">" "</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">reconstructed</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"royalblue"</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span></span></code></pre></div>
+<p>We can finally compare the original waveform with its reconstructed
+version.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Compute median relative difference</span>
-<span class="va">err</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="op">(</span><span class="op">(</span><span class="va">waveform</span> <span class="op">-</span> <span class="va">reconstructed</span><span class="op">)</span><span class="op">$</span><span class="fu">abs</span><span class="op">(</span><span class="op">)</span> <span class="op">/</span> <span class="va">waveform</span><span class="op">$</span><span class="fu">abs</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="fu">median</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Median relative difference between original and MuLaw reconstucted signals:"</span>, <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_percent.html">percent</a></span><span class="op">(</span><span class="va">err</span>, accuracy <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Compute median relative difference</span></span>
+<span><span class="va">err</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="op">(</span><span class="op">(</span><span class="va">waveform</span> <span class="op">-</span> <span class="va">reconstructed</span><span class="op">)</span><span class="op">$</span><span class="fu">abs</span><span class="op">(</span><span class="op">)</span> <span class="op">/</span> <span class="va">waveform</span><span class="op">$</span><span class="fu">abs</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="fu">median</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Median relative difference between original and MuLaw reconstucted signals:"</span>, <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/percent_format.html" class="external-link">percent</a></span><span class="op">(</span><span class="va">err</span>, accuracy <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
-<div id="functional" class="section level1">
-<h1 class="hasAnchor">
-<a href="#functional" class="anchor"></a>Functional</h1>
-<p>The transformations seen above rely on lower level stateless functions for their computations. These functions are identified by <code>torchaudio::functional_*</code> prefix.</p>
+<div class="section level2">
+<h2 id="functional">Functional<a class="anchor" aria-label="anchor" href="#functional"></a>
+</h2>
+<p>The transformations seen above rely on lower level stateless
+functions for their computations. These functions are identified by
+<code>torchaudio::functional_*</code> prefix.</p>
 <ul>
 <li>
 <strong>istft</strong>: Inverse short time Fourier Transform.</li>
 <li>
-<strong>gain</strong>: Applies amplification or attenuation to the whole waveform.</li>
+<strong>gain</strong>: Applies amplification or attenuation to the
+whole waveform.</li>
 <li>
-<strong>dither</strong>: Increases the perceived dynamic range of audio stored at a particular bit-depth.</li>
+<strong>dither</strong>: Increases the perceived dynamic range of
+audio stored at a particular bit-depth.</li>
 <li>
-<strong>compute_deltas</strong>: Compute delta coefficients of a tensor.</li>
+<strong>compute_deltas</strong>: Compute delta coefficients of a
+tensor.</li>
 <li>
-<strong>equalizer_biquad</strong>: Design biquad peaking equalizer filter and perform filtering.</li>
+<strong>equalizer_biquad</strong>: Design biquad peaking equalizer
+filter and perform filtering.</li>
 <li>
-<strong>lowpass_biquad</strong>: Design biquad lowpass filter and perform filtering.</li>
+<strong>lowpass_biquad</strong>: Design biquad lowpass filter and
+perform filtering.</li>
 <li>
-<strong>highpass_biquad</strong>:Design biquad highpass filter and perform filtering.</li>
+<strong>highpass_biquad</strong>:Design biquad highpass filter and
+perform filtering.</li>
 </ul>
-<p>For example, let’s try the <code>functional_mu_law_encoding</code>:</p>
+<p>For example, let’s try the
+<code>functional_mu_law_encoding</code>:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mu_law_encoding_waveform</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/functional_mu_law_encoding.html">functional_mu_law_encoding</a></span><span class="op">(</span><span class="va">waveform</span>, quantization_channels <span class="op">=</span> <span class="fl">256</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Shape of transformed waveform: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">mu_law_encoding_waveform</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">" "</span><span class="op">)</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">mu_law_encoding_waveform</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"royalblue"</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span></code></pre></div>
-<p>You can see how the output from <code>functional_mu_law_encoding</code> is the same as the output from <code>transforms_mu_law_encoding</code>.</p>
-<p>Now let’s experiment with a few of the other functionals and visualize their output. Taking our spectogram, we can compute it’s deltas:</p>
+<code class="sourceCode R"><span><span class="va">mu_law_encoding_waveform</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/functional_mu_law_encoding.html">functional_mu_law_encoding</a></span><span class="op">(</span><span class="va">waveform</span>, quantization_channels <span class="op">=</span> <span class="fl">256</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Shape of transformed waveform: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">mu_law_encoding_waveform</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">" "</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mu_law_encoding_waveform</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"royalblue"</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span></span></code></pre></div>
+<p>You can see how the output from
+<code>functional_mu_law_encoding</code> is the same as the output from
+<code>transforms_mu_law_encoding</code>.</p>
+<p>Now let’s experiment with a few of the other functionals and
+visualize their output. Taking our spectogram, we can compute it’s
+deltas:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">computed</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/functional_compute_deltas.html">functional_compute_deltas</a></span><span class="op">(</span><span class="va">specgram</span><span class="op">$</span><span class="fu">contiguous</span><span class="op">(</span><span class="op">)</span>, win_length<span class="op">=</span><span class="fl">3</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Shape of computed deltas: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">computed</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">" "</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">computed_as_array</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html">as.array</a></span><span class="op">(</span><span class="va">computed</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">$</span><span class="fu">t</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/image.html">image</a></span><span class="op">(</span><span class="va">computed_as_array</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">computed_as_array</span><span class="op">)</span><span class="op">:</span><span class="fl">1</span><span class="op">]</span>, col <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html">viridis</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">257</span>,  option <span class="op">=</span> <span class="st">"magma"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>We can take the original waveform and apply different effects to it.</p>
+<code class="sourceCode R"><span><span class="va">computed</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/functional_compute_deltas.html">functional_compute_deltas</a></span><span class="op">(</span><span class="va">specgram</span><span class="op">$</span><span class="fu">contiguous</span><span class="op">(</span><span class="op">)</span>, win_length<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Shape of computed deltas: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">computed</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">" "</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">computed_as_array</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">as.array</a></span><span class="op">(</span><span class="va">computed</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">$</span><span class="fu">t</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/image.html" class="external-link">image</a></span><span class="op">(</span><span class="va">computed_as_array</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">computed_as_array</span><span class="op">)</span><span class="op">:</span><span class="fl">1</span><span class="op">]</span>, col <span class="op">=</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html" class="external-link">viridis</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">257</span>,  option <span class="op">=</span> <span class="st">"magma"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>We can take the original waveform and apply different effects to
+it.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">gain_waveform</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="../reference/functional_gain.html">functional_gain</a></span><span class="op">(</span><span class="va">waveform</span>, gain_db<span class="op">=</span><span class="fl">5.0</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"Min of gain_waveform: %f\nMax of gain_waveform: %f\nMean of gain_waveform: %f"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">gain_waveform</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">gain_waveform</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">gain_waveform</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">dither_waveform</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="../reference/functional_dither.html">functional_dither</a></span><span class="op">(</span><span class="va">waveform</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"Min of dither_waveform: %f\nMax of dither_waveform: %f\nMean of dither_waveform: %f"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">dither_waveform</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">dither_waveform</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">dither_waveform</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>Another example of the capabilities in <code>torchaudio::functional_</code> are applying filters to our waveform. Applying the lowpass biquad filter to our waveform will output a new waveform with the signal of the frequency modified.</p>
+<code class="sourceCode R"><span><span class="va">gain_waveform</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="../reference/functional_gain.html">functional_gain</a></span><span class="op">(</span><span class="va">waveform</span>, gain_db<span class="op">=</span><span class="fl">5.0</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Min of gain_waveform: %f\nMax of gain_waveform: %f\nMean of gain_waveform: %f"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">gain_waveform</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">gain_waveform</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">gain_waveform</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">dither_waveform</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="../reference/functional_dither.html">functional_dither</a></span><span class="op">(</span><span class="va">waveform</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Min of dither_waveform: %f\nMax of dither_waveform: %f\nMean of dither_waveform: %f"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">dither_waveform</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">dither_waveform</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">dither_waveform</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Another example of the capabilities in
+<code>torchaudio::functional_</code> are applying filters to our
+waveform. Applying the lowpass biquad filter to our waveform will output
+a new waveform with the signal of the frequency modified.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">lowpass_waveform</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html">as.array</a></span><span class="op">(</span><span class="fu"><a href="../reference/functional_lowpass_biquad.html">functional_lowpass_biquad</a></span><span class="op">(</span><span class="va">waveform</span>, <span class="va">sample_rate</span>, cutoff_freq<span class="op">=</span><span class="fl">3000</span><span class="op">)</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"Min of lowpass_waveform: %f\nMax of lowpass_waveform: %f\nMean of lowpass_waveform: %f"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">lowpass_waveform</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">lowpass_waveform</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">lowpass_waveform</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">lowpass_waveform</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span>, col <span class="op">=</span> <span class="st">"royalblue"</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">lowpass_waveform</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span>, col <span class="op">=</span> <span class="st">"orange"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">lowpass_waveform</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">as.array</a></span><span class="op">(</span><span class="fu"><a href="../reference/functional_lowpass_biquad.html">functional_lowpass_biquad</a></span><span class="op">(</span><span class="va">waveform</span>, <span class="va">sample_rate</span>, cutoff_freq<span class="op">=</span><span class="fl">3000</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Min of lowpass_waveform: %f\nMax of lowpass_waveform: %f\nMean of lowpass_waveform: %f"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">lowpass_waveform</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">lowpass_waveform</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">lowpass_waveform</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">lowpass_waveform</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span>, col <span class="op">=</span> <span class="st">"royalblue"</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">lowpass_waveform</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span>, col <span class="op">=</span> <span class="st">"orange"</span><span class="op">)</span></span></code></pre></div>
 <p>We can also visualize a waveform with the highpass biquad filter.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">highpass_waveform</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html">as.array</a></span><span class="op">(</span><span class="fu"><a href="../reference/functional_highpass_biquad.html">functional_highpass_biquad</a></span><span class="op">(</span><span class="va">waveform</span>, <span class="va">sample_rate</span>, cutoff_freq<span class="op">=</span><span class="fl">3000</span><span class="op">)</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"Min of highpass_waveform: %f\nMax of highpass_waveform: %f\nMean of highpass_waveform: %f"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">highpass_waveform</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">highpass_waveform</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">highpass_waveform</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">highpass_waveform</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span>, col <span class="op">=</span> <span class="st">"royalblue"</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">highpass_waveform</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span>, col <span class="op">=</span> <span class="st">"orange"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">highpass_waveform</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">as.array</a></span><span class="op">(</span><span class="fu"><a href="../reference/functional_highpass_biquad.html">functional_highpass_biquad</a></span><span class="op">(</span><span class="va">waveform</span>, <span class="va">sample_rate</span>, cutoff_freq<span class="op">=</span><span class="fl">3000</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Min of highpass_waveform: %f\nMax of highpass_waveform: %f\nMean of highpass_waveform: %f"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">highpass_waveform</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">highpass_waveform</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">highpass_waveform</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">highpass_waveform</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span>, col <span class="op">=</span> <span class="st">"royalblue"</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">highpass_waveform</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span>, col <span class="op">=</span> <span class="st">"orange"</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="migrating-to-torchaudio-from-kaldi-not-implemented-yet" class="section level1">
-<h1 class="hasAnchor">
-<a href="#migrating-to-torchaudio-from-kaldi-not-implemented-yet" class="anchor"></a>Migrating to torchaudio from Kaldi (Not Implemented Yet)</h1>
-<p>Users may be familiar with <a href="https://github.com/kaldi-asr/kaldi">Kaldi</a>, a toolkit for speech recognition. <code>torchaudio</code> will offer compatibility with it in <code>torchaudio::kaldi_*</code> in the future.</p>
+<div class="section level2">
+<h2 id="migrating-to-torchaudio-from-kaldi-not-implemented-yet">Migrating to torchaudio from Kaldi (Not Implemented Yet)<a class="anchor" aria-label="anchor" href="#migrating-to-torchaudio-from-kaldi-not-implemented-yet"></a>
+</h2>
+<p>Users may be familiar with <a href="https://github.com/kaldi-asr/kaldi" class="external-link">Kaldi</a>, a toolkit for
+speech recognition. <code>torchaudio</code> will offer compatibility
+with it in <code>torchaudio::kaldi_*</code> in the future.</p>
 </div>
-<div id="available-datasets" class="section level1">
-<h1 class="hasAnchor">
-<a href="#available-datasets" class="anchor"></a>Available Datasets</h1>
-<p>If you do not want to create your own dataset to train your model, <code>torchaudio</code> offers a unified dataset interface. This interface supports lazy-loading of files to memory, download and extract functions, and datasets to build models.</p>
+<div class="section level2">
+<h2 id="available-datasets">Available Datasets<a class="anchor" aria-label="anchor" href="#available-datasets"></a>
+</h2>
+<p>If you do not want to create your own dataset to train your model,
+<code>torchaudio</code> offers a unified dataset interface. This
+interface supports lazy-loading of files to memory, download and extract
+functions, and datasets to build models.</p>
 <p>The datasets <code>torchaudio</code> currently supports are:</p>
 <ul>
 <li><p><strong>Yesno</strong></p></li>
@@ -310,23 +362,31 @@
 <li><p><strong>CMUArctics</strong></p></li>
 </ul>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">temp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempdir</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">yesno_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/yesno_dataset.html">yesno_dataset</a></span><span class="op">(</span><span class="va">temp</span>, download<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
-
-<span class="co"># A data point in Yesno is a list (waveform, sample_rate, labels) where labels is a list of integers with 1 for yes and 0 for no.</span>
-
-<span class="co"># Pick data point number 3 to see an example of the the yesno_data:</span>
-<span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">3</span>
-<span class="va">sample</span> <span class="op">&lt;-</span> <span class="va">yesno_data</span><span class="op">[</span><span class="va">n</span><span class="op">]</span>
-<span class="va">sample</span>
-
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">sample</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"royalblue"</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span></code></pre></div>
-<p>Now, whenever you ask for a sound file from the dataset, it is loaded in memory only when you ask for it. Meaning, the dataset only loads and keeps in memory the items that you want and use, saving on memory.</p>
+<code class="sourceCode R"><span><span class="va">temp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">yesno_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/yesno_dataset.html">yesno_dataset</a></span><span class="op">(</span><span class="va">temp</span>, download<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># A data point in Yesno is a list (waveform, sample_rate, labels) where labels is a list of integers with 1 for yes and 0 for no.</span></span>
+<span></span>
+<span><span class="co"># Pick data point number 3 to see an example of the the yesno_data:</span></span>
+<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">3</span></span>
+<span><span class="va">sample</span> <span class="op">&lt;-</span> <span class="va">yesno_data</span><span class="op">[</span><span class="va">n</span><span class="op">]</span></span>
+<span><span class="va">sample</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">sample</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"royalblue"</span>, type <span class="op">=</span> <span class="st">"l"</span><span class="op">)</span></span></code></pre></div>
+<p>Now, whenever you ask for a sound file from the dataset, it is loaded
+in memory only when you ask for it. Meaning, the dataset only loads and
+keeps in memory the items that you want and use, saving on memory.</p>
 </div>
-<div id="conclusion" class="section level1">
-<h1 class="hasAnchor">
-<a href="#conclusion" class="anchor"></a>Conclusion</h1>
-<p>We used an example raw audio signal, or waveform, to illustrate how to open an audio file using <code>torchaudio</code>, and how to pre-process, transform, and apply functions to such waveform. We also demonstrated built-in datasets to construct our models. Given that <code>torchaudio</code> is built on {torch}, these techniques can be used as building blocks for more advanced audio applications, such as speech recognition, while leveraging GPUs.</p>
+<div class="section level2">
+<h2 id="conclusion">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>
+</h2>
+<p>We used an example raw audio signal, or waveform, to illustrate how
+to open an audio file using <code>torchaudio</code>, and how to
+pre-process, transform, and apply functions to such waveform. We also
+demonstrated built-in datasets to construct our models. Given that
+<code>torchaudio</code> is built on {torch}, these techniques can be
+used as building blocks for more advanced audio applications, such as
+speech recognition, while leveraging GPUs.</p>
 </div>
   </div>
 
@@ -341,11 +401,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="https://github.com/athospd">Athos Damiani</a>.</p>
+  <p></p>
+<p>Developed by <a href="https://github.com/athospd" class="external-link">Athos Damiani</a>, Daniel Falbel, Sigrid Keydana.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
@@ -353,6 +415,8 @@
 
   
 
+
+  
 
   </body>
 </html>
