@@ -36,11 +36,24 @@ reference:
   - title: Audio I/O
     contents:
       - '`tuneR_loader`'
+      - '`torchaudio_loader`'
+      - '`av_loader`'
+      - '`set_audio_backend`'
+      - '`torchaudio_load`'
+      - '`audiofile_loader`'
+  - title: Informational
+    contents:
+      - '`info`'
+      - '`mp3_info`'
+      - '`wav_info`'
+  - title: Utilities
+    contents:
+      - '`extract_archive`'
   - title: Misc
     contents:
       - '`linear_to_mel_frequency`'
       - '`mel_to_linear_frequency`'
-      - '`extract_archive`'
+
 
 
 
