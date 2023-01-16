@@ -77,8 +77,6 @@ navbar:
       menu:
       - text: Audio I/O and Pre-Processing with torchaudio
         href: articles/audio_preprocessing_tutorial.html
-      - text: Speech Command Recognition With Torchaudio
-        href: articles/speech_command_recognition_with_torchaudio.html
     github:
       icon: fa-github
       href: https://github.com/mlverse/torchaudio
