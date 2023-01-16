@@ -8,7 +8,7 @@ home:
   title: R interface to PyTorch's TorchAudio.
   links:
   - text: Ask a question about this work
-    href: https://github.com/curso-r/torchaudio/issues
+    href: https://github.com/mlverse/torchaudio/issues
 
 
 authors:
