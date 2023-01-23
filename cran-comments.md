@@ -5,6 +5,6 @@
 
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
+0 errors | 0 warnings | 0 notes
 
-* Re-submitting the package after CRAN removal.
+* Re-submitting to fix missing inclusion of <cstdint>
