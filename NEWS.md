@@ -1,6 +1,6 @@
 
 # torchaudio 0.2.2
-* fix missing inclusion of <cstdint> in Audiofile.h
+* fix missing inclusion of `cstdint` in `Audiofile.h`
 
 # torchaudio 0.2.1
 * maintenance release
