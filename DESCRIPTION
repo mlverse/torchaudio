@@ -34,8 +34,6 @@ Imports:
     glue,
     Rcpp,
     methods
-Remotes:
-    RcppCore/Rcpp
 VignetteBuilder: knitr
 LinkingTo: 
     Rcpp
