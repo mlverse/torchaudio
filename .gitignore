@@ -3,6 +3,6 @@
 .RData
 .Ruserdata
 inst/doc
-inst/trash
+rstudio
 *.mp3
 *.R
