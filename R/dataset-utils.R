@@ -22,10 +22,10 @@ download_url <- function(url, destfile, checksum) {
 #' @examples
 #'if(torch::torch_is_installed()) {
 #' url = 'http://www.quest.dcs.shef.ac.uk/wmt16_files_mmt/validation.tar.gz'
-#' from_path = './validation.tar.gz'
-#' to_path = './'
+#' d <- fs::dir_create(tempdir(), "torchaudio")
+#' from_path <- fs::path(d, basename(url))
 #' utils::download.file(url = url, destfile = from_path)
-#' torchaudio::extract_archive (from_path, to_path)
+#' torchaudio::extract_archive (from_path, d)
 #' }
 #'
 #' @export
