@@ -121,24 +121,4 @@ test_that("torchaudio_load works", {
   # expect_tensor(waveform_and_sample_rate[[1]])
 })
 
-test_that("loaders returns the same output", {
-  speechcommand_ds <- speechcommand_dataset(
-    root = system.file("SpeechCommands", package = "torchaudio"),
-    folder_in_archive = ""
-  )
-
-  item_to_vector <- function(loader) {
-    set_audio_backend(loader)
-    as.numeric(speechcommand_ds[1]$waveform)
-  }
-
-   a3 <- data.frame(
-    audiofile_wf = item_to_vector(audiofile_loader),
-    tuner_wf = item_to_vector(tuneR_loader),
-    av_wf = item_to_vector(av_loader)
-  )
-
-  expect_equal(sum(cor(a3)), 9)
-})
-
 

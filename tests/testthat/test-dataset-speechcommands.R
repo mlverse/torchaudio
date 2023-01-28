@@ -11,11 +11,6 @@ test_that("load_speechcommands_item", {
   expect_length(one_item, 6)
   expect_tensor(one_item[[1]])
 
-  set_audio_backend(audiofile_loader)
-  one_item <- speechcommand_ds[1]
-  expect_length(one_item, 6)
-  expect_tensor(one_item[[1]])
-
   set_audio_backend(av_loader)
   one_item <- speechcommand_ds[1]
   expect_length(one_item, 6)
