@@ -5,7 +5,3 @@ get_info_mp3 <- function(filepath) {
     .Call(`_torchaudio_get_info_mp3`, filepath)
 }
 
-audiofile_read_wav_cpp <- function(filepath, from, to, unit) {
-    .Call(`_torchaudio_audiofile_read_wav_cpp`, filepath, from, to, unit)
-}
-
