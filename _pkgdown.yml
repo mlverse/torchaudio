@@ -39,8 +39,6 @@ reference:
       - '`torchaudio_loader`'
       - '`av_loader`'
       - '`set_audio_backend`'
-      - '`torchaudio_load`'
-      - '`audiofile_loader`'
   - title: Informational
     contents:
       - '`info`'

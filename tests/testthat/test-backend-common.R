@@ -7,16 +7,6 @@ test_that("av_loader works", {
 
 })
 
-test_that("audiofile_loader works", {
-  # WAV
-  # by_samples <- audiofile_loader(filepath_wav, offset = 1, duration = 40000, unit = "samples")
-  # expect_equal(length(by_samples$waveform[[1]]), 40000)
-  # expect_equal(class(by_samples), c("audiofile", "list"))
-
-  # MP3
-  # expect_error(by_samples <- audiofile_loader(filepath_mp3), class = "runtime_error")
-})
-
 test_that("tuneR_loader works", {
 
   a <- torchaudio:::tuneR_read_mp3_or_wav(filepath_mp3, from = 1, to = 40001, unit = "samples")
@@ -63,11 +53,6 @@ test_that("transform_to_tensor works", {
   expect_equal(waveform_and_sample_rate[[2]], sample_mp3@samp.rate)
   expect_tensor(waveform_and_sample_rate[[1]])
 
-  # audiofile
-  # by_samples <- audiofile_loader(filepath_wav, offset = 1, duration = 48000, unit = "samples")
-  # waveform_and_sample_rate <- transform_to_tensor(by_samples)
-  # expect_equal(waveform_and_sample_rate[[2]], sample_mp3@samp.rate)
-  # expect_tensor(waveform_and_sample_rate[[1]])
 })
 
 test_that("set_audio_backend and torchaudio_loader works", {
@@ -83,9 +68,5 @@ test_that("set_audio_backend and torchaudio_loader works", {
   audio <- torchaudio_loader(filepath_mp3, offset = 1, duration = 100, unit = "samples")
   expect_equal(class(audio)[1], "av")
   expect_equal(length(audio), 100)
-
-  # set_audio_backend(audiofile_loader)
-  # audio <- torchaudio_loader(filepath_wav, offset = 1, duration = 100, unit = "samples")
-  # expect_equal(class(audio)[1], "audiofile")
 })
 
