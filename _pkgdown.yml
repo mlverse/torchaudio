@@ -41,9 +41,7 @@ reference:
       - '`set_audio_backend`'
   - title: Informational
     contents:
-      - '`info`'
-      - '`mp3_info`'
-      - '`wav_info`'
+      - '`torchaudio_info`'
   - title: Utilities
     contents:
       - '`extract_archive`'

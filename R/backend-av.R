@@ -2,7 +2,7 @@
 av_read_mp3_or_wav <- function(filepath, from = 0, to = Inf, unit = "samples") {
   file_ext <- tools::file_ext(filepath)
   unit <- unit[1]
-  info <- info(filepath)
+  info <- torchaudio_info(filepath)
   to_ <- to
   from_ <- from
   if(unit == "samples") {

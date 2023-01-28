@@ -154,69 +154,26 @@ transform_to_tensor.audiofile <- function(
   return(list(out_tensor, sample_rate))
 }
 
-#' MP3 Information
-#'
-#' Retrive metadata from mp3 without load the audio samples in memory.
-#'
-#' @param filepath (chr) path to mp3 file
-#'
-#' @return AudioMetaData: sample_rate, channels, samples
-#'
-#' @examples
-#' mp3_path <- system.file("sample_audio_1.mp3", package = "torchaudio")
-#' mp3_info(mp3_path)
-#'
-#' @export
-mp3_info <- function(filepath) {
-  info <- get_info_mp3(filepath)
-  AudioMetaData$new(
-    sample_rate = info$hz,
-    num_frames = info$samples,
-    num_channels = info$channels
-  )
-}
-
-#' Wave Information
-#'
-#' Retrive metadata from wav without load the audio samples in memory.
-#'
-#' @param filepath (chr) path to wav file
-#'
-#' @return AudioMetaData: sample_rate, channels, samples
-#'
-#' @examples
-#' wav_path <- system.file("waves_yesno/1_1_0_1_1_0_1_1.wav", package = "torchaudio")
-#' wav_info(wav_path)
-#'
-#' @export
-wav_info <- function(filepath) {
-  info <- tuneR::readWave(filepath, header = TRUE)
-  AudioMetaData$new(
-    sample_rate = info$sample.rate,
-    num_frames = info$samples,
-    num_channels = info$channels
-  )
-}
-
 #' Audio Information
 #'
-#' Retrive metadata from mp3 or wave file without load the audio samples in memory.
+#' Retrieve audio metadata.
 #'
-#' @param filepath (str) path to the mp3/wav file.
+#' @param filepath (str) path to the audio file.#'
+#' @return AudioMetaData: an R6 class with fields sample_rate, channels, samples.
 #'
-#' @return list(sample_rate, channels, samples)
+#' @examples
+#' path <- system.file("waves_yesno/1_1_0_1_1_0_1_1.wav", package = "torchaudio")
+#' torchaudio_info(path)
 #'
 #' @export
-info <- function(filepath) {
-  file_ext <- tools::file_ext(filepath)
-  validate_audio_extension(file_ext)
-
-  if(file_ext == "mp3")
-    info <- mp3_info(filepath)
-  if(file_ext == "wav")
-    info <- wav_info(filepath)
-
-  info
+torchaudio_info <- function(filepath) {
+  audio <- av::read_audio_bin(filepath)
+  num_samples <- length(audio)/attr(audio, "channels")
+  AudioMetaData$new(
+    sample_rate = attr(audio, "sample_rate"),
+    num_frames = num_samples,
+    num_channels = attr(audio, "channels")
+  )
 }
 
 #' Set the backend for I/O operation
