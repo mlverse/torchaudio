@@ -15,7 +15,7 @@ load_cmuarctic_item <- function(
   file_audio = file.path(path, folder_audio, paste0(utterance_id, ext_audio))
 
   # Load audio
-  audio_r <- torchaudio_loader(file_audio)
+  audio_r <- torchaudio_load(file_audio)
   waveform_and_sample_rate <- transform_to_tensor(audio_r)
 
   return(

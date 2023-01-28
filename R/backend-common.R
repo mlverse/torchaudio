@@ -251,7 +251,7 @@ set_audio_backend <- function(backend) {
 #'
 #'
 #' @export
-torchaudio_loader <- function(
+torchaudio_load <- function(
   filepath,
   offset = 0L,
   duration = 0L,

@@ -36,7 +36,7 @@ reference:
   - title: Audio I/O
     contents:
       - '`tuneR_loader`'
-      - '`torchaudio_loader`'
+      - '`torchaudio_load`'
       - '`av_loader`'
       - '`set_audio_backend`'
   - title: Informational
