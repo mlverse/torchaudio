@@ -121,39 +121,6 @@ transform_to_tensor.av <- function(
   return(list(out_tensor, sample_rate))
 }
 
-to_tensor_float <- function(x) torch::torch_tensor(x, dtype = torch::torch_float())
-
-#' @export
-transform_to_tensor.audiofile <- function(
-  audio,
-  out = NULL,
-  normalization = FALSE,
-  channels_first = TRUE
-) {
-
-  sample_rate <- audio$sample_rate
-
-  if(audio$channels > 1) {
-    out_tensor <- Map(to_tensor_float, audio$waveform)
-    out_tensor <- torch::torch_stack(out_tensor)
-  } else {
-    out_tensor <- to_tensor_float(audio$waveform[[1]])$unsqueeze(1)
-  }
-
-  if(!channels_first)
-    out_tensor = out_tensor$t()
-
-  # normalize if needed
-  if(is.null(normalization)) normalization <- FALSE
-  if(is.logical(normalization) && isTRUE(normalization)) {
-    bits <- audio$bit %||% 32
-    normalization <- 2^(bits-1)
-  }
-  internal__normalize_audio(out_tensor, normalization)
-
-  return(list(out_tensor, sample_rate))
-}
-
 #' Audio Information
 #'
 #' Retrieve audio metadata.
