@@ -32,8 +32,6 @@ Imports:
     utils,
     tools,
     glue,
-    Rcpp,
     methods
 VignetteBuilder: knitr
-LinkingTo: 
-    Rcpp
+
