@@ -4,7 +4,12 @@
 \alias{tuneR_loader}
 \title{tuneR_loader}
 \usage{
-tuneR_loader(filepath, offset = 0L, duration = 0L, unit = c("samples", "time"))
+tuneR_loader(
+  filepath,
+  offset = 0L,
+  duration = Inf,
+  unit = c("samples", "time")
+)
 }
 \arguments{
 \item{filepath}{(str) path to the audio file.}
@@ -18,3 +23,4 @@ tuneR_loader(filepath, offset = 0L, duration = 0L, unit = c("samples", "time"))
 \description{
 Load an audio located at 'filepath' using tuneR package.
 }
+\keyword{internal}

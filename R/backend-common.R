@@ -121,7 +121,7 @@ transform_to_tensor.av <- function(
 #'
 #' Retrieve audio metadata.
 #'
-#' @param filepath (str) path to the audio file.#'
+#' @param filepath (str) path to the audio file.
 #' @return AudioMetaData: an R6 class with fields sample_rate, channels, samples.
 #'
 #' @examples
@@ -165,8 +165,8 @@ set_audio_backend <- function(backend) {
 #' Loads an audio file from disk using the default loader (getOption("torchaudio.loader")).
 #'
 #' @param filepath (str): Path to audio file
-#' @param offset (int): Number of frames (or seconds) from the start of the file to begin data loading. (Default: ``0``)
-#' @param duration (int): Number of frames (or seconds) to load.  0 to load everything after the offset. (Default: ``0``)
+#' @param offset (int): Number of frames (or seconds) from the start of the file to begin data loading. (Default: `0`)
+#' @param duration (int): Number of frames (or seconds) to load.  `-1` to load everything after the offset. (Default: `-1`)
 #' @param unit (str): "sample" or "time". If "sample" duration and offset will be interpreted as frames, and as seconds otherwise.
 #'
 #'
@@ -174,7 +174,7 @@ set_audio_backend <- function(backend) {
 torchaudio_load <- function(
     filepath,
     offset = 0L,
-    duration = 0L,
+    duration = -1L,
     unit = c("samples", "time")) {
   loader <- getOption("torchaudio.loader", default = tuneR_loader)
 
@@ -182,10 +182,10 @@ torchaudio_load <- function(
   if (!fs::is_file(filepath)) {
     runtime_error(glue::glue("{filepath} not found or is a directory"))
   }
-  if (duration < -1) {
-    value_error("Expected value for num_samples -1 (entire file) or >=0")
+  if ((duration < -1) || (duration == 0)) {
+    value_error("Expected value for num_samples -1 (entire file) or > 0")
   }
-  if (duration %in% c(-1, 0)) {
+  if (duration == -1) {
     duration <- Inf
   }
   if (offset < 0) {

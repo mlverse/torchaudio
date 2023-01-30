@@ -31,11 +31,11 @@ tuneR_read_mp3_or_wav <- function(filepath, from = 0, to = Inf, unit = "samples"
 #' @param duration (num) how many samples (or how many seconds if unit = 'time') should be extracted.
 #' @param unit (str) 'samples' or 'time'
 #'
-#' @export
+#' @keywords internal
 tuneR_loader <- function(
     filepath,
     offset = 0L,
-    duration = 0L,
+    duration = Inf,
     unit = c("samples", "time")) {
   package_required("tuneR")
 

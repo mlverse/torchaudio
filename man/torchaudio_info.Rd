@@ -7,7 +7,7 @@
 torchaudio_info(filepath)
 }
 \arguments{
-\item{filepath}{(str) path to the audio file.#'}
+\item{filepath}{(str) path to the audio file.}
 }
 \value{
 AudioMetaData: an R6 class with fields sample_rate, channels, samples.

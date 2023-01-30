@@ -7,7 +7,7 @@
 torchaudio_load(
   filepath,
   offset = 0L,
-  duration = 0L,
+  duration = -1L,
   unit = c("samples", "time")
 )
 }
@@ -16,7 +16,7 @@ torchaudio_load(
 
 \item{offset}{(int): Number of frames (or seconds) from the start of the file to begin data loading. (Default: \code{0})}
 
-\item{duration}{(int): Number of frames (or seconds) to load.  0 to load everything after the offset. (Default: \code{0})}
+\item{duration}{(int): Number of frames (or seconds) to load.  \code{-1} to load everything after the offset. (Default: \code{-1})}
 
 \item{unit}{(str): "sample" or "time". If "sample" duration and offset will be interpreted as frames, and as seconds otherwise.}
 }
