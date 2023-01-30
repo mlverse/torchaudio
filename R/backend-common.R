@@ -1,8 +1,8 @@
 #' @keywords internal
-validate_audio_extension <- function(file_extension) {
-  valid_extensions <- c("mp3", "wav")
-  if (!file_extension %in% valid_extensions) {
-    value_error(glue::glue("{file_extension} is not a valid audio extension."))
+validate_audio_extension <- function(actual, valid, backend) {
+
+  if (!actual %in% valid) {
+    value_error(glue::glue("{actual} is not a valid audio extension using the {backend} backend."))
   }
 }
 

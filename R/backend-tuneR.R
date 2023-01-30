@@ -9,10 +9,13 @@ tuneR_loader <- function(
     unit = "samples") {
   package_required("tuneR")
 
+  file_ext <- tools::file_ext(filepath)
+  valid <- c("mp3", "wav")
+  validate_audio_extension(file_ext, valid, "tuneR")
+
   from <- offset
   to <- offset + duration
 
-  file_ext <- tools::file_ext(filepath)
   unit <- unit[1]
   if (file_ext == "mp3") {
     wave_obj <- tuneR::readMP3(filepath)
@@ -26,8 +29,6 @@ tuneR_loader <- function(
       from <- max(1, from)
     }
     wave_obj <- tuneR::readWave(filepath, from = from, to = to, unit = unit)
-  } else {
-    runtime_error(glue::glue("Only .mp3 and .wav formats are supported. Got {file_ext}."))
   }
   return(wave_obj)
 }
