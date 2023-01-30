@@ -2,13 +2,14 @@
 tuneR_read_mp3_or_wav <- function(filepath, from = 0, to = Inf, unit = "samples") {
   file_ext <- tools::file_ext(filepath)
   unit <- unit[1]
-  if( file_ext == "mp3") {
-      wave_obj <- tuneR::readMP3(filepath)
-      if(from > 0 | is.finite(to))
-      wave_obj <- tuneR::extractWave(wave_obj, from = unit=="samples", to = to - from, xunit = unit)
-  } else if(file_ext == "wav") {
-    if(unit == "time") unit <- "seconds"
-    if(unit %in% c("samples", "sample")) {
+  if (file_ext == "mp3") {
+    wave_obj <- tuneR::readMP3(filepath)
+    if (from > 0 | is.finite(to)) {
+      wave_obj <- tuneR::extractWave(wave_obj, from = unit == "samples", to = to - from, xunit = unit)
+    }
+  } else if (file_ext == "wav") {
+    if (unit == "time") unit <- "seconds"
+    if (unit %in% c("samples", "sample")) {
       to <- to - 1
       from <- max(1, from)
     }
@@ -32,27 +33,12 @@ tuneR_read_mp3_or_wav <- function(filepath, from = 0, to = Inf, unit = "samples"
 #'
 #' @export
 tuneR_loader <- function(
-  filepath,
-  offset = 0L,
-  duration = 0L,
-  unit = c("samples", "time")
-){
+    filepath,
+    offset = 0L,
+    duration = 0L,
+    unit = c("samples", "time")) {
   package_required("tuneR")
-  filepath = as.character(filepath)
-
-  # check if valid file
-  if(!fs::is_file(filepath))
-    runtime_error(glue::glue("{filepath} not found or is a directory"))
-
-  if(duration < -1)
-    value_error("Expected value for num_samples -1 (entire file) or >=0")
-  if(duration %in% c(-1, 0))
-    duration = Inf
-  if(offset < 0)
-    value_error("Expected positive offset value")
 
   # load audio file
   tuneR_read_mp3_or_wav(filepath, from = offset, to = offset + duration, unit = unit)
 }
-
-

@@ -1,8 +1,9 @@
 #' @keywords internal
 validate_audio_extension <- function(file_extension) {
   valid_extensions <- c("mp3", "wav")
-  if(!file_extension %in% valid_extensions)
+  if (!file_extension %in% valid_extensions) {
     value_error(glue::glue("{file_extension} is not a valid audio extension."))
+  }
 }
 
 #' @keywords internal
@@ -12,14 +13,12 @@ AudioMetaData <- R6::R6Class(
     sample_rate = NULL,
     num_frames = NULL,
     num_channels = NULL,
-    initialize = function(
-      sample_rate,
-      num_frames,
-      num_channels
-    ) {
-      self$sample_rate = sample_rate
-      self$num_frames = num_frames
-      self$num_channels = num_channels
+    initialize = function(sample_rate,
+                          num_frames,
+                          num_channels) {
+      self$sample_rate <- sample_rate
+      self$num_frames <- num_frames
+      self$num_channels <- num_channels
     }
   )
 )
@@ -50,40 +49,39 @@ AudioMetaData <- R6::R6Class(
 #'
 #' @export
 transform_to_tensor <- function(
-  audio,
-  out = NULL,
-  normalization = TRUE,
-  channels_first = TRUE
-) {
+    audio,
+    out = NULL,
+    normalization = TRUE,
+    channels_first = TRUE) {
   UseMethod("transform_to_tensor")
 }
 
 #' @export
 transform_to_tensor.Wave <- function(
-  audio,
-  out = NULL,
-  normalization = TRUE,
-  channels_first = TRUE
-) {
+    audio,
+    out = NULL,
+    normalization = TRUE,
+    channels_first = TRUE) {
   l_wave_obj <- length(audio)
 
-  channels <- if(audio@stereo) 2 else 1
+  channels <- if (audio@stereo) 2 else 1
   out_tensor <- torch::torch_zeros(channels, l_wave_obj)
-  if(length(audio@left) > 0) out_tensor[1] = audio@left
-  if(length(audio@right) > 0 & channels == 2) out_tensor[2] = audio@right
+  if (length(audio@left) > 0) out_tensor[1] <- audio@left
+  if (length(audio@right) > 0 & channels == 2) out_tensor[2] <- audio@right
 
-  if(!channels_first)
-    out_tensor = out_tensor$t()
+  if (!channels_first) {
+    out_tensor <- out_tensor$t()
+  }
 
   # normalize if needed
-  if(is.null(normalization)) normalization <- TRUE
-  if(is.logical(normalization) && isTRUE(normalization)) {
+  if (is.null(normalization)) normalization <- TRUE
+  if (is.logical(normalization) && isTRUE(normalization)) {
     bits <- audio@bit %||% 32
-    normalization <- 2^(bits-1)
+    normalization <- 2^(bits - 1)
   }
   internal__normalize_audio(out_tensor, normalization)
 
-  sample_rate = audio@samp.rate
+  sample_rate <- audio@samp.rate
 
   return(list(out_tensor, sample_rate))
 }
@@ -94,28 +92,26 @@ transform_to_tensor.WaveMC <- function(
     audio,
     out = NULL,
     normalization = TRUE,
-    channels_first = TRUE
-) {
-  audio <- as(audio, 'Wave')
+    channels_first = TRUE) {
+  audio <- as(audio, "Wave")
   transform_to_tensor(audio, out, normalization, channels_first)
 }
 
 #' @export
 transform_to_tensor.av <- function(
-  audio,
-  out = NULL,
-  normalization = TRUE,
-  channels_first = TRUE
-) {
-
+    audio,
+    out = NULL,
+    normalization = TRUE,
+    channels_first = TRUE) {
   sample_rate <- attr(audio, "sample_rate")
   out_tensor <- torch::torch_tensor(audio, dtype = torch::torch_float())
 
-  if(!channels_first)
-    out_tensor = out_tensor$t()
+  if (!channels_first) {
+    out_tensor <- out_tensor$t()
+  }
 
   # normalize if needed
-  if(is.null(normalization)) normalization <- TRUE
+  if (is.null(normalization)) normalization <- TRUE
   internal__normalize_audio(out_tensor, normalization)
 
   return(list(out_tensor, sample_rate))
@@ -135,7 +131,7 @@ transform_to_tensor.av <- function(
 #' @export
 torchaudio_info <- function(filepath) {
   audio <- av::read_audio_bin(filepath)
-  num_samples <- length(audio)/attr(audio, "channels")
+  num_samples <- length(audio) / attr(audio, "channels")
   AudioMetaData$new(
     sample_rate = attr(audio, "sample_rate"),
     num_frames = num_samples,
@@ -176,12 +172,26 @@ set_audio_backend <- function(backend) {
 #'
 #' @export
 torchaudio_load <- function(
-  filepath,
-  offset = 0L,
-  duration = 0L,
-  unit = c("samples", "time")
-) {
+    filepath,
+    offset = 0L,
+    duration = 0L,
+    unit = c("samples", "time")) {
   loader <- getOption("torchaudio.loader", default = tuneR_loader)
+
+  filepath <- as.character(filepath)
+  if (!fs::is_file(filepath)) {
+    runtime_error(glue::glue("{filepath} not found or is a directory"))
+  }
+  if (duration < -1) {
+    value_error("Expected value for num_samples -1 (entire file) or >=0")
+  }
+  if (duration %in% c(-1, 0)) {
+    duration <- Inf
+  }
+  if (offset < 0) {
+    value_error("Expected positive offset value")
+  }
+
   loader(
     filepath,
     offset = offset,
@@ -189,4 +199,3 @@ torchaudio_load <- function(
     unit = unit[1]
   )
 }
-
