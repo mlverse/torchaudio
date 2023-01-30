@@ -4,23 +4,9 @@
 \alias{tuneR_loader}
 \title{tuneR_loader}
 \usage{
-tuneR_loader(
-  filepath,
-  offset = 0L,
-  duration = Inf,
-  unit = c("samples", "time")
-)
-}
-\arguments{
-\item{filepath}{(str) path to the audio file.}
-
-\item{offset}{(num) the sample (or the second if unit = 'time') where the audio should start.}
-
-\item{duration}{(num) how many samples (or how many seconds if unit = 'time') should be extracted.}
-
-\item{unit}{(str) 'samples' or 'time'}
+tuneR_loader(filepath, offset = 0L, duration = Inf, unit = "samples")
 }
 \description{
-Load an audio located at 'filepath' using tuneR package.
+tuneR_loader
 }
 \keyword{internal}

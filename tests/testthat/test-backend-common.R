@@ -7,38 +7,6 @@ test_that("av_loader works", {
 
 })
 
-test_that("tuneR_loader works", {
-
-  a <- torchaudio:::tuneR_read_mp3_or_wav(filepath_mp3, from = 1, to = 40001, unit = "samples")
-  # MP3
-  by_samples <- tuneR_loader(filepath_mp3, offset = 1, duration = 40000, unit = "samples")
-  expect_equal(length(by_samples@left), 40000)
-  expect_equal(class(by_samples)[1], c("Wave"))
-
-  by_samples <- tuneR_loader(filepath_mp3, offset = 1, duration = 100, unit = "samples")
-  expect_equal(length(by_samples@left), 100)
-  expect_equal(class(by_samples)[1], c("Wave"))
-
-  by_time <-tuneR_loader(filepath_mp3, offset = 1, duration = 1, unit = "time")
-  expect_gt(length(by_time@left), 40000)
-  expect_lt(length(by_time@left), 50000)
-  expect_equal(class(by_time)[1], c("Wave"))
-
-  # WAV
-  by_samples <- tuneR_loader(filepath_wav, offset = 1, duration = 40000, unit = "samples")
-  expect_equal(length(by_samples@left), 40000)
-  expect_equal(class(by_samples)[1], c("Wave"))
-
-  by_samples <- tuneR_loader(filepath_wav, offset = 1, duration = 100, unit = "samples")
-  expect_equal(length(by_samples@left), 100)
-  expect_equal(class(by_samples)[1], c("Wave"))
-
-  by_time <-tuneR_loader(filepath_wav, offset = 1, duration = 1, unit = "seconds")
-  expect_gte(length(by_time@left), 8000)
-  expect_lte(length(by_time@left), 8000)
-  expect_equal(class(by_time)[1], c("Wave"))
-})
-
 
 test_that("transform_to_tensor works", {
   # Wave

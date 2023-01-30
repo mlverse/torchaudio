@@ -1,5 +1,17 @@
+
+#' tuneR_loader
+#'
 #' @keywords internal
-tuneR_read_mp3_or_wav <- function(filepath, from = 0, to = Inf, unit = "samples") {
+tuneR_loader <- function(
+    filepath,
+    offset = 0L,
+    duration = Inf,
+    unit = "samples") {
+  package_required("tuneR")
+
+  from <- offset
+  to <- offset + duration
+
   file_ext <- tools::file_ext(filepath)
   unit <- unit[1]
   if (file_ext == "mp3") {
@@ -18,27 +30,4 @@ tuneR_read_mp3_or_wav <- function(filepath, from = 0, to = Inf, unit = "samples"
     runtime_error(glue::glue("Only .mp3 and .wav formats are supported. Got {file_ext}."))
   }
   return(wave_obj)
-}
-
-
-
-#' tuneR_loader
-#'
-#' Load an audio located at 'filepath' using tuneR package.
-#'
-#' @param filepath (str) path to the audio file.
-#' @param offset (num) the sample (or the second if unit = 'time') where the audio should start.
-#' @param duration (num) how many samples (or how many seconds if unit = 'time') should be extracted.
-#' @param unit (str) 'samples' or 'time'
-#'
-#' @keywords internal
-tuneR_loader <- function(
-    filepath,
-    offset = 0L,
-    duration = Inf,
-    unit = c("samples", "time")) {
-  package_required("tuneR")
-
-  # load audio file
-  tuneR_read_mp3_or_wav(filepath, from = offset, to = offset + duration, unit = unit)
 }
