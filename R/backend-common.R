@@ -1,6 +1,5 @@
 #' @keywords internal
 validate_audio_extension <- function(actual, valid, backend) {
-
   if (!actual %in% valid) {
     value_error(glue::glue("{actual} is not a valid audio extension using the {backend} backend."))
   }

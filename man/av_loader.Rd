@@ -4,18 +4,9 @@
 \alias{av_loader}
 \title{av_loader}
 \usage{
-av_loader(filepath, offset = 0L, duration = Inf, unit = c("samples", "time"))
-}
-\arguments{
-\item{filepath}{(str) path to the audio file.}
-
-\item{offset}{(num) the sample (or the second if unit = 'time') where the audio should start.}
-
-\item{duration}{(num) how many samples (or how many seconds if unit = 'time') should be extracted.}
-
-\item{unit}{(str) 'samples' or 'time'}
+av_loader(filepath, offset = 0L, duration = Inf, unit = "samples")
 }
 \description{
-Load an audio located at 'filepath' using av package.
+av_loader
 }
 \keyword{internal}

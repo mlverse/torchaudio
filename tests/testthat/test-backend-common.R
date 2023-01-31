@@ -1,27 +1,4 @@
 filepath_mp3 <- system.file("sample_audio_1.mp3", package = "torchaudio")
-sample_mp3 <- tuneR::readMP3(filepath_mp3)
-filepath_wav <- system.file("waves_yesno/1_1_0_1_1_0_1_1.wav", package = "torchaudio")
-sample_wav <- tuneR::readWave(filepath_wav)
-
-test_that("av_loader works", {
-
-})
-
-
-test_that("transform_to_tensor works", {
-  # Wave
-  by_samples <- tuneR_loader(filepath_mp3, offset = 1, duration = 48000, unit = "samples")
-  waveform_and_sample_rate <- transform_to_tensor(by_samples)
-  expect_equal(waveform_and_sample_rate[[2]], sample_mp3@samp.rate)
-  expect_tensor(waveform_and_sample_rate[[1]])
-
-  # av
-  by_samples <- av_loader(filepath_mp3, offset = 1, duration = 48000, unit = "samples")
-  waveform_and_sample_rate <- transform_to_tensor(by_samples)
-  expect_equal(waveform_and_sample_rate[[2]], sample_mp3@samp.rate)
-  expect_tensor(waveform_and_sample_rate[[1]])
-
-})
 
 test_that("set_audio_backend and torchaudio_load works", {
   loader <- getOption("torchaudio.loader")

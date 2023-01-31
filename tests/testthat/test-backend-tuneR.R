@@ -4,6 +4,7 @@ filepath_wav <- system.file("waves_yesno/1_1_0_1_1_0_1_1.wav", package = "torcha
 sample_wav <- tuneR::readWave(filepath_wav)
 
 test_that("tuneR_loader works", {
+
   # MP3
   by_samples <- tuneR_loader(filepath_mp3, offset = 1, duration = 40000, unit = "samples")
   expect_equal(length(by_samples@left), 40000)
@@ -25,11 +26,7 @@ test_that("tuneR_loader works", {
   expect_tensor(waveform_and_sample_rate[[1]])
   expect_equal(length(waveform_and_sample_rate[[1]]), length(sample_mp3@left))
 
-  tuneR_Wave <- tuneR_loader(
-    system.file("sample_audio_1.mp3", package = "torchaudio"),
-    offset = 2000,
-    duration = 2
-  )
+  tuneR_Wave <- tuneR_loader(filepath_mp3, offset = 2000, duration = 2)
   expect_equal(class(tuneR_Wave)[1], "Wave")
   waveform_and_sample_rate <- transform_to_tensor(tuneR_Wave)
   expect_equal(waveform_and_sample_rate[[2]], sample_mp3@samp.rate)
@@ -49,4 +46,13 @@ test_that("tuneR_loader works", {
   expect_gte(length(by_time@left), 8000)
   expect_lte(length(by_time@left), 8000)
   expect_equal(class(by_time)[1], c("Wave"))
+})
+
+test_that("transform_to_tensor works with tuneR", {
+
+  by_samples <- tuneR_loader(filepath_mp3, offset = 1, duration = 48000, unit = "samples")
+  waveform_and_sample_rate <- transform_to_tensor(by_samples)
+  expect_equal(waveform_and_sample_rate[[2]], sample_mp3@samp.rate)
+  expect_tensor(waveform_and_sample_rate[[1]])
+
 })
