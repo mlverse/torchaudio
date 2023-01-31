@@ -24,13 +24,10 @@ AudioMetaData <- R6::R6Class(
 
 #' Convert an audio object into a tensor
 #'
-#' Converts a tuneR Wave object or numeric vector into a `torch_tensor` of shape (Channels x Samples).
-#' Convert Audio Object to Tensor.
+#' Converts a numeric vector, as delivered by the backend, into a `torch_tensor` of shape (channels x samples).
+#' If provided by the backend, attributes "channels" and "sample_rate" will be used.
 #'
-#' If audio is a numeric vector, attributes "channels" and "sample_rate" will be used if exists.
-#' Numeric vectors returned from [av::read_audio_bin] have both attributes by default.
-#'
-#' @param audio (numeric or Wave): A numeric vector or Wave object, usually from [tuneR::readMP3] or [tuneR::readWave].
+#' @param audio (numeric): A numeric vector, as delivered by the backend.
 #' @param out (Tensor): An optional output tensor to use instead of creating one. (Default: ``NULL``)
 #' @param normalization (bool, float or function): Optional normalization.
 #'         If boolean `TRUE`, then output is divided by `2^(bits-1)`.
@@ -41,10 +38,10 @@ AudioMetaData <- R6::R6Class(
 #' @param channels_first (bool): Set channels first or length first in result. (Default: ``TRUE``)
 #'
 #' @return
-#'     list(Tensor, int): An output tensor of size `[C x L]` or `[L x C]` where
-#'         L is the number of audio frames and
-#'         C is the number of channels.
-#'         An integer which is the sample rate of the audio (as listed in the metadata of the file)
+#'     list(Tensor, int), containing
+#'     - the audio content, encoded as `[C x L]` or `[L x C]` where L is the number of audio frames and
+#'         C is the number of channels
+#'     - the sample rate of the audio (as listed in the metadata of the file)
 #'
 #' @export
 transform_to_tensor <- function(
