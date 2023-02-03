@@ -142,17 +142,15 @@ torchaudio_info <- function(filepath) {
 #'
 #' @return invisible(NULL).
 #'
-#' It will set `torchaudio.loader` and `torchaudio.loader.name` options:``
+#' It will set `torchaudio.loader` options:``
 #' options(
 #'   torchaudio.loader = rlang::as_function(backend),
-#'   torchaudio.loader.name = backend
 #' )
 #'
 #' @export
 set_audio_backend <- function(backend) {
   options(
-    torchaudio.loader = rlang::as_function(backend),
-    torchaudio.loader.name = backend
+    torchaudio.loader = rlang::as_function(backend)
   )
 }
 
