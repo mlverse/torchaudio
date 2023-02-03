@@ -136,12 +136,12 @@ torchaudio_info <- function(filepath) {
 }
 #' @keywords internal
 set_audio_backend <- function(backend) {
-  options("torchaudio.backend" = backend)
+  options("torchaudio.loader" = backend)
 }
 
 #'  @keywords internal
 get_audio_backend <- function() {
-  rlang::as_function(getOption("torchaudio.backend", default="av_loader"))
+  rlang::as_function(getOption("torchaudio.loader", default="av_loader"))
 }
 
 #' List available audio backends
