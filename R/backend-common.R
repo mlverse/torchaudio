@@ -134,24 +134,26 @@ torchaudio_info <- function(filepath) {
     num_channels = attr(audio, "channels")
   )
 }
-
-#' Set the backend for I/O operation
-#'
-#' @param backend (str): one of `'av_loader'`,
-#' `'audiofile_loader'` or `'tuneR_loader'`.
-#'
-#' @return invisible(NULL).
-#'
-#' It will set `torchaudio.loader` options:``
-#' options(
-#'   torchaudio.loader = rlang::as_function(backend),
-#' )
-#'
-#' @export
+#' @keywords internal
 set_audio_backend <- function(backend) {
   options(
-    torchaudio.loader = rlang::as_function(backend)
+    torchaudio_backend = backend
   )
+}
+
+#'  @keywords internal
+get_audio_backend <- function() {
+  getOption("torchaudio_backend")
+}
+
+#' List available audio backends
+#'
+#' @return character vector with the list of available backends.
+#'
+#' @export
+list_audio_backends <- function() {
+  backends = c("av", "tuneR")
+  return(backends)
 }
 
 #' Load Audio File
@@ -170,7 +172,7 @@ torchaudio_load <- function(
     offset = 0L,
     duration = -1L,
     unit = c("samples", "time")) {
-  loader <- getOption("torchaudio.loader", default = tuneR_loader)
+  loader <- rlang::as_function(get_audio_backend())
 
   filepath <- as.character(filepath)
   if (!fs::is_file(filepath)) {

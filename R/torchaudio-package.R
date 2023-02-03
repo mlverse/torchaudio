@@ -1,5 +1,5 @@
 utils::globalVariables(c("..", "N"))
 
 .onLoad <- function(libname, pkgname) {
-  torchaudio.loader <- getOption("torchaudio.loader", default = get("av_loader"))
+  set_audio_backend(getOption("torchaudio.loader", default ="av_loader"))
 }

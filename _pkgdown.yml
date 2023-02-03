@@ -28,14 +28,13 @@ reference:
   - title: Kaldi API
     contents:
     - starts_with("kaldi_")
-    - '`backend_utils_list_audio_backends`'
+    - '`list_audio_backends`'
   - title: Neural network modules
     contents:
       - starts_with("model_")
   - title: Audio I/O
     contents:
       - '`torchaudio_load`'
-      - '`set_audio_backend`'
   - title: Informational
     contents:
       - '`torchaudio_info`'
