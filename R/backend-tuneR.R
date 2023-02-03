@@ -7,7 +7,7 @@ tuneR_loader <- function(
     offset = 0L,
     duration = Inf,
     unit = "samples") {
-  package_required("tuneR")
+  rlang::check_installed("tuneR")
 
   file_ext <- tools::file_ext(filepath)
   valid <- c("mp3", "wav")
