@@ -11,10 +11,11 @@ av_loader <- function(
 
   from <- offset
   to <- offset + duration
-  info <- torchaudio_info(filepath)
+  #info <- torchaudio_info(filepath)
+  sample_rate <- av::av_media_info(filepath)$audio$sample_rate
 
-  from_secs <- if(unit == "samples") from / info$sample_rate else from
-  to_secs <- if(unit == "samples") to / info$sample_rate else to
+  from_secs <- if(unit == "samples") from / sample_rate else from
+  to_secs <- if(unit == "samples") to / sample_rate else to
 
   to_secs <- max(to_secs, from_secs + 0.015) + 0.05
   av_obj <- av::read_audio_bin(audio = filepath, start_time = from_secs, end_time = to_secs)
