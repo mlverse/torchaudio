@@ -134,14 +134,24 @@ torchaudio_info <- function(filepath) {
     num_channels = attr(audio, "channels")
   )
 }
-#' @keywords internal
+
 set_audio_backend <- function(backend) {
+  if (!backend %in% list_audio_backends()) {
+    stop(paste("Invalid backend: ", backend))
+  }
   options("torchaudio.loader" = backend)
+
 }
 
-#'  @keywords internal
 get_audio_backend <- function() {
-  rlang::as_function(getOption("torchaudio.loader", default="av_loader"))
+  loader <- getOption("torchaudio.loader", default = "av")
+  if (loader == "av") {
+    av_loader
+  } else if (loader == "tuneR") {
+    tuneR_loader
+  } else {
+    stop(paste("Invalid setting for option torchaudio.loader", loader))
+  }
 }
 
 #' List available audio backends
