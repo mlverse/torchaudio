@@ -1,5 +1,5 @@
 
-# torchaudio 0.3.0.1
+# torchaudio 0.3.1
 
 - Update README to reflect the audio-backend related changes.
 
