@@ -1,9 +1,11 @@
-# torchaudio (development version)
+
+
+# torchaudio 0.3.0
 
 ### Breaking changes
 
 #### Streamline audio loading (#62)
-Thanks to superior performance as well as versatility, the default backend for loading audio files is now [`av`](https://docs.ropensci.org/av/). `av` is an efficient wrapper for [Ffmpeg](https://ffmpeg.org/).
+Owing to superior performance as well as versatility, the default backend for loading audio files is now [`av`](https://docs.ropensci.org/av/). `av` is an efficient wrapper for [Ffmpeg](https://ffmpeg.org/).
 
 The refactorings involved in this update contain breaking changes as to naming and scope. Most mportantly:
 
