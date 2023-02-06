@@ -11,7 +11,6 @@ av_loader <- function(
 
   from <- offset
   to <- offset + duration
-  #info <- torchaudio_info(filepath)
   sample_rate <- av::av_media_info(filepath)$audio$sample_rate
 
   from_secs <- if(unit == "samples") from / sample_rate else from
@@ -22,15 +21,17 @@ av_loader <- function(
 
   channels <- attr(av_obj, "channels")
   samples <- length(av_obj)
-  dim(av_obj) <- c(channels, samples / channels)
+  samples_per_channel <- samples / channels
+  dim(av_obj) <- c(channels, samples_per_channel)
   attrs <- attributes(av_obj)
 
   if (unit == "samples") {
-    len <- min(to - from, samples)
-    av_obj <- av_obj[channels, 1:(len), drop = FALSE]
+    len <- min(to - from, samples_per_channel)
+    av_obj <- av_obj[ , 1:len, drop = FALSE]
     attrs$dim <- c(channels, len)
     attributes(av_obj) <- attrs
   }
+
   class(av_obj) <- c("av", class(av_obj))
   return(av_obj)
 }

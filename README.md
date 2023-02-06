@@ -42,21 +42,61 @@ You can install the development version from GitHub with:
 remotes::install_github("mlverse/torchaudio")
 ```
 
-## A Waveform
+## A basic workflow
 
-`torchaudio` also supports loading sound files in the wav and mp3
-format. We call waveform the resulting raw audio signal.
+`torchaudio` supports a variety of workflows – such as training a neural
+network on a speech dataset, say – but to get started, let’s do
+something more basic: load a sound file, extract some information about
+it, convert it to something `torchaudio` can work with (a tensor), and
+display a spectrogram.
+
+Here is an example sound:
 
 ``` r
 library(torchaudio)
+url <- "https://pytorch.org/tutorials/_static/img/steam-train-whistle-daniel_simon-converted-from-mp3.wav"
+soundfile <- tempfile(fileext = ".wav")
+r <- httr::GET(url, httr::write_disk(soundfile, overwrite = TRUE))
+```
 
-url = "https://pytorch.org/tutorials/_static/img/steam-train-whistle-daniel_simon-converted-from-mp3.wav"
-filename = tempfile(fileext = ".wav")
-r = httr::GET(url, httr::write_disk(filename, overwrite = TRUE))
+Using `torchaudio_info()`, we obtain number of channels, number of
+samples, and the sampling rate:
 
-waveform_and_sample_rate = transform_to_tensor(tuneR_loader(filename))
-waveform = waveform_and_sample_rate[[1]]
-sample_rate = waveform_and_sample_rate[[2]]
+``` r
+info <- torchaudio_info(soundfile)
+cat("Number of channels: ", info$num_channels, "\n")
+#> Number of channels:  2
+cat("Number of samples: ", info$num_frames, "\n")
+#> Number of samples:  276858
+cat("Sampling rate: ", info$sample_rate, "\n")
+#> Sampling rate:  44100
+```
+
+To read in the file, we call `torchaudio_load()`. `torchaudio_load()`
+itself delegates to the default (alternatively, the user-requested)
+backend to read in the file.
+
+The default backend is [`av`](https://docs.ropensci.org/av/), a fast and
+light-weight wrapper for [Ffmpeg](https://ffmpeg.org/). As of this
+writing, an alternative is `tuneR`; it may be requested via the option
+`torchaudio.loader`. (Note though that with `tuneR`, only `wav` and
+`mp3` file extensions are supported.)
+
+``` r
+wav <- torchaudio_load(soundfile)
+dim(wav)
+#> [1]      2 276858
+```
+
+For `torchaudio` to be able to process the sound object, we need to
+convert it to a tensor. This is achieved by means of a call to
+`transform_to_tensor()`, resulting in a list of two tensors: one
+containing the actual amplitude values, the other, the sampling rate.
+
+``` r
+waveform_and_sample_rate <- transform_to_tensor(wav)
+waveform <- waveform_and_sample_rate[[1]]
+sample_rate <- waveform_and_sample_rate[[2]]
 
 paste("Shape of waveform: ", paste(dim(waveform), collapse = " "))
 #> [1] "Shape of waveform:  2 276858"
@@ -67,9 +107,9 @@ plot(waveform[1], col = "royalblue", type = "l")
 lines(waveform[2], col = "orange")
 ```
 
-<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
 
-## A Spectrogram
+Finally, let’s create a spectrogam!
 
 ``` r
 specgram <- transform_spectrogram()(waveform)
@@ -81,9 +121,11 @@ specgram_as_array <- as.array(specgram$log2()[1]$t())
 image(specgram_as_array[,ncol(specgram_as_array):1], col = viridis::viridis(n = 257,  option = "magma"))
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
 
-## Datasets ([go to issue](https://github.com/mlverse/torchaudio/issues/17))
+## Development status
+
+### Datasets ([go to issue](https://github.com/mlverse/torchaudio/issues/17))
 
 - [x] CMUARCTIC
 - [ ] COMMONVOICE
@@ -97,20 +139,20 @@ image(specgram_as_array[,ncol(specgram_as_array):1], col = viridis::viridis(n = 
 - [ ] VCTK_092
 - [x] YESNO
 
-## Models ([go to issue](https://github.com/mlverse/torchaudio/issues/19))
+### Models ([go to issue](https://github.com/mlverse/torchaudio/issues/19))
 
 - [ ] ConvTasNet
 - [ ] Wav2Letter
 - [x] WaveRNN
-- [ ] (what else? novel structures are very welcome!)
 
-## I/O Backend
+## I/O Backends
 
+- [x] {av} (default)
 - [x] {tuneR}
 
 ## Code of Conduct
 
-Please note that the torchaudio project is released with a [Contributor
-Code of
+Please note that the `torchaudio` project is released with a
+[Contributor Code of
 Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
 By contributing to this project, you agree to abide by its terms.

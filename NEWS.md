@@ -1,4 +1,7 @@
 
+# torchaudio 0.3.0.1
+
+- Update README to reflect the audio-backend related changes.
 
 # torchaudio 0.3.0
 
@@ -16,15 +19,6 @@ The refactorings involved in this update contain breaking changes as to naming a
 - As of this time, a supported alternative backend is `tuneR`.
 
 - The only user-visible function to obtain audio file information is now `torchaudio_info()`. 
-
-
-### New features
-
-
-### Bug fixes
-
-
-### Internal
 
 
 # torchaudio 0.2.2
