@@ -1,6 +1,6 @@
 Package: torchaudio
 Title: R Interface to 'pytorch''s 'torchaudio'
-Version: 0.3.0
+Version: 0.3.0.1
 Authors@R: c(
     person("Sigrid", "Keydana", email = "sigrid@posit.co", role = c("aut", "cre")),
     person("Athos", "Damiani", role = c("aut"), email = "athos.damiani@gmail.com"),
