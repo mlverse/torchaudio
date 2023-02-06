@@ -31,13 +31,7 @@
     <loc>/news/index.html</loc>
   </url>
   <url>
-    <loc>/reference/audiofile_loader.html</loc>
-  </url>
-  <url>
     <loc>/reference/av_loader.html</loc>
-  </url>
-  <url>
-    <loc>/reference/backend_utils_list_audio_backends.html</loc>
   </url>
   <url>
     <loc>/reference/cmuarctic_dataset.html</loc>
@@ -187,9 +181,6 @@
     <loc>/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/info.html</loc>
-  </url>
-  <url>
     <loc>/reference/internal__normalize_audio.html</loc>
   </url>
   <url>
@@ -203,6 +194,9 @@
   </url>
   <url>
     <loc>/reference/linear_to_mel_frequency.html</loc>
+  </url>
+  <url>
+    <loc>/reference/list_audio_backends.html</loc>
   </url>
   <url>
     <loc>/reference/mel_to_linear_frequency.html</loc>
@@ -223,22 +217,16 @@
     <loc>/reference/model_wavernn.html</loc>
   </url>
   <url>
-    <loc>/reference/mp3_info.html</loc>
-  </url>
-  <url>
-    <loc>/reference/set_audio_backend.html</loc>
-  </url>
-  <url>
     <loc>/reference/speechcommand_dataset.html</loc>
   </url>
   <url>
     <loc>/reference/strip.html</loc>
   </url>
   <url>
-    <loc>/reference/torchaudio_load.html</loc>
+    <loc>/reference/torchaudio_info.html</loc>
   </url>
   <url>
-    <loc>/reference/torchaudio_loader.html</loc>
+    <loc>/reference/torchaudio_load.html</loc>
   </url>
   <url>
     <loc>/reference/transform__axismasking.html</loc>
@@ -305,9 +293,6 @@
   </url>
   <url>
     <loc>/reference/walk_files.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wav_info.html</loc>
   </url>
   <url>
     <loc>/reference/yesno_dataset.html</loc>
