@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">torchaudio</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.2.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.0.1</span>
       </span>
     </div>
 
@@ -67,27 +67,22 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="development version" id="torchaudio-development-version">torchaudio (development version)<a class="anchor" aria-label="anchor" href="#torchaudio-development-version"></a></h2>
+<h2 class="page-header" data-toc-text="0.3.0.1" id="torchaudio-0301">torchaudio 0.3.0.1<a class="anchor" aria-label="anchor" href="#torchaudio-0301"></a></h2>
+<ul><li>Update README to reflect the audio-backend related changes.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.3.0" id="torchaudio-030">torchaudio 0.3.0<small>2023-02-06</small><a class="anchor" aria-label="anchor" href="#torchaudio-030"></a></h2>
 <div class="section level4">
-<h4 id="breaking-changes-development-version">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-development-version"></a></h4>
+<h4 id="breaking-changes-0-3-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-3-0"></a></h4>
 <div class="section level5">
-<h5 id="streamline-audio-loading-development-version">Streamline audio loading (#62)<a class="anchor" aria-label="anchor" href="#streamline-audio-loading-development-version"></a></h5>
-<p>Thanks to superior performance as well as versatility, the default backend for loading audio files is now <a href="https://docs.ropensci.org/av/" class="external-link"><code>av</code></a>. <code>av</code> is an efficient wrapper for <a href="https://ffmpeg.org/" class="external-link">Ffmpeg</a>.</p>
+<h5 id="streamline-audio-loading-0-3-0">Streamline audio loading (#62)<a class="anchor" aria-label="anchor" href="#streamline-audio-loading-0-3-0"></a></h5>
+<p>Owing to superior performance as well as versatility, the default backend for loading audio files is now <a href="https://docs.ropensci.org/av/" class="external-link"><code>av</code></a>. <code>av</code> is an efficient wrapper for <a href="https://ffmpeg.org/" class="external-link">Ffmpeg</a>.</p>
 <p>The refactorings involved in this update contain breaking changes as to naming and scope. Most mportantly:</p>
 <ul><li><p><code>av</code> is now the default backend, and it is a mandatory dependency. Linux users please consider the <a href="https://docs.ropensci.org/av/" class="external-link">av installation instructions</a>.</p></li>
 <li><p>The only user-visible function to load audio is <code><a href="../reference/torchaudio_load.html">torchaudio_load()</a></code>. It will delegate to the default backend, or one you set with <code>set_audio_backend()</code>.</p></li>
 <li><p>As of this time, a supported alternative backend is <code>tuneR</code>.</p></li>
 <li><p>The only user-visible function to obtain audio file information is now <code><a href="../reference/torchaudio_info.html">torchaudio_info()</a></code>.</p></li>
 </ul></div>
-</div>
-<div class="section level4">
-<h4 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h4>
-</div>
-<div class="section level4">
-<h4 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h4>
-</div>
-<div class="section level4">
-<h4 id="internal-development-version">Internal<a class="anchor" aria-label="anchor" href="#internal-development-version"></a></h4>
 </div>
 </div>
     <div class="section level2">
