@@ -12,7 +12,7 @@ transform_to_tensor(
 )
 }
 \arguments{
-\item{audio}{(numeric or Wave): A numeric vector or Wave object, usually from \link[tuneR:readMP3]{tuneR::readMP3} or \link[tuneR:readWave]{tuneR::readWave}.}
+\item{audio}{(numeric): A numeric vector, as delivered by the backend.}
 
 \item{out}{(Tensor): An optional output tensor to use instead of creating one. (Default: \code{NULL})}
 
@@ -26,17 +26,13 @@ then the output is divided by the result. (Default: \code{TRUE})}
 \item{channels_first}{(bool): Set channels first or length first in result. (Default: \code{TRUE})}
 }
 \value{
-\if{html}{\out{<div class="sourceCode">}}\preformatted{list(Tensor, int): An output tensor of size `[C x L]` or `[L x C]` where
-    L is the number of audio frames and
-    C is the number of channels.
-    An integer which is the sample rate of the audio (as listed in the metadata of the file)
+\if{html}{\out{<div class="sourceCode">}}\preformatted{list(Tensor, int), containing
+- the audio content, encoded as `[C x L]` or `[L x C]` where L is the number of audio frames and
+    C is the number of channels
+- the sample rate of the audio (as listed in the metadata of the file)
 }\if{html}{\out{</div>}}
 }
 \description{
-Converts a tuneR Wave object or numeric vector into a \code{torch_tensor} of shape (Channels x Samples).
-Convert Audio Object to Tensor.
-}
-\details{
-If audio is a numeric vector, attributes "channels" and "sample_rate" will be used if exists.
-Numeric vectors returned from \link[av:read_audio]{av::read_audio_bin} have both attributes by default.
+Converts a numeric vector, as delivered by the backend, into a \code{torch_tensor} of shape (channels x samples).
+If provided by the backend, attributes "channels" and "sample_rate" will be used.
 }

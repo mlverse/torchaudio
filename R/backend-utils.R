@@ -1,18 +1,3 @@
-#' List Available Audio Backends
-#'
-#' @return character vector with the list of available backends.
-#'
-#' @export
-backend_utils_list_audio_backends <- function() {
-  backends = c()
-  # if(is_module_available('soundfile')) backends = c(backends, 'soundfile')
-  # if(is_module_available('sox')) backends = c(backends, 'sox')
-  # if(is_module_available('tuneR')) backends = c(backends, 'tuneR')
-  not_implemented_error("Not implemented yet.")
-
-  return(backends)
-}
-
 #' Strip
 #'
 #' removes any leading (spaces at the beginning) and trailing (spaces at the end) characters.

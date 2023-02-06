@@ -23,17 +23,15 @@ Suggests:
     purrr,
     scales,
     httr,
-    viridis,
-    av
+    viridis
 Imports: 
     torch (>= 0.3.0),
+    av,
     fs,
     rlang,
     utils,
     tools,
     glue,
-    Rcpp,
     methods
 VignetteBuilder: knitr
-LinkingTo: 
-    Rcpp
+

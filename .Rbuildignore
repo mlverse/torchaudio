@@ -14,6 +14,5 @@
 ^_vignettes/*
 ^CRAN-RELEASE$
 torchaudio-manual\.tex$
-^inst/loaders_benchmark\.R$
 ^CRAN-SUBMISSION$
 ^rstudio$
