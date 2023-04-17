@@ -42,5 +42,5 @@ for name, url in models.items():
   upload_blob(
     "torchaudio-models",
     fpath,
-     "/v" + version + "/models/" + fpath 
+     "v" + version + "/models/" + fpath 
   )
