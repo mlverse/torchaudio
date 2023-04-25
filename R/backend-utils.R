@@ -22,3 +22,52 @@ strip <- function(str) gsub("^\\s+|\\s+$", "", str)
     x
   }
 }
+
+#' F string
+#'
+#' Alias to glue::glue to resemble the Pythonic f-string.
+#'
+#' @seealso [glue::glue()]
+#'
+#' @keywords internal
+#' @export
+#' @examples
+#' mean <- 3.5
+#' f("the mean is {mean}")
+f <- glue::glue
+
+#' Not in operator
+#'
+#' the Negate(`\%in\%`) function.
+#'
+#' @keywords internal
+#' @export
+"%not_in%" <- Negate(`%in%`)
+
+#' Pipe operator
+#'
+#' See \code{magrittr::\link[magrittr:pipe]{\%>\%}} for details.
+#'
+#' @name %>%
+#' @rdname pipe
+#' @keywords internal
+#' @export
+#' @importFrom magrittr %>%
+#' @usage lhs \%>\% rhs
+NULL
+
+#' Multiple assignment operator
+#'
+#' See \code{zeallot::\link[zeallot:operator]{\%<-\%}} for details.
+#'
+#' @name %<-%
+#' @rdname zeallot-multi-assignment
+#' @keywords internal
+#' @export
+#' @importFrom zeallot %<-%
+#' @usage c(x, y, z) \%<-\% list(a, b, c)
+NULL
+
+
+#' @keywords internal
+n_dim <- function(x) length(dim(x))
