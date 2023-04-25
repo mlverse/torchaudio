@@ -1,0 +1,220 @@
+---
+title: "Speech Recognition With Wav2Vec2"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Speech Recognition With Wav2Vec2}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = TRUE#identical(Sys.getenv("TORCH_TEST", unset = "0"), "1")
+)
+```
+
+> Note: This is an R port of the original tutorial available [here](https://pytorch.org/audio/stable/tutorials/speech_recognition_pipeline_tutorial.html). All credits goes to [Moto Hira](https://github.com/mthrok).
+
+This tutorial shows how to perform speech recognition using using pre-trained models from wav2vec 2.0 [paper](https://arxiv.org/abs/2006.11477).
+
+# Overview
+
+The process of speech recognition looks like the following.
+
+1. Extract the acoustic features from audio waveform
+
+2. Estimate the class of the acoustic features frame-by-frame
+
+3. Generate hypothesis from the sequence of the class probabilities
+
+{torchaudio} provides easy access to the pre-trained weights and associated information, such as the expected sample rate and class labels. They are bundled together and available under `torchaudio::pipeline_*` functions.
+
+# Preparation
+
+```{r setup}
+library(glue)
+library(torch)
+library(torchaudio)
+library(zeallot)
+f <- glue::glue
+
+torch_manual_seed(0)
+device = torch_device(if (cuda_is_available()) "cuda" else "cpu")
+device
+```
+
+```{r}
+SPEECH_FILE = download_asset("tutorial-assets/Lab41-SRI-VOiCES-src-sp0307-ch127535-sg0042.wav")
+```
+
+# Creating a pipeline
+
+First, we will create a Wav2Vec2 model that performs the feature extraction and the classification.
+
+There are two types of Wav2Vec2 pre-trained weights available in {torchaudio}. The ones fine-tuned for ASR task, and the ones not fine-tuned.
+
+Wav2Vec2 (and HuBERT) models are trained in self-supervised manner. They are firstly trained with audio only for representation learning, then fine-tuned for a specific task with additional labels.
+
+The pre-trained weights without fine-tuning can be fine-tuned for other downstream tasks as well, but this tutorial does not cover that.
+
+We will use `pipeline_wav2vec2_asr_base_960h` here.
+
+There are multiple pre-trained models available in `torchaudio::pipeline_*`. Please check the documentation for the detail of how they are trained.
+
+The bundle object provides the interface to instantiate model and other information. Sampling rate and the class labels are found as follow.
+
+```{r}
+bundle = pipeline_wav2vec2_asr_base_960h()
+
+cat("Sample Rate:", bundle$sample_rate(), "\n")
+cat("Labels: ", bundle$get_labels())
+```
+
+```{r}
+model = bundle$get_model()
+
+class(model)
+```
+
+# Loading data
+
+We will use the speech data from VOiCES dataset, which is licensed under Creative Commos BY 4.0.
+
+```{r, results='asis'}
+f("![audio]({SPEECH_FILE})")
+```
+
+To load data, we use `torchaudio_load()`. If the sampling rate is different from what the pipeline expects, then we can use `functional_resample()` for resampling.
+
+
+```{r}
+c(waveform, sample_rate) %<-% transform_to_tensor(torchaudio_load(SPEECH_FILE))
+
+if (sample_rate != bundle$sample_rate())
+  waveform = functional_resample(waveform, sample_rate, bundle$sample_rate())
+```
+
+# Extracting acoustic features
+
+The next step is to extract acoustic features from the audio.
+
+Note:
+
+> Wav2Vec2 models fine-tuned for ASR task can perform feature extraction and classification with one step, but for the sake of the tutorial, we also show how to perform feature extraction here.
+
+
+```{r}
+features <- model$extract_features(waveform)[[1]]
+```
+
+The returned features is a list of tensors. Each tensor is the output of a transformer layer.
+
+```{r, fig.width = 7.1, fig.asp = .25}
+color_schema = viridis::viridis(n = 257,  option = "viridis")
+plot_image <- function(x) {
+  par(mar = c(1,1,0.5,0.5))
+  image(
+    x, 
+    col = color_schema,
+    cex.lab = 0.5, cex.axis = 0.5, mgp = c(.2, .2, 0)
+  )
+}
+
+for(i in seq_along(features)) {
+  plot_image(as.array(features[[i]][1]$transpose(2,1)))
+}
+```
+
+# Feature classification
+
+Once the acoustic features are extracted, the next step is to classify them into a set of categories.
+
+Wav2Vec2 model provides method to perform the feature extraction and classification in one step.
+
+```{r}
+emission = model(waveform)[[1]]
+```
+
+The output is in the form of logits. It is not in the form of probability.
+
+Let’s visualize this.
+
+```{r, fig.width = 7, fig.asp = .33}
+plot_image(as.array(emission[1]))
+```
+
+We can see that there are strong indications to certain labels across the time line.
+
+# Generating transcripts
+
+From the sequence of label probabilities, now we want to generate transcripts. The process to generate hypotheses is often called "decoding".
+
+Decoding is more elaborate than simple classification because decoding at certain time step can be affected by surrounding observations.
+
+For example, take a word like night and knight. Even if their prior probability distribution are different (in typical conversations, night would occur way more often than knight), to accurately generate transcripts with knight, such as a knight with a sword, the decoding process has to postpone the final decision until it sees enough context.
+
+There are many decoding techniques proposed, and they require external resources, such as word dictionary and language models.
+
+In this tutorial, for the sake of simplicity, we will perform greedy decoding which does not depend on such external components, and simply pick up the best hypothesis at each time step. Therefore, the context information are not used, and only one transcript can be generated.
+
+We start by defining greedy decoding algorithm.
+
+```{r}
+greedy_ctc_decoder <- R6::R6Class(
+  "GreedyCTCDecoder",
+  public = list(
+    labels = NULL,
+    blank = NULL,
+    
+    initialize = function(labels, blank = 1) {
+      self$labels = labels
+      self$blank = blank
+    },
+    
+    #' @description
+    #' 
+    #' Given a sequence emission over labels, get the best path string
+    #'
+    #' @param emission (Tensor): Logit tensors. Shape `[num_seq, num_label]`.
+    #'
+    #' @return str: The resulting transcript
+    forward = function(emission) {
+      indices = torch::torch_argmax(emission, dim = -1)  # [num_seq,]
+      indices = torch::torch_unique_consecutive(indices, dim = -1)[[1]]
+      indices = torch::as_array(indices[indices != self$blank])
+      return(paste(self$labels[indices], collapse = ""))
+    }
+  )
+)
+```
+
+Now create the decoder object and decode the transcript.
+
+```{r}
+decoder = greedy_ctc_decoder$new(labels = bundle$get_labels())
+transcript = decoder$forward(emission[1])
+```
+
+Let's check the result and listen again to the audio.
+
+```{r}
+print(transcript)
+```
+
+```{r, results='asis'}
+f("![audio]({SPEECH_FILE})")
+```
+
+The ASR model is fine-tuned using a loss function called Connectionist Temporal Classification (CTC). The detail of CTC loss is explained [here](https://distill.pub/2017/ctc/). In CTC a blank token (ϵ) is a special token which represents a repetition of the previous symbol. In decoding, these are simply ignored.
+
+# Conclusion
+
+In this tutorial, we looked at how to use `Wav2Vec2ASRBundle` to perform acoustic feature extraction and speech recognition. Constructing a model and getting the emission is as short as two lines.
+
+```{r, eval = FALSE}
+model = pipeline_wav2vec2_asr_base_960h$get_model()
+emission = model(waveforms, ...)
+```
+
