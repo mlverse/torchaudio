@@ -116,6 +116,7 @@ image(specgram_as_array[,ncol(specgram_as_array):1], col = viridis::viridis(n = 
 -   [ ] ConvTasNet
 -   [ ] Wav2Letter
 -   [x] WaveRNN
+-   [x] Wav2Vec2
 
 ## I/O Backends
 

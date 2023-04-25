@@ -46,7 +46,8 @@ def_pytorch_to_r_function <- function(script) {
     stringr::str_replace_all("raise ValueError", "value_error") %>%
     stringr::str_remove("^:") %>%
     stringr::str_remove_all("r@@") %>%
-    stringr::str_c("\n}\n")
+    stringr::str_c("\n}\n") %>%
+    stringr::str_replace_all("if\\((.+) is not NULL","if(!is.null(\\1)")
 
   # documentation prep
   documentation_preped <- documentation %>%
@@ -59,11 +60,12 @@ def_pytorch_to_r_function <- function(script) {
     stringr::str_remove("#' +Args:\n") %>%
     stringr::str_c("\n")
 
-  cat(stringr::str_c(
+  output_string <- stringr::str_c(
     ifelse(is.na(documentation_preped), "", documentation_preped),
     ifelse(is.na(signature_preped), "", signature_preped),
     ifelse(is.na(body_preped), "", body_preped)
-    )
   )
+  cat(output_string)
+  writeClipboard(output_string)
 }
 

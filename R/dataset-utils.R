@@ -4,7 +4,7 @@
 
 #' @keywords internal
 download_url <- function(url, destfile, checksum) {
-  p <- utils::download.file(url = url, destfile = destfile)
+  p <- utils::download.file(url = url, destfile = destfile, mode = "wb")
 
   if (!tools::md5sum(destfile) == checksum)
     runtime_error(glue::glue("MD5 sums are not identical for file: {destfile}."))
@@ -24,12 +24,16 @@ download_url <- function(url, destfile, checksum) {
 #' url = 'http://www.quest.dcs.shef.ac.uk/wmt16_files_mmt/validation.tar.gz'
 #' d <- fs::dir_create(tempdir(), "torchaudio")
 #' from_path <- fs::path(d, basename(url))
-#' utils::download.file(url = url, destfile = from_path)
+#' utils::download.file(url = url, destfile = from_path, mode = "wb")
 #' torchaudio::extract_archive (from_path, d)
 #' }
 #'
 #' @export
-extract_archive <- function(from_path, to_path = NULL, overwrite = FALSE) {
+extract_archive <- function(
+    from_path,
+    to_path = NULL,
+    overwrite = FALSE
+  ) {
   ext_file <- fs::path_ext(from_path)
   if(ext_file %in% "zip") {
     utils::unzip(zipfile = from_path, exdir = to_path, overwrite = overwrite)
@@ -54,8 +58,14 @@ walk_files <- function(
   prefix = FALSE,
   remove_suffix = FALSE
 ) {
-  out <- list.files(root, pattern = suffix, full.names = prefix, recursive = TRUE)
+  out <- list.files(
+    root,
+    pattern = suffix,
+    full.names = prefix,
+    recursive = TRUE
+  )
+
   if(remove_suffix) out <- gsub(suffix, "", out)
 
-  out
+  return(out)
 }

@@ -5,7 +5,6 @@
 #'
 #' @param n_freq the number of bins in a spectrogram.  (Default: ``128``)
 #'
-#'
 #' @details forward param:
 #'  specgram  (Tensor): the input sequence to the ResBlock layer (n_batch, n_freq, n_time).
 #'
@@ -206,7 +205,7 @@ model_upsample_network <- torch::nn_module(
 #'
 #' WaveRNN model based on the implementation from [fatchord](https://github.com/fatchord/WaveRNN).
 #' The original implementation was introduced in ["Efficient Neural Audio Synthesis"](https://arxiv.org/pdf/1802.08435.pdf).
-#'#' Pass the input through the WaveRNN model.
+#' Pass the input through the WaveRNN model.
 #'
 #' @param upsample_scales the list of upsample scales.
 #' @param n_classes the number of output classes.
