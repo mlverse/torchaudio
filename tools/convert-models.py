@@ -6,7 +6,30 @@ import os
 version = "1"
 
 models = {
+  'wav2vec2_fairseq_base_ls960': 'https://download.pytorch.org/torchaudio/models/wav2vec2_fairseq_base_ls960.pth',
+  'wav2vec2_fairseq_base_ls960_asr_ll10m': 'https://download.pytorch.org/torchaudio/models/wav2vec2_fairseq_base_ls960_asr_ll10m.pth',
+  'wav2vec2_fairseq_base_ls960_asr_ls100': 'https://download.pytorch.org/torchaudio/models/wav2vec2_fairseq_base_ls960_asr_ls100.pth',
   'wav2vec2_fairseq_base_ls960_asr_ls960': 'https://download.pytorch.org/torchaudio/models/wav2vec2_fairseq_base_ls960_asr_ls960.pth',
+  'wav2vec2_fairseq_large_ls960': 'https://download.pytorch.org/torchaudio/models/wav2vec2_fairseq_large_ls960.pth',
+  'wav2vec2_fairseq_large_ls960_asr_ll10m': 'https://download.pytorch.org/torchaudio/models/wav2vec2_fairseq_large_ls960_asr_ll10m.pth',
+  'wav2vec2_fairseq_large_ls960_asr_ls100': 'https://download.pytorch.org/torchaudio/models/wav2vec2_fairseq_large_ls960_asr_ls100.pth',
+  'wav2vec2_fairseq_large_ls960_asr_ls960': 'https://download.pytorch.org/torchaudio/models/wav2vec2_fairseq_large_ls960_asr_ls960.pth',
+  'wav2vec2_fairseq_large_lv60k': 'https://download.pytorch.org/torchaudio/models/wav2vec2_fairseq_large_lv60k.pth',
+  'wav2vec2_fairseq_large_lv60k_asr_ll10m': 'https://download.pytorch.org/torchaudio/models/wav2vec2_fairseq_large_lv60k_asr_ll10m.pth',
+  'wav2vec2_fairseq_large_lv60k_asr_ls100': 'https://download.pytorch.org/torchaudio/models/wav2vec2_fairseq_large_lv60k_asr_ls100.pth',
+  'wav2vec2_fairseq_large_lv60k_asr_ls960': 'https://download.pytorch.org/torchaudio/models/wav2vec2_fairseq_large_lv60k_asr_ls960.pth',
+  'wav2vec2_fairseq_large_xlsr53': 'https://download.pytorch.org/torchaudio/models/wav2vec2_fairseq_large_xlsr53.pth',
+  'hubert_fairseq_base_ls960': 'https://download.pytorch.org/torchaudio/models/hubert_fairseq_base_ls960.pth',
+  'hubert_fairseq_large_ll60k': 'https://download.pytorch.org/torchaudio/models/hubert_fairseq_large_ll60k.pth',
+  'hubert_fairseq_xlarge_ll60k': 'https://download.pytorch.org/torchaudio/models/hubert_fairseq_xlarge_ll60k.pth',
+  'hubert_fairseq_large_ll60k_asr_ls960': 'https://download.pytorch.org/torchaudio/models/hubert_fairseq_large_ll60k_asr_ls960.pth',
+  'hubert_fairseq_xlarge_ll60k_asr_ls960': 'https://download.pytorch.org/torchaudio/models/hubert_fairseq_xlarge_ll60k_asr_ls960.pth',
+  'wavlm_base': 'https://download.pytorch.org/torchaudio/models/wavlm_base.pth',
+  'wavlm_base_plus': 'https://download.pytorch.org/torchaudio/models/wavlm_base_plus.pth',
+  'wavlm_large': 'https://download.pytorch.org/torchaudio/models/wavlm_large.pth',
+  'wav2vec2_xlsr_300m': 'https://download.pytorch.org/torchaudio/models/wav2vec2_xlsr_300m.pth',
+  'wav2vec2_xlsr_1b': 'https://download.pytorch.org/torchaudio/models/wav2vec2_xlsr_1b.pth',
+  'wav2vec2_xlsr_2b': 'https://download.pytorch.org/torchaudio/models/wav2vec2_xlsr_2b.pth'
 }
 
 def upload_blob(bucket_name, source_file_name, destination_blob_name):
